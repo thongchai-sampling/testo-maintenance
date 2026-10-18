@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบรายงานซ่อมบำรุง Testo</title>
+    <!-- นำเข้า Tailwind CSS สำหรับจัดรูปแบบหน้าเว็บ -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- นำเข้าฟอนต์ Google Fonts (Sarabun) เพื่อให้อ่านภาษาไทยได้สวยงาม -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* ซ่อน Modal ตอนเริ่มต้น */
+        .hidden-modal {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex items-center justify-center">
+
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden">
+        <!-- ส่วนหัวของฟอร์ม -->
+        <div class="bg-blue-600 p-6 text-white text-center">
+            <h1 class="text-2xl md:text-3xl font-bold">รายงานซ่อมบำรุงรายสัปดาห์</h1>
+            <p class="mt-2 text-blue-100">เครื่องวัดประสิทธิภาพการเผาไหม้ Testo</p>
+        </div>
+
+        <form id="maintenanceForm" class="p-6 md:p-8 space-y-6" novalidate>
+            
+            <!-- วันที่ซ่อมบำรุง และ ชื่อช่าง (จัดให้อยู่แถวเดียวกันบนจอใหญ่) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="date">วันที่ซ่อมบำรุง / Date</label>
+                    <input type="date" id="date" name="date" required 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="technician">ชื่อช่างผู้ตรวจเช็ค / Technician</label>
+                    <input type="text" id="technician" name="technician" required placeholder="ระบุชื่อ-นามสกุล" maxlength="100" autocomplete="name"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="model">รุ่นเครื่อง / Model</label>
+                    <select id="model" name="model" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white">
+                        <option value="" disabled selected>เลือกรุ่นเครื่อง...</option>
+                        <option value="Testo 350 XL">Testo 350 XL</option>
+                        <option value="Testo 350 New">Testo 350 New</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="serial">หมายเลขเครื่อง / Serial No.</label>
+                    <input type="text" id="serial" name="serial" required placeholder="เช่น 12345678" maxlength="50"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-2 mb-4">รายการตรวจเช็ค (Checklist)</h2>
+                
+                <!-- 1. กรองฝุ่น -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span class="text-gray-700 font-medium">1. ฟิลเตอร์กรองฝุ่นก่อนเข้าเซ็นเซอร์</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_filter" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_filter" value="ต้องแก้ไข/เปลี่ยน" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    </div>
+                </div>
+
+                <!-- 2. ปั๊มดูดอากาศ -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span class="text-gray-700 font-medium">2. การทำงานของปั๊มดูดอากาศ</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_pump" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_pump" value="ต้องแก้ไข/ซ่อมแซม" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    </div>
+                </div>
+
+                <!-- 3. แบตเตอรี่ -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span class="text-gray-700 font-medium">3. ความพร้อมของแบตเตอรี่</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_battery" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_battery" value="เสื่อม/ต้องชาร์จ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    </div>
+                </div>
+
+                <!-- 4. ความสะอาด -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span class="text-gray-700 font-medium">4. ความสะอาดของเครื่องมือ</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_clean" value="สะอาด/ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_clean" value="ต้องทำความสะอาด" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    </div>
+                </div>
+
+                <!-- 5. สถานะเซ็นเซอร์ -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span class="text-gray-700 font-medium">5. สถานะเซ็นเซอร์ (O2, CO, etc.)</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2" for="notes">ภาพรวมหรือรายละเอียดเพิ่มเติม / Notes</label>
+                <textarea id="notes" name="notes" rows="3" maxlength="1000" placeholder="ระบุรายละเอียดการตรวจสอบ หรือปัญหาที่พบ..."
+                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"></textarea>
+                <p id="notesHint" class="hidden mt-1 text-sm text-red-600">กรุณาระบุรายละเอียดปัญหา เนื่องจากมีรายการที่ "ต้องแก้ไข"</p>
+            </div>
+
+            <!-- ปุ่มส่งข้อมูล -->
+            <button type="submit" id="submitBtn"
+                    class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition disabled:cursor-not-allowed">
+                <svg id="loadingSpinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                <span id="submitText">บันทึกรายงาน</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Modal แจ้งเตือนผลการบันทึก -->
+    <div id="messageModal" class="hidden-modal fixed inset-0 bg-black/50 items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+            <div id="modalIcon" class="mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4"></div>
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
+            <p id="modalMessage" class="mt-2 text-gray-600"></p>
+            <button type="button" id="modalCloseBtn"
+                    class="mt-6 w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2 rounded-lg transition">ตกลง</button>
+        </div>
+    </div>
+
+    <script>
+        // ===== ตั้งค่า: วาง URL ของ Web App ที่ได้จากการ Deploy Google Apps Script =====
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnP_bgn93tKB2FzcpJIH_9vAT7a6Sz8YHkVtB6EiNaYuAT4z292QU74jkiMLf2Rq9E/exec';
+
+        const form = document.getElementById('maintenanceForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const messageModal = document.getElementById('messageModal');
+        const technicianInput = document.getElementById('technician');
+        const notesInput = document.getElementById('notes');
+        const notesHint = document.getElementById('notesHint');
+
+        // ตั้งวันที่เป็น "วันนี้" ตามเวลาเครื่อง (valueAsDate ใช้ UTC ทำให้ช่วง 00:00-07:00 ได้วันที่เมื่อวาน)
+        function setToday() {
+            const d = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            const today = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+            const dateInput = document.getElementById('date');
+            dateInput.value = today;
+            dateInput.max = today; // ไม่อนุญาตให้เลือกวันในอนาคต
+        }
+
+        // จำชื่อช่างไว้ ไม่ต้องพิมพ์ใหม่ทุกครั้ง
+        function restoreTechnician() {
+            const saved = localStorage.getItem('testo_technician');
+            if (saved) technicianInput.value = saved;
+        }
+
+        setToday();
+        restoreTechnician();
+
+        // ถ้ามีรายการ "ต้องแก้ไข" ให้บังคับกรอกหมายเหตุ
+        function hasIssue() {
+            return [...form.querySelectorAll('input[type=radio]:checked')]
+                .some(r => r.classList.contains('text-red-600'));
+        }
+        form.addEventListener('change', () => {
+            notesInput.required = hasIssue();
+            if (!notesInput.required) notesHint.classList.add('hidden');
+        });
+
+        function setLoading(isLoading) {
+            submitBtn.disabled = isLoading;
+            submitBtn.classList.toggle('bg-blue-600', !isLoading);
+            submitBtn.classList.toggle('bg-blue-400', isLoading);
+            loadingSpinner.classList.toggle('hidden', !isLoading);
+            submitText.textContent = isLoading ? 'กำลังบันทึก...' : 'บันทึกรายงาน';
+        }
+
+        // จัดการเมื่อฟอร์มถูก Submit
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // ป้องกันไม่ให้หน้าเว็บรีเฟรช
+            if (submitBtn.disabled) return; // กันกดซ้ำ
+
+            // ตรวจสอบความครบถ้วนของข้อมูล
+            notesInput.required = hasIssue();
+            if (!form.checkValidity()) {
+                if (notesInput.required && !notesInput.value.trim()) notesHint.classList.remove('hidden');
+                form.reportValidity();
+                return;
+            }
+
+            // ตรวจสอบว่าได้ใส่ URL ของ Google Script หรือยัง
+            if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                showModal('error', 'ข้อผิดพลาด', 'กรุณาตั้งค่า GOOGLE_SCRIPT_URL ในโค้ดก่อนทำการบันทึกข้อมูลครับ');
+                return;
+            }
+
+            setLoading(true);
+
+            // ดึงข้อมูลจากฟอร์ม และตัดช่องว่างหัว-ท้าย
+            const dataObj = {};
+            for (const [k, v] of new FormData(form).entries()) dataObj[k] = String(v).trim();
+
+            try {
+                // ใช้ Content-Type: text/plain เพื่อให้เป็น "simple request" (ไม่มี preflight)
+                // Google Apps Script จะตอบกลับพร้อม CORS header ทำให้อ่านผลลัพธ์จริงได้ (ไม่ต้องใช้ no-cors)
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(dataObj)
+                });
+
+                const result = await response.json();
+                if (result.status !== 'success') {
+                    throw new Error(result.message || 'Server error');
+                }
+
+                localStorage.setItem('testo_technician', dataObj.technician);
+                showModal('success', 'บันทึกสำเร็จ!', 'ข้อมูลการซ่อมบำรุงของคุณถูกส่งไปยัง Google Sheet เรียบร้อยแล้ว');
+                form.reset(); // ล้างข้อมูลในฟอร์ม
+                notesInput.required = false;
+                notesHint.classList.add('hidden');
+                setToday();
+                restoreTechnician();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showModal('error', 'การบันทึกล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message + ' กรุณาลองใหม่อีกครั้ง');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // ฟังก์ชันสำหรับแสดง Modal แจ้งเตือน
+        function showModal(type, title, message) {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalIcon = document.getElementById('modalIcon');
+
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+
+            if (type === 'success') {
+                modalIcon.classList.add('bg-green-100', 'text-green-600');
+                modalIcon.classList.remove('bg-red-100', 'text-red-600');
+                modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            } else {
+                modalIcon.classList.add('bg-red-100', 'text-red-600');
+                modalIcon.classList.remove('bg-green-100', 'text-green-600');
+                modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+            }
+
+            messageModal.style.display = 'flex';
+            document.getElementById('modalCloseBtn').focus();
+        }
+
+        // ฟังก์ชันสำหรับปิด Modal
+        function closeModal() {
+            messageModal.style.display = 'none';
+        }
+
+        // ปิด Modal ได้ทั้งจากปุ่ม, คลิกพื้นหลัง และกด Esc
+        document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+        messageModal.addEventListener('click', (e) => { if (e.target === messageModal) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+    </script>
+</body>
+</html>
