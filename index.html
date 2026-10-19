@@ -30,7 +30,7 @@
 
         <form id="maintenanceForm" class="p-6 md:p-8 space-y-6" novalidate>
             
-            <!-- วันที่ซ่อมบำรุง และ ชื่อช่าง (จัดให้อยู่แถวเดียวกันบนจอใหญ่) -->
+            <!-- วันที่ตรวจสอบ และ ชื่อผู้ตรวจสอบ (จัดให้อยู่แถวเดียวกันบนจอใหญ่) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2" for="date">วันที่ตรวจสอบและบำรุงรักษา / Date</label>
@@ -100,12 +100,48 @@
                     </div>
                 </div>
 
-                <!-- 5. สถานะเซ็นเซอร์ -->
+                <!-- 5. สถานะเซ็นเซอร์ O2 -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span class="text-gray-700 font-medium">5. สถานะเซ็นเซอร์ (O2, CO, etc.)</span>
+                    <span class="text-gray-700 font-medium">5. สถานะเซ็นเซอร์ O2 (Oxygen)</span>
                     <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_o2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_o2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    </div>
+                </div>
+
+                <!-- 6. สถานะเซ็นเซอร์ CO -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span class="text-gray-700 font-medium">6. สถานะเซ็นเซอร์ CO (Carbon Monoxide)</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_co" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_co" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    </div>
+                </div>
+
+                <!-- 7. สถานะเซ็นเซอร์ NO -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span class="text-gray-700 font-medium">7. สถานะเซ็นเซอร์ NO (Nitric Oxide)</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    </div>
+                </div>
+
+                <!-- 8. สถานะเซ็นเซอร์ NO2 -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span class="text-gray-700 font-medium">8. สถานะเซ็นเซอร์ NO2 (Nitrogen Dioxide)</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    </div>
+                </div>
+
+                <!-- 9. สถานะเซ็นเซอร์ SO2 -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span class="text-gray-700 font-medium">9. สถานะเซ็นเซอร์ SO2 (Sulfur Dioxide)</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_so2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_so2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
                     </div>
                 </div>
             </div>
@@ -153,33 +189,42 @@
         const notesInput = document.getElementById('notes');
         const notesHint = document.getElementById('notesHint');
 
-        // ตั้งวันที่เป็น "วันนี้" ตามเวลาเครื่อง (valueAsDate ใช้ UTC ทำให้ช่วง 00:00-07:00 ได้วันที่เมื่อวาน)
+        // ตั้งวันที่เป็น "วันนี้" ตามเวลาเครื่อง
         function setToday() {
             const d = new Date();
             const pad = n => String(n).padStart(2, '0');
             const today = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
             const dateInput = document.getElementById('date');
             dateInput.value = today;
-            dateInput.max = today; // ไม่อนุญาตให้เลือกวันในอนาคต
+            dateInput.max = today;
         }
 
-        // จำชื่อช่างไว้ ไม่ต้องพิมพ์ใหม่ทุกครั้ง
+        // จำชื่อผู้ตรวจสอบไว้ใน localStorage
         function restoreTechnician() {
-            const saved = localStorage.getItem('testo_technician');
-            if (saved) technicianInput.value = saved;
+            try {
+                const saved = localStorage.getItem('testo_technician');
+                if (saved) technicianInput.value = saved;
+            } catch (e) {
+                console.warn('Cannot access localStorage:', e);
+            }
         }
 
         setToday();
         restoreTechnician();
 
-        // ถ้ามีรายการ "ต้องแก้ไข" ให้บังคับกรอกหมายเหตุ
+        // ตรวจสอบว่ามีรายการที่ "ต้องแก้ไข" หรือไม่
         function hasIssue() {
             return [...form.querySelectorAll('input[type=radio]:checked')]
-                .some(r => r.classList.contains('text-red-600'));
+                .some(r => r.classList.contains('text-red-600') || r.value.includes('ต้อง') || r.value.includes('เสื่อม') || r.value.includes('ผิดปกติ'));
         }
+
         form.addEventListener('change', () => {
             notesInput.required = hasIssue();
             if (!notesInput.required) notesHint.classList.add('hidden');
+        });
+
+        notesInput.addEventListener('input', () => {
+            if (notesInput.value.trim()) notesHint.classList.add('hidden');
         });
 
         function setLoading(isLoading) {
@@ -192,18 +237,22 @@
 
         // จัดการเมื่อฟอร์มถูก Submit
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // ป้องกันไม่ให้หน้าเว็บรีเฟรช
-            if (submitBtn.disabled) return; // กันกดซ้ำ
+            e.preventDefault();
+            if (submitBtn.disabled) return;
 
             // ตรวจสอบความครบถ้วนของข้อมูล
             notesInput.required = hasIssue();
-            if (!form.checkValidity()) {
-                if (notesInput.required && !notesInput.value.trim()) notesHint.classList.remove('hidden');
+            const isNotesMissing = notesInput.required && !notesInput.value.trim();
+
+            if (!form.checkValidity() || isNotesMissing) {
+                if (isNotesMissing) {
+                    notesHint.classList.remove('hidden');
+                    notesInput.focus();
+                }
                 form.reportValidity();
                 return;
             }
 
-            // ตรวจสอบว่าได้ใส่ URL ของ Google Script หรือยัง
             if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
                 showModal('error', 'ข้อผิดพลาด', 'กรุณาตั้งค่า GOOGLE_SCRIPT_URL ในโค้ดก่อนทำการบันทึกข้อมูลครับ');
                 return;
@@ -215,23 +264,42 @@
             const dataObj = {};
             for (const [k, v] of new FormData(form).entries()) dataObj[k] = String(v).trim();
 
+            // รองรับความเข้ากันได้ย้อนหลัง หาก Google Sheet เดิมมีคอลัมน์ chk_sensor รวม
+            const sensorKeys = ['chk_sensor_o2', 'chk_sensor_co', 'chk_sensor_no', 'chk_sensor_no2', 'chk_sensor_so2'];
+            const hasSensorIssue = sensorKeys.some(key => dataObj[key] && dataObj[key].includes('ผิดปกติ'));
+            dataObj['chk_sensor'] = hasSensorIssue ? 'ผิดปกติ/รอสอบเทียบ' : 'ปกติ';
+
             try {
-                // ใช้ Content-Type: text/plain เพื่อให้เป็น "simple request" (ไม่มี preflight)
-                // Google Apps Script จะตอบกลับพร้อม CORS header ทำให้อ่านผลลัพธ์จริงได้ (ไม่ต้องใช้ no-cors)
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(dataObj)
                 });
 
-                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(`เซิร์ฟเวอร์ตอบกลับรหัส: ${response.status}`);
+                }
+
+                const text = await response.text();
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch {
+                    throw new Error('การตอบกลับจาก Google Apps Script ไม่ถูกต้อง (อาจเกิดจากสิทธิ์หรือโควตา)');
+                }
+
                 if (result.status !== 'success') {
                     throw new Error(result.message || 'Server error');
                 }
 
-                localStorage.setItem('testo_technician', dataObj.technician);
-                showModal('success', 'บันทึกสำเร็จ!', 'ข้อมูลการซ่อมบำรุงของคุณถูกส่งไปยัง Google Sheet เรียบร้อยแล้ว');
-                form.reset(); // ล้างข้อมูลในฟอร์ม
+                try {
+                    localStorage.setItem('testo_technician', dataObj.technician);
+                } catch (e) {
+                    console.warn('Cannot write to localStorage:', e);
+                }
+
+                showModal('success', 'บันทึกสำเร็จ!', 'ข้อมูลการตรวจสอบและบำรุงรักษาของคุณถูกส่งไปยัง Google Sheet เรียบร้อยแล้ว');
+                form.reset();
                 notesInput.required = false;
                 notesHint.classList.add('hidden');
                 setToday();
@@ -268,12 +336,10 @@
             document.getElementById('modalCloseBtn').focus();
         }
 
-        // ฟังก์ชันสำหรับปิด Modal
         function closeModal() {
             messageModal.style.display = 'none';
         }
 
-        // ปิด Modal ได้ทั้งจากปุ่ม, คลิกพื้นหลัง และกด Esc
         document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
         messageModal.addEventListener('click', (e) => { if (e.target === messageModal) closeModal(); });
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
