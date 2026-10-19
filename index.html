@@ -13,19 +13,73 @@
             font-family: 'Sarabun', sans-serif;
             background-color: #f3f4f6;
         }
-        /* ซ่อน Modal ตอนเริ่มต้น */
         .hidden-modal {
             display: none;
         }
+        
+        /* สไตล์สำหรับเอกสารพิมพ์ออกกระดาษ A4 / บันทึกเป็น PDF */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            #printableReport {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 10mm 15mm !important;
+                font-family: 'Sarabun', sans-serif !important;
+                color: #000 !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 8mm 10mm;
+            }
+        }
+        @media screen {
+            #printableReport {
+                display: none;
+            }
+        }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8 flex items-center justify-center">
+<body class="min-h-screen p-3 md:p-8 flex items-center justify-center">
 
-    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden">
+    <!-- Container หลักของหน้าเว็บ (ซ่อนตอนสั่ง Print) -->
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden no-print">
+        
+        <!-- แถบแสดงสถานะเครือข่าย & คิว Offline -->
+        <div id="networkBanner" class="bg-gray-800 text-white px-4 py-2.5 flex flex-wrap items-center justify-between text-xs sm:text-sm gap-2">
+            <div class="flex items-center gap-2">
+                <span id="networkStatusDot" class="w-2.5 h-2.5 rounded-full bg-green-400"></span>
+                <span id="networkStatusText" class="font-medium">ออนไลน์</span>
+                <span id="pendingBadge" class="hidden ml-2 bg-amber-500 text-gray-900 font-bold px-2 py-0.5 rounded-full text-xs">
+                    รอ Sync <span id="pendingCount">0</span> รายการ
+                </span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" id="syncNowBtn" class="hidden bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold px-2.5 py-1 rounded text-xs transition">
+                    🔄 Sync ทันที
+                </button>
+                <button type="button" id="openHistoryBtn" class="bg-gray-700 hover:bg-gray-600 text-white font-medium px-2.5 py-1 rounded text-xs transition flex items-center gap-1">
+                    📋 ประวัติบันทึก (<span id="historyCount">0</span>)
+                </button>
+            </div>
+        </div>
+
         <!-- ส่วนหัวของฟอร์ม -->
         <div class="bg-blue-600 p-6 text-white text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-full mb-2">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+            </div>
             <h1 class="text-2xl md:text-3xl font-bold">รายงานการตรวจสอบและบำรุงรักษา Testo รายสัปดาห์</h1>
-            <p class="mt-2 text-blue-100">เครื่องวัดประสิทธิภาพการเผาไหม้ Testo</p>
+            <p class="mt-2 text-blue-100 text-sm md:text-base">เครื่องวัดประสิทธิภาพการเผาไหม้และก๊าซไอเสีย Testo</p>
         </div>
 
         <form id="maintenanceForm" class="p-6 md:p-8 space-y-6" novalidate>
@@ -61,11 +115,15 @@
                 </div>
             </div>
 
+            <!-- กล่องรายการตรวจเช็ค -->
             <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 space-y-4">
-                <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-2 mb-4">รายการตรวจเช็ค (Checklist)</h2>
+                <div class="flex items-center justify-between border-b border-gray-300 pb-2 mb-4">
+                    <h2 class="text-lg font-bold text-gray-800">รายการตรวจเช็ค (Checklist)</h2>
+                    <span class="text-xs text-gray-500">เลือกสถานะทุกข้อ</span>
+                </div>
                 
                 <!-- 1. กรองฝุ่น -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1">
                     <span class="text-gray-700 font-medium">1. ฟิลเตอร์กรองฝุ่นก่อนเข้าเซ็นเซอร์</span>
                     <div class="flex gap-4">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="chk_filter" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
@@ -74,7 +132,7 @@
                 </div>
 
                 <!-- 2. ปั๊มดูดอากาศ -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-200">
                     <span class="text-gray-700 font-medium">2. การทำงานของปั๊มดูดอากาศ</span>
                     <div class="flex gap-4">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="chk_pump" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
@@ -83,7 +141,7 @@
                 </div>
 
                 <!-- 3. แบตเตอรี่ -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-200">
                     <span class="text-gray-700 font-medium">3. ความพร้อมของแบตเตอรี่</span>
                     <div class="flex gap-4">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="chk_battery" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
@@ -92,7 +150,7 @@
                 </div>
 
                 <!-- 4. ความสะอาด -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-200">
                     <span class="text-gray-700 font-medium">4. ความสะอาดของเครื่องมือ</span>
                     <div class="flex gap-4">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="chk_clean" value="สะอาด/ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
@@ -100,48 +158,53 @@
                     </div>
                 </div>
 
-                <!-- 5. สถานะเซ็นเซอร์ O2 -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span class="text-gray-700 font-medium">5. สถานะเซ็นเซอร์ O2 (Oxygen)</span>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_o2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_o2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
-                    </div>
-                </div>
+                <!-- รายการตรวจเช็คเซ็นเซอร์ (5-9) -->
+                <div class="pt-2 border-t-2 border-gray-200">
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">สถานะเซ็นเซอร์วัดก๊าซ (Gas Sensors)</p>
 
-                <!-- 6. สถานะเซ็นเซอร์ CO -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span class="text-gray-700 font-medium">6. สถานะเซ็นเซอร์ CO (Carbon Monoxide)</span>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_co" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_co" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    <!-- 5. O2 -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1">
+                        <span class="text-gray-700 font-medium">5. เซ็นเซอร์ O<sub>2</sub> (Oxygen)</span>
+                        <div class="flex gap-4">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_o2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_o2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                        </div>
                     </div>
-                </div>
 
-                <!-- 7. สถานะเซ็นเซอร์ NO -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span class="text-gray-700 font-medium">7. สถานะเซ็นเซอร์ NO (Nitric Oxide)</span>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    <!-- 6. CO -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-100">
+                        <span class="text-gray-700 font-medium">6. เซ็นเซอร์ CO (Carbon Monoxide)</span>
+                        <div class="flex gap-4">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_co" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_co" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                        </div>
                     </div>
-                </div>
 
-                <!-- 8. สถานะเซ็นเซอร์ NO2 -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span class="text-gray-700 font-medium">8. สถานะเซ็นเซอร์ NO2 (Nitrogen Dioxide)</span>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    <!-- 7. NO -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-100">
+                        <span class="text-gray-700 font-medium">7. เซ็นเซอร์ NO (Nitric Oxide)</span>
+                        <div class="flex gap-4">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                        </div>
                     </div>
-                </div>
 
-                <!-- 9. สถานะเซ็นเซอร์ SO2 -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span class="text-gray-700 font-medium">9. สถานะเซ็นเซอร์ SO2 (Sulfur Dioxide)</span>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_so2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_so2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    <!-- 8. NO2 -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-100">
+                        <span class="text-gray-700 font-medium">8. เซ็นเซอร์ NO<sub>2</sub> (Nitrogen Dioxide)</span>
+                        <div class="flex gap-4">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                        </div>
+                    </div>
+
+                    <!-- 9. SO2 -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-100">
+                        <span class="text-gray-700 font-medium">9. เซ็นเซอร์ SO<sub>2</sub> (Sulfur Dioxide)</span>
+                        <div class="flex gap-4">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_so2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_so2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -153,31 +216,212 @@
                 <p id="notesHint" class="hidden mt-1 text-sm text-red-600">กรุณาระบุรายละเอียดปัญหา เนื่องจากมีรายการที่ "ต้องแก้ไข"</p>
             </div>
 
-            <!-- ปุ่มส่งข้อมูล -->
-            <button type="submit" id="submitBtn"
-                    class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition disabled:cursor-not-allowed">
-                <svg id="loadingSpinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
-                <span id="submitText">บันทึกรายงาน</span>
-            </button>
+            <!-- กลุ่มปุ่มส่งข้อมูล & ปุ่มพิมพ์รายงาน -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button type="submit" id="submitBtn"
+                        class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition disabled:cursor-not-allowed">
+                    <svg id="loadingSpinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    <span id="submitText">บันทึกรายงาน</span>
+                </button>
+                <button type="button" id="printFormBtn"
+                        class="flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-5 rounded-lg shadow-md transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                    </svg>
+                    <span>พิมพ์รายงาน / PDF</span>
+                </button>
+            </div>
         </form>
     </div>
 
     <!-- Modal แจ้งเตือนผลการบันทึก -->
-    <div id="messageModal" class="hidden-modal fixed inset-0 bg-black/50 items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="messageModal" class="hidden-modal fixed inset-0 bg-black/50 items-center justify-center p-4 z-50 no-print" role="dialog" aria-modal="true">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
             <div id="modalIcon" class="mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4"></div>
             <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
-            <p id="modalMessage" class="mt-2 text-gray-600"></p>
-            <button type="button" id="modalCloseBtn"
-                    class="mt-6 w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2 rounded-lg transition">ตกลง</button>
+            <p id="modalMessage" class="mt-2 text-gray-600 text-sm"></p>
+            <div class="mt-6 space-y-2">
+                <button type="button" id="modalPrintBtn"
+                        class="hidden w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                    </svg>
+                    <span>พิมพ์ใบรายงานฉบับนี้ (PDF)</span>
+                </button>
+                <button type="button" id="modalCloseBtn"
+                        class="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 rounded-lg transition text-sm">ตกลง</button>
+            </div>
         </div>
     </div>
 
+    <!-- Modal ประวัติการบันทึก & จัดการคิว Offline (History & Offline Queue) -->
+    <div id="historyModal" class="hidden-modal fixed inset-0 bg-black/50 items-center justify-center p-3 md:p-4 z-50 no-print" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">ประวัติการบันทึกในเครื่อง</h3>
+                    <p class="text-xs text-gray-500">ข้อมูลที่บันทึกไว้ในอุปกรณ์นี้ รองรับการทำงาน Offline</p>
+                </div>
+                <button type="button" id="closeHistoryBtn" class="text-gray-400 hover:text-gray-600 p-1">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <!-- แถบเครื่องมือใน History -->
+            <div class="p-4 bg-gray-100 border-b border-gray-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="font-medium text-gray-700">ทั้งหมด: <strong id="histTotalCount">0</strong> รายการ</span>
+                    <span class="text-gray-400">|</span>
+                    <span class="text-amber-700 font-medium">รอ Sync: <strong id="histPendingCount">0</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="histSyncAllBtn" class="bg-amber-600 hover:bg-amber-700 text-white font-medium px-3 py-1.5 rounded transition">
+                        🔄 Sync ข้อมูลทั้งหมด
+                    </button>
+                    <button type="button" id="clearSyncedHistoryBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-2.5 py-1.5 rounded transition">
+                        ล้างรายการที่ส่งแล้ว
+                    </button>
+                </div>
+            </div>
+
+            <!-- รายการประวัติ -->
+            <div id="historyList" class="p-4 overflow-y-auto flex-1 space-y-3">
+                <!-- Javascript จะเรนเดอร์การ์ดรายการตรงนี้ -->
+            </div>
+
+            <div class="p-4 border-t border-gray-200 text-right bg-gray-50">
+                <button type="button" id="historyDoneBtn" class="px-5 py-2 bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-lg text-sm transition">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- หน้าใบรายงานทางการสำหรับสั่ง Print / บันทึกเป็น PDF (Print Template) -->
+    <!-- ============================================================= -->
+    <div id="printableReport">
+        <!-- หัวเอกสาร -->
+        <div style="border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h1 style="font-size: 20pt; font-weight: 700; color: #1e3a8a; margin: 0; line-height: 1.2;">ใบรายงานการตรวจสอบและบำรุงรักษา Testo</h1>
+                    <p style="font-size: 11pt; color: #4b5563; margin: 4px 0 0 0;">เครื่องวัดประสิทธิภาพการเผาไหม้และก๊าซไอเสีย (Flue Gas Analyzer Maintenance Report)</p>
+                </div>
+                <div style="text-align: right; font-size: 9pt; color: #6b7280;">
+                    <div style="border: 1px solid #d1d5db; padding: 4px 8px; border-radius: 4px; display: inline-block;">
+                        สถานะ: <strong><span id="printReportDocStatus">บันทึกเรียบร้อย</span></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ข้อมูลทั่วไปของเครื่องและผู้ตรวจสอบ -->
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 10.5pt;">
+            <tr>
+                <td style="padding: 6px 10px; border: 1px solid #d1d5db; background: #f9fafb; font-weight: 600; width: 22%;">วันที่ตรวจสอบ:</td>
+                <td style="padding: 6px 10px; border: 1px solid #d1d5db; width: 28%;"><span id="printDate">-</span></td>
+                <td style="padding: 6px 10px; border: 1px solid #d1d5db; background: #f9fafb; font-weight: 600; width: 22%;">ชื่อผู้ตรวจสอบ:</td>
+                <td style="padding: 6px 10px; border: 1px solid #d1d5db; width: 28%;"><span id="printTechnician">-</span></td>
+            </tr>
+            <tr>
+                <td style="padding: 6px 10px; border: 1px solid #d1d5db; background: #f9fafb; font-weight: 600;">รุ่นเครื่องมือ (Model):</td>
+                <td style="padding: 6px 10px; border: 1px solid #d1d5db;"><span id="printModel">-</span></td>
+                <td style="padding: 6px 10px; border: 1px solid #d1d5db; background: #f9fafb; font-weight: 600;">หมายเลขเครื่อง (S/N):</td>
+                <td style="padding: 6px 10px; border: 1px solid #d1d5db;"><span id="printSerial">-</span></td>
+            </tr>
+        </table>
+
+        <!-- ตารางรายการตรวจเช็ค 9 ข้อ -->
+        <h2 style="font-size: 12pt; font-weight: 700; color: #1f2937; margin: 12px 0 6px 0;">ผลการตรวจเช็คสภาพเครื่องมือ (Checklist Summary)</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 10pt;">
+            <thead>
+                <tr style="background-color: #2563eb; color: white;">
+                    <th style="padding: 6px 8px; border: 1px solid #2563eb; width: 8%; text-align: center;">ข้อที่</th>
+                    <th style="padding: 6px 10px; border: 1px solid #2563eb; text-align: left;">รายการตรวจเช็ค</th>
+                    <th style="padding: 6px 10px; border: 1px solid #2563eb; width: 26%; text-align: center;">ผลการตรวจสอบ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center;">1</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db;">ฟิลเตอร์กรองฝุ่นก่อนเข้าเซ็นเซอร์</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_filter">-</span></td>
+                </tr>
+                <tr style="background: #fbfbfb;">
+                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center;">2</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db;">การทำงานของปั๊มดูดอากาศ</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_pump">-</span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center;">3</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db;">ความพร้อมของแบตเตอรี่</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_battery">-</span></td>
+                </tr>
+                <tr style="background: #fbfbfb;">
+                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center;">4</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db;">ความสะอาดของเครื่องมือ</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_clean">-</span></td>
+                </tr>
+                <tr style="background: #eff6ff;">
+                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">5</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ O<sub>2</sub> (Oxygen)</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_o2">-</span></td>
+                </tr>
+                <tr style="background: #eff6ff;">
+                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">6</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ CO (Carbon Monoxide)</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_co">-</span></td>
+                </tr>
+                <tr style="background: #eff6ff;">
+                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">7</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ NO (Nitric Oxide)</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_no">-</span></td>
+                </tr>
+                <tr style="background: #eff6ff;">
+                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">8</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ NO<sub>2</sub> (Nitrogen Dioxide)</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_no2">-</span></td>
+                </tr>
+                <tr style="background: #eff6ff;">
+                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">9</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ SO<sub>2</sub> (Sulfur Dioxide)</td>
+                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_so2">-</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- รายละเอียดเพิ่มเติม / หมายเหตุ -->
+        <div style="border: 1px solid #d1d5db; border-radius: 4px; padding: 10px; margin-bottom: 25px; background: #fff;">
+            <div style="font-weight: 600; font-size: 10.5pt; color: #374151; margin-bottom: 4px;">รายละเอียดการตรวจสอบ / ปัญหาและแนวทางแก้ไข (Notes):</div>
+            <div id="printNotes" style="font-size: 10pt; min-height: 40px; color: #111827; white-space: pre-wrap;">- ไม่มี -</div>
+        </div>
+
+        <!-- ช่องลงลายมือชื่อ (Signature Section) -->
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 10pt;">
+            <tr>
+                <td style="width: 50%; text-align: center; vertical-align: bottom; padding: 10px;">
+                    <div style="margin-bottom: 45px;">ลงชื่อ ................................................................ ผู้ตรวจสอบ</div>
+                    <div>( <span id="printSignTech">................................................................</span> )</div>
+                    <div style="margin-top: 6px; color: #6b7280; font-size: 9pt;">วันที่ ......... / ......... / .............</div>
+                </td>
+                <td style="width: 50%; text-align: center; vertical-align: bottom; padding: 10px;">
+                    <div style="margin-bottom: 45px;">ลงชื่อ ................................................................ ผู้รับรอง/หัวหน้างาน</div>
+                    <div>( ................................................................ )</div>
+                    <div style="margin-top: 6px; color: #6b7280; font-size: 9pt;">วันที่ ......... / ......... / .............</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- Script การทำงานหลักของระบบ -->
+    <!-- ============================================================= -->
     <script>
-        // ===== ตั้งค่า: วาง URL ของ Web App ที่ได้จากการ Deploy Google Apps Script =====
+        // URL ของ Google Apps Script Web App
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnP_bgn93tKB2FzcpJIH_9vAT7a6Sz8YHkVtB6EiNaYuAT4z292QU74jkiMLf2Rq9E/exec';
 
         const form = document.getElementById('maintenanceForm');
@@ -188,8 +432,100 @@
         const technicianInput = document.getElementById('technician');
         const notesInput = document.getElementById('notes');
         const notesHint = document.getElementById('notesHint');
+        const printFormBtn = document.getElementById('printFormBtn');
+        const modalPrintBtn = document.getElementById('modalPrintBtn');
+        
+        // History & Network Elements
+        const networkStatusDot = document.getElementById('networkStatusDot');
+        const networkStatusText = document.getElementById('networkStatusText');
+        const pendingBadge = document.getElementById('pendingBadge');
+        const pendingCount = document.getElementById('pendingCount');
+        const syncNowBtn = document.getElementById('syncNowBtn');
+        const openHistoryBtn = document.getElementById('openHistoryBtn');
+        const historyCount = document.getElementById('historyCount');
+        const historyModal = document.getElementById('historyModal');
+        const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+        const historyDoneBtn = document.getElementById('historyDoneBtn');
+        const historyList = document.getElementById('historyList');
+        const histTotalCount = document.getElementById('histTotalCount');
+        const histPendingCount = document.getElementById('histPendingCount');
+        const histSyncAllBtn = document.getElementById('histSyncAllBtn');
+        const clearSyncedHistoryBtn = document.getElementById('clearSyncedHistoryBtn');
 
-        // ตั้งวันที่เป็น "วันนี้" ตามเวลาเครื่อง
+        let lastReportData = null; // เก็บข้อมูลรายงานล่าสุดสำหรับพิมพ์
+
+        // ==========================================
+        // 1. ตรวจจับสถานะการเชื่อมต่อ (Online / Offline)
+        // ==========================================
+        function updateNetworkStatus() {
+            const isOnline = navigator.onLine;
+            if (isOnline) {
+                networkStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-green-400';
+                networkStatusText.textContent = 'ออนไลน์';
+            } else {
+                networkStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse';
+                networkStatusText.textContent = 'ออฟไลน์ (ไม่มีอินเทอร์เน็ต)';
+            }
+            updatePendingBadges();
+        }
+
+        window.addEventListener('online', () => {
+            updateNetworkStatus();
+            // เมื่อกลับมาออนไลน์ ถ้ามีคิวค้าง ให้แจ้งเตือนและชวน Sync
+            const queue = getOfflineQueue();
+            if (queue.length > 0) {
+                showModal('info', 'กลับมาเชื่อมต่ออินเทอร์เน็ตแล้ว', `พบข้อมูลที่บันทึกแบบ Offline จำนวน ${queue.length} รายการ คุณสามารถกดปุ่ม "Sync ทันที" ได้เลยครับ`);
+            }
+        });
+        window.addEventListener('offline', updateNetworkStatus);
+
+        // ==========================================
+        // 2. จัดการประวัติในเครื่อง & คิว Offline (Local Storage)
+        // ==========================================
+        function getHistory() {
+            try {
+                return JSON.parse(localStorage.getItem('testo_history') || '[]');
+            } catch (e) {
+                console.warn('Error reading history:', e);
+                return [];
+            }
+        }
+
+        function saveHistory(historyArr) {
+            try {
+                localStorage.setItem('testo_history', JSON.stringify(historyArr));
+                updatePendingBadges();
+            } catch (e) {
+                console.warn('Error saving history:', e);
+            }
+        }
+
+        function getOfflineQueue() {
+            return getHistory().filter(item => !item.synced);
+        }
+
+        function updatePendingBadges() {
+            const allItems = getHistory();
+            const pendingItems = allItems.filter(item => !item.synced);
+            
+            historyCount.textContent = allItems.length;
+            pendingCount.textContent = pendingItems.length;
+
+            if (pendingItems.length > 0) {
+                pendingBadge.classList.remove('hidden');
+                syncNowBtn.classList.remove('hidden');
+            } else {
+                pendingBadge.classList.add('hidden');
+                syncNowBtn.classList.add('hidden');
+            }
+
+            histTotalCount.textContent = allItems.length;
+            histPendingCount.textContent = pendingItems.length;
+        }
+
+        // ==========================================
+        // 3. ฟังก์ชันเริ่มต้นหน้าเว็บ & การตรวจสอบ
+        // ==========================================
         function setToday() {
             const d = new Date();
             const pad = n => String(n).padStart(2, '0');
@@ -199,7 +535,6 @@
             dateInput.max = today;
         }
 
-        // จำชื่อผู้ตรวจสอบไว้ใน localStorage
         function restoreTechnician() {
             try {
                 const saved = localStorage.getItem('testo_technician');
@@ -209,10 +544,6 @@
             }
         }
 
-        setToday();
-        restoreTechnician();
-
-        // ตรวจสอบว่ามีรายการที่ "ต้องแก้ไข" หรือไม่
         function hasIssue() {
             return [...form.querySelectorAll('input[type=radio]:checked')]
                 .some(r => r.classList.contains('text-red-600') || r.value.includes('ต้อง') || r.value.includes('เสื่อม') || r.value.includes('ผิดปกติ'));
@@ -227,20 +558,35 @@
             if (notesInput.value.trim()) notesHint.classList.add('hidden');
         });
 
-        function setLoading(isLoading) {
+        function setLoading(isLoading, text = 'กำลังบันทึก...') {
             submitBtn.disabled = isLoading;
             submitBtn.classList.toggle('bg-blue-600', !isLoading);
             submitBtn.classList.toggle('bg-blue-400', isLoading);
             loadingSpinner.classList.toggle('hidden', !isLoading);
-            submitText.textContent = isLoading ? 'กำลังบันทึก...' : 'บันทึกรายงาน';
+            submitText.textContent = isLoading ? text : 'บันทึกรายงาน';
         }
 
-        // จัดการเมื่อฟอร์มถูก Submit
+        // รวบรวมข้อมูลจากฟอร์มปัจจุบัน
+        function getFormDataObj() {
+            const dataObj = {};
+            for (const [k, v] of new FormData(form).entries()) dataObj[k] = String(v).trim();
+            
+            // สรุปสถานะเซ็นเซอร์รวมเพื่อความเข้ากันได้ย้อนหลัง
+            const sensorKeys = ['chk_sensor_o2', 'chk_sensor_co', 'chk_sensor_no', 'chk_sensor_no2', 'chk_sensor_so2'];
+            const hasSensorIssue = sensorKeys.some(key => dataObj[key] && dataObj[key].includes('ผิดปกติ'));
+            dataObj['chk_sensor'] = hasSensorIssue ? 'ผิดปกติ/รอสอบเทียบ' : 'ปกติ';
+
+            return dataObj;
+        }
+
+        // ==========================================
+        // 4. การส่งข้อมูล (Submit & Offline Support)
+        // ==========================================
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (submitBtn.disabled) return;
 
-            // ตรวจสอบความครบถ้วนของข้อมูล
+            // ตรวจสอบความถูกต้องของข้อมูล
             notesInput.required = hasIssue();
             const isNotesMissing = notesInput.required && !notesInput.value.trim();
 
@@ -253,67 +599,312 @@
                 return;
             }
 
-            if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
-                showModal('error', 'ข้อผิดพลาด', 'กรุณาตั้งค่า GOOGLE_SCRIPT_URL ในโค้ดก่อนทำการบันทึกข้อมูลครับ');
+            const dataObj = getFormDataObj();
+            lastReportData = dataObj; // เก็บไว้อ้างอิงการพิมพ์
+
+            // สร้าง Record สำหรับบันทึกในเครื่อง
+            const record = {
+                id: 'testo_' + Date.now(),
+                createdAt: new Date().toLocaleString('th-TH'),
+                synced: false,
+                data: dataObj
+            };
+
+            // กรณีไม่มีอินเทอร์เน็ต (Offline โดยตรง)
+            if (!navigator.onLine) {
+                saveRecordOffline(record, 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต');
                 return;
             }
 
             setLoading(true);
 
-            // ดึงข้อมูลจากฟอร์ม และตัดช่องว่างหัว-ท้าย
-            const dataObj = {};
-            for (const [k, v] of new FormData(form).entries()) dataObj[k] = String(v).trim();
-
-            // รองรับความเข้ากันได้ย้อนหลัง หาก Google Sheet เดิมมีคอลัมน์ chk_sensor รวม
-            const sensorKeys = ['chk_sensor_o2', 'chk_sensor_co', 'chk_sensor_no', 'chk_sensor_no2', 'chk_sensor_so2'];
-            const hasSensorIssue = sensorKeys.some(key => dataObj[key] && dataObj[key].includes('ผิดปกติ'));
-            dataObj['chk_sensor'] = hasSensorIssue ? 'ผิดปกติ/รอสอบเทียบ' : 'ปกติ';
-
             try {
+                // ส่งคำขอแบบมี Timeout 10 วินาที ป้องกันหน้าเว็บค้างถ้าเน็ตช้ามาก
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(dataObj)
+                    body: JSON.stringify(dataObj),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
 
                 if (!response.ok) {
-                    throw new Error(`เซิร์ฟเวอร์ตอบกลับรหัส: ${response.status}`);
+                    throw new Error(`Server returned status: ${response.status}`);
                 }
 
-                const text = await response.text();
-                let result;
-                try {
-                    result = JSON.parse(text);
-                } catch {
-                    throw new Error('การตอบกลับจาก Google Apps Script ไม่ถูกต้อง (อาจเกิดจากสิทธิ์หรือโควตา)');
-                }
-
+                const result = await response.json();
                 if (result.status !== 'success') {
                     throw new Error(result.message || 'Server error');
                 }
 
-                try {
-                    localStorage.setItem('testo_technician', dataObj.technician);
-                } catch (e) {
-                    console.warn('Cannot write to localStorage:', e);
-                }
+                // ส่งขึ้นชีตสำเร็จ -> บันทึกลงประวัติพร้อมสถานะ synced = true
+                record.synced = true;
+                const history = getHistory();
+                history.unshift(record);
+                saveHistory(history);
 
-                showModal('success', 'บันทึกสำเร็จ!', 'ข้อมูลการตรวจสอบและบำรุงรักษาของคุณถูกส่งไปยัง Google Sheet เรียบร้อยแล้ว');
-                form.reset();
-                notesInput.required = false;
-                notesHint.classList.add('hidden');
-                setToday();
-                restoreTechnician();
+                try { localStorage.setItem('testo_technician', dataObj.technician); } catch(e){}
+
+                showModal('success', 'บันทึกสำเร็จ (ออนไลน์)!', 'ข้อมูลการตรวจสอบของคุณถูกส่งไปยัง Google Sheet เรียบร้อยแล้ว');
+                modalPrintBtn.classList.remove('hidden');
+                
+                resetFormState();
 
             } catch (error) {
-                console.error('Error:', error);
-                showModal('error', 'การบันทึกล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message + ' กรุณาลองใหม่อีกครั้ง');
+                console.warn('Online sync failed, saving offline:', error);
+                // หากส่งไม่ผ่าน (เน็ตหลุด / Timeout / Google Script มีปัญหา) ให้บันทึกแบบ Offline อัตโนมัติ
+                saveRecordOffline(record, error.name === 'AbortError' ? 'การเชื่อมต่อหมดเวลา (Timeout)' : error.message);
             } finally {
                 setLoading(false);
             }
         });
 
-        // ฟังก์ชันสำหรับแสดง Modal แจ้งเตือน
+        // ฟังก์ชันช่วยบันทึก Record เมื่อออฟไลน์
+        function saveRecordOffline(record, reason) {
+            record.synced = false;
+            const history = getHistory();
+            history.unshift(record);
+            saveHistory(history);
+
+            try { localStorage.setItem('testo_technician', record.data.technician); } catch(e){}
+
+            showModal('offline', 'บันทึกในเครื่องเรียบร้อย (ออฟไลน์)', 
+                `เนื่องจาก${reason} ข้อมูลจึงถูกเก็บไว้ในเครื่องอย่างปลอดภัย เมื่อเชื่อมต่อเน็ตสามารถกด "Sync ทันที" เพื่อส่งขึ้น Google Sheet ได้ครับ`);
+            modalPrintBtn.classList.remove('hidden');
+            resetFormState();
+        }
+
+        function resetFormState() {
+            form.reset();
+            notesInput.required = false;
+            notesHint.classList.add('hidden');
+            setToday();
+            restoreTechnician();
+        }
+
+        // ==========================================
+        // 5. ระบบซิงค์ข้อมูลค้างส่ง (Sync Pending Queue)
+        // ==========================================
+        async function syncRecord(recordId) {
+            const history = getHistory();
+            const record = history.find(r => r.id === recordId);
+            if (!record || record.synced) return true;
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(record.data)
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    record.synced = true;
+                    saveHistory(history);
+                    return true;
+                }
+            } catch (e) {
+                console.error(`Sync failed for ${recordId}:`, e);
+            }
+            return false;
+        }
+
+        async function syncAllPending() {
+            if (!navigator.onLine) {
+                showModal('error', 'ไม่สามารถ Sync ได้', 'กรุณาเชื่อมต่ออินเทอร์เน็ตก่อนทำการ Sync ข้อมูลครับ');
+                return;
+            }
+
+            const queue = getOfflineQueue();
+            if (queue.length === 0) {
+                showModal('info', 'ไม่มีข้อมูลค้างส่ง', 'ข้อมูลทั้งหมดในเครื่องได้รับการ Sync เรียบร้อยแล้ว');
+                return;
+            }
+
+            setLoading(true, `กำลัง Sync ${queue.length} รายการ...`);
+            let successCount = 0;
+
+            for (const item of queue) {
+                const ok = await syncRecord(item.id);
+                if (ok) successCount++;
+            }
+
+            setLoading(false);
+            renderHistoryModal();
+
+            if (successCount === queue.length) {
+                showModal('success', 'Sync สำเร็จทั้งหมด!', `ส่งข้อมูลขึ้น Google Sheet ครบทั้ง ${successCount} รายการเรียบร้อยแล้ว`);
+            } else {
+                showModal('warning', 'Sync สำเร็จบางส่วน', `Sync สำเร็จ ${successCount} จาก ${queue.length} รายการ (รายการที่เหลือจะถูกเก็บไว้ลองใหม่รอบหน้า)`);
+            }
+        }
+
+        syncNowBtn.addEventListener('click', syncAllPending);
+        histSyncAllBtn.addEventListener('click', syncAllPending);
+
+        // ==========================================
+        // 6. ระบบพิมพ์รายงาน / Export เป็น PDF
+        // ==========================================
+        function populatePrintableReport(data) {
+            document.getElementById('printDate').textContent = data.date || '-';
+            document.getElementById('printTechnician').textContent = data.technician || '-';
+            document.getElementById('printSignTech').textContent = data.technician || '................................................................';
+            document.getElementById('printModel').textContent = data.model || '-';
+            document.getElementById('printSerial').textContent = data.serial || '-';
+            document.getElementById('printNotes').textContent = data.notes ? data.notes : '- ไม่มีรายละเอียดเพิ่มเติม -';
+
+            // รายการตรวจเช็ค 9 ข้อ
+            const checkMap = [
+                { id: 'print_chk_filter', val: data.chk_filter },
+                { id: 'print_chk_pump', val: data.chk_pump },
+                { id: 'print_chk_battery', val: data.chk_battery },
+                { id: 'print_chk_clean', val: data.chk_clean },
+                { id: 'print_chk_sensor_o2', val: data.chk_sensor_o2 },
+                { id: 'print_chk_sensor_co', val: data.chk_sensor_co },
+                { id: 'print_chk_sensor_no', val: data.chk_sensor_no },
+                { id: 'print_chk_sensor_no2', val: data.chk_sensor_no2 },
+                { id: 'print_chk_sensor_so2', val: data.chk_sensor_so2 }
+            ];
+
+            checkMap.forEach(item => {
+                const el = document.getElementById(item.id);
+                if (!el) return;
+                const v = item.val || '';
+                if (v === 'ปกติ' || v.includes('สะอาด')) {
+                    el.innerHTML = '<span style="color: #16a34a; font-weight: bold;">✓ ปกติ</span>';
+                } else if (v.includes('ต้อง') || v.includes('เสื่อม') || v.includes('ผิดปกติ')) {
+                    el.innerHTML = `<span style="color: #dc2626; font-weight: bold;">✗ ${v}</span>`;
+                } else {
+                    el.textContent = v || '-';
+                }
+            });
+        }
+
+        function triggerPrint(data) {
+            populatePrintableReport(data);
+            // เรียกคำสั่งพิมพ์ของเบราว์เซอร์ ซึ่งผู้ใช้สามารถเลือกเครื่องพิมพ์จริง หรือ "Save as PDF" ได้ทันที
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
+
+        // ปุ่มพิมพ์จากหน้าฟอร์มโดยตรง
+        printFormBtn.addEventListener('click', () => {
+            const dataObj = getFormDataObj();
+            if (!dataObj.technician && !dataObj.model) {
+                showModal('info', 'ยังไม่มีข้อมูล', 'กรุณากรอกข้อมูลในฟอร์มก่อนทำการพิมพ์ หรือเลือกพิมพ์จาก "ประวัติบันทึก" ได้ครับ');
+                return;
+            }
+            lastReportData = dataObj;
+            triggerPrint(dataObj);
+        });
+
+        // ปุ่มพิมพ์จาก Modal เมื่อบันทึกเสร็จ
+        modalPrintBtn.addEventListener('click', () => {
+            if (lastReportData) {
+                closeModal();
+                triggerPrint(lastReportData);
+            }
+        });
+
+        // ==========================================
+        // 7. จัดการหน้าต่างประวัติการบันทึก (History Modal)
+        // ==========================================
+        function renderHistoryModal() {
+            const history = getHistory();
+            updatePendingBadges();
+
+            if (history.length === 0) {
+                historyList.innerHTML = `
+                    <div class="text-center py-10 text-gray-400">
+                        <svg class="mx-auto w-12 h-12 mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <p>ยังไม่มีประวัติการบันทึกข้อมูลบนอุปกรณ์นี้</p>
+                    </div>`;
+                return;
+            }
+
+            historyList.innerHTML = history.map(item => {
+                const d = item.data;
+                const isSynced = item.synced;
+                return `
+                <div class="border border-gray-200 rounded-xl p-3.5 hover:border-blue-300 transition bg-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded ${isSynced ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-800 animate-pulse'}">
+                                ${isSynced ? '✓ ส่งแล้ว (Synced)' : '⏳ รอ Sync'}
+                            </span>
+                            <span class="text-xs text-gray-400">${item.createdAt || ''}</span>
+                        </div>
+                        <div class="font-bold text-gray-800 text-sm">
+                            ${d.model || 'Testo'} (S/N: ${d.serial || '-'})
+                        </div>
+                        <div class="text-xs text-gray-600">
+                            วันที่ตรวจ: <strong>${d.date}</strong> | ผู้ตรวจ: <strong>${d.technician}</strong>
+                        </div>
+                        ${d.notes ? `<div class="text-xs text-gray-500 italic truncate max-w-sm">หมายเหตุ: ${d.notes}</div>` : ''}
+                    </div>
+                    <div class="flex items-center gap-2 self-end sm:self-center">
+                        ${!isSynced ? `
+                            <button type="button" onclick="handleSyncSingle('${item.id}')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded text-xs font-semibold flex items-center gap-1 transition">
+                                🔄 Sync
+                            </button>
+                        ` : ''}
+                        <button type="button" onclick="handlePrintHistory('${item.id}')" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold flex items-center gap-1 transition">
+                            🖨️ พิมพ์/PDF
+                        </button>
+                        <button type="button" onclick="handleDeleteHistory('${item.id}')" class="p-1.5 text-gray-400 hover:text-red-600 rounded transition" title="ลบรายการนี้">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // จัดการคลิกใน History
+        window.handlePrintHistory = function(id) {
+            const record = getHistory().find(r => r.id === id);
+            if (record) triggerPrint(record.data);
+        };
+
+        window.handleSyncSingle = async function(id) {
+            const ok = await syncRecord(id);
+            renderHistoryModal();
+            if (ok) {
+                showModal('success', 'Sync รายการสำเร็จ', 'ข้อมูลถูกส่งไปยัง Google Sheet เรียบร้อยแล้วครับ');
+            } else {
+                showModal('error', 'Sync ไม่สำเร็จ', 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่อีกครั้ง');
+            }
+        };
+
+        window.handleDeleteHistory = function(id) {
+            if (confirm('คุณต้องการลบประวัติรายการนี้ออกจากอุปกรณ์ใช่หรือไม่?')) {
+                const history = getHistory().filter(r => r.id !== id);
+                saveHistory(history);
+                renderHistoryModal();
+            }
+        };
+
+        clearSyncedHistoryBtn.addEventListener('click', () => {
+            if (confirm('ต้องการลบเฉพาะรายการที่ส่งข้อมูลขึ้น Google Sheet แล้ว ออกจากอุปกรณ์เพื่อประหยัดพื้นที่หรือไม่?')) {
+                const history = getHistory().filter(r => !r.synced);
+                saveHistory(history);
+                renderHistoryModal();
+            }
+        });
+
+        openHistoryBtn.addEventListener('click', () => {
+            renderHistoryModal();
+            historyModal.style.display = 'flex';
+        });
+
+        closeHistoryBtn.addEventListener('click', () => { historyModal.style.display = 'none'; });
+        historyDoneBtn.addEventListener('click', () => { historyModal.style.display = 'none'; });
+
+        // ==========================================
+        // 8. การควบคุม Modal แจ้งเตือน
+        // ==========================================
         function showModal(type, title, message) {
             const modalTitle = document.getElementById('modalTitle');
             const modalMessage = document.getElementById('modalMessage');
@@ -323,12 +914,13 @@
             modalMessage.textContent = message;
 
             if (type === 'success') {
-                modalIcon.classList.add('bg-green-100', 'text-green-600');
-                modalIcon.classList.remove('bg-red-100', 'text-red-600');
+                modalIcon.className = 'mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 bg-green-100 text-green-600';
                 modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            } else if (type === 'offline' || type === 'info') {
+                modalIcon.className = 'mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 bg-amber-100 text-amber-600';
+                modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
             } else {
-                modalIcon.classList.add('bg-red-100', 'text-red-600');
-                modalIcon.classList.remove('bg-green-100', 'text-green-600');
+                modalIcon.className = 'mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 bg-red-100 text-red-600';
                 modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
             }
 
@@ -338,11 +930,24 @@
 
         function closeModal() {
             messageModal.style.display = 'none';
+            modalPrintBtn.classList.add('hidden');
         }
 
         document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
         messageModal.addEventListener('click', (e) => { if (e.target === messageModal) closeModal(); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        historyModal.addEventListener('click', (e) => { if (e.target === historyModal) historyModal.style.display = 'none'; });
+        document.addEventListener('keydown', (e) => { 
+            if (e.key === 'Escape') {
+                closeModal(); 
+                historyModal.style.display = 'none';
+            } 
+        });
+
+        // เริ่มต้นการทำงานเมื่อโหลดหน้า
+        setToday();
+        restoreTechnician();
+        updateNetworkStatus();
+        updatePendingBadges();
     </script>
 </body>
 </html>
