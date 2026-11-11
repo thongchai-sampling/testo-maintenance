@@ -3,908 +3,1712 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบรายงานการตรวจสอบและบำรุงรักษา Testo</title>
-    <!-- นำเข้า Tailwind CSS สำหรับจัดรูปแบบหน้าเว็บ -->
+    <title>ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ Testo | ETC 1992</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- นำเข้าฟอนต์ Google Fonts (Sarabun) เพื่อให้อ่านภาษาไทยได้สวยงาม -->
+    <!-- Google Fonts (Sarabun) -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f1f5f9;
         }
         .hidden-modal {
             display: none;
         }
-        
-        /* สไตล์สำหรับเอกสารพิมพ์ออกกระดาษ A4 / บันทึกเป็น PDF */
+        .tab-active {
+            background-color: #1d4ed8;
+            color: #ffffff;
+            border-color: #1d4ed8;
+            box-shadow: 0 4px 6px -1px rgba(29, 78, 216, 0.25);
+        }
+        .tab-inactive {
+            background-color: #ffffff;
+            color: #475569;
+            border-color: #cbd5e1;
+        }
+        .tab-inactive:hover {
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        /* ตารางแบบฟอร์มมาตรฐานสำหรับ Preview และ Print */
+        .official-form-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            color: #000000;
+        }
+        .official-form-table th,
+        .official-form-table td {
+            border: 1px solid #000000;
+            padding: 5px 6px;
+            vertical-align: middle;
+        }
+        .official-form-table th {
+            background-color: #e2e8f0;
+            font-weight: 700;
+            text-align: center;
+        }
+        /* สไตล์สำหรับสั่งพิมพ์เอกสาร (รองรับทั้งฟอร์ม 1, 2 และ 3) */
         @media print {
             body {
-                background: white !important;
+                background-color: #ffffff !important;
                 padding: 0 !important;
                 margin: 0 !important;
             }
             .no-print {
                 display: none !important;
             }
-            #printableReport {
+            #universalPrintArea {
                 display: block !important;
                 width: 100% !important;
-                max-width: 100% !important;
-                padding: 10mm 15mm !important;
-                font-family: 'Sarabun', sans-serif !important;
-                color: #000 !important;
-            }
-            @page {
-                size: A4 portrait;
-                margin: 8mm 10mm;
-            }
-        }
-        @media screen {
-            #printableReport {
-                display: none;
+                margin: 0 !important;
+                padding: 6mm !important;
+                box-shadow: none !important;
             }
         }
     </style>
 </head>
-<body class="min-h-screen p-3 md:p-8 flex items-center justify-center">
+<body class="min-h-screen p-3 md:p-6 lg:p-8">
 
-    <!-- Container หลักของหน้าเว็บ (ซ่อนตอนสั่ง Print) -->
-    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden no-print">
+    <!-- กล่องหลักของเว็บแอป (ซ่อนเวลาสั่ง Print เอกสาร) -->
+    <div class="no-print max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
         
-        <!-- แถบแสดงสถานะเครือข่าย & คิว Offline -->
-        <div id="networkBanner" class="bg-gray-800 text-white px-4 py-2.5 flex flex-wrap items-center justify-between text-xs sm:text-sm gap-2">
-            <div class="flex items-center gap-2">
-                <span id="networkStatusDot" class="w-2.5 h-2.5 rounded-full bg-green-400"></span>
-                <span id="networkStatusText" class="font-medium">ออนไลน์</span>
-                <span id="pendingBadge" class="hidden ml-2 bg-amber-500 text-gray-900 font-bold px-2 py-0.5 rounded-full text-xs">
-                    รอ Sync <span id="pendingCount">0</span> รายการ
-                </span>
-            </div>
-            <div class="flex items-center gap-2">
-                <button type="button" id="syncNowBtn" class="hidden bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold px-2.5 py-1 rounded text-xs transition">
-                    🔄 Sync ทันที
-                </button>
-                <button type="button" id="openHistoryBtn" class="bg-gray-700 hover:bg-gray-600 text-white font-medium px-2.5 py-1 rounded text-xs transition flex items-center gap-1">
-                    📋 ประวัติบันทึก (<span id="historyCount">0</span>)
-                </button>
+        <!-- ส่วนหัวองค์กร -->
+        <div class="bg-gradient-to-r from-blue-800 via-blue-700 to-indigo-800 p-6 text-white">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                <div>
+                    <span class="inline-block px-3 py-0.5 text-xs font-semibold bg-blue-900/60 border border-blue-400/30 rounded-full text-blue-100 mb-2">
+                        ห้องปฏิบัติการตรวจวิเคราะห์ / ฝ่ายตรวจวิเคราะห์
+                    </span>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-wide">
+                        ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ
+                    </h1>
+                    <p class="text-sm text-blue-100 mt-1">
+                        บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด (Eastern Thai Consulting 1992 Co., Ltd.)
+                    </p>
+                </div>
+                <div class="text-left md:text-right text-xs text-blue-200 bg-blue-950/40 p-3 rounded-xl border border-blue-500/20">
+                    <div class="font-semibold text-white">Flue Gas Analyzer</div>
+                    <div>ยี่ห้อ: Testo (327-1 / 350XL / 350New)</div>
+                    <div class="mt-1 text-[11px] text-emerald-300">● เชื่อมต่อฐานข้อมูล Google Sheet</div>
+                </div>
             </div>
         </div>
 
-        <!-- ส่วนหัวของฟอร์ม -->
-        <div class="bg-blue-600 p-6 text-white text-center">
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-full mb-2">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                </svg>
-            </div>
-            <h1 class="text-2xl md:text-3xl font-bold">รายงานการตรวจสอบและบำรุงรักษา Testo รายสัปดาห์</h1>
-            <p class="mt-2 text-blue-100 text-sm md:text-base">เครื่องวัดประสิทธิภาพการเผาไหม้และก๊าซไอเสีย Testo</p>
-        </div>
+        <div class="p-4 md:p-8 space-y-6">
 
-        <form id="maintenanceForm" class="p-6 md:p-8 space-y-6" novalidate>
-            
-            <!-- วันที่ตรวจสอบ และ ชื่อผู้ตรวจสอบ (จัดให้อยู่แถวเดียวกันบนจอใหญ่) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="date">วันที่ตรวจสอบและบำรุงรักษา / Date</label>
-                    <input type="date" id="date" name="date" required 
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+            <!-- ===================================================================== -->
+            <!-- ส่วนที่ 1: ข้อมูลประจำเครื่องมือ (Equipment Master - ใช้ร่วมกันทุกแบบฟอร์ม) -->
+            <!-- ===================================================================== -->
+            <div class="bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-200">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3 mb-4">
+                    <h2 class="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">1</span>
+                        ข้อมูลเครื่องมือ (Equipment Information)
+                    </h2>
+                    <span class="text-xs text-slate-500">เลือกเครื่องมือเพื่อดึง รุ่น และ S/N อัตโนมัติ</span>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="technician">ชื่อผู้ตรวจสอบ / Technician</label>
-                    <input type="text" id="technician" name="technician" required placeholder="ระบุชื่อ-นามสกุล" maxlength="100" autocomplete="name"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
-                </div>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="model">รุ่นเครื่อง / Model</label>
-                    <select id="model" name="model" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white">
-                        <option value="" disabled selected>เลือกรุ่นเครื่อง...</option>
-                        <option value="Testo 350 XL">Testo 350 XL</option>
-                        <option value="Testo 350 New">Testo 350 New</option>
+                <!-- ตัวเลือกเครื่องมือด่วน (6 เครื่องหลักตามทะเบียน) -->
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="equipmentPreset">
+                        เลือกเครื่องมือจากทะเบียน (Quick Select) <span class="text-red-500">*</span>
+                    </label>
+                    <select id="equipmentPreset"
+                            class="w-full px-3.5 py-2.5 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white font-medium text-slate-800">
+                        <option value="Testo|327-1|01563443">1. Testo รุ่น 327-1 — S/N: 01563443</option>
+                        <option value="Testo|350XL|01807527">2. Testo รุ่น 350XL — S/N: 01807527</option>
+                        <option value="Testo|350XL|01859560">3. Testo รุ่น 350XL — S/N: 01859560</option>
+                        <option value="Testo|350New|60378478">4. Testo รุ่น 350New — S/N: 60378478</option>
+                        <option value="Testo|350New|63455616">5. Testo รุ่น 350New — S/N: 63455616</option>
+                        <option value="Testo|350New|63455658">6. Testo รุ่น 350New — S/N: 63455658</option>
+                        <option value="CUSTOM">-- ระบุเอง / เครื่องมืออื่น --</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="serial">หมายเลขเครื่อง / Serial No.</label>
-                    <input type="text" id="serial" name="serial" required placeholder="เช่น 12345678" maxlength="50"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
-                </div>
-            </div>
 
-            <!-- กล่องรายการตรวจเช็ค -->
-            <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 space-y-4">
-                <div class="flex items-center justify-between border-b border-gray-300 pb-2 mb-4">
-                    <h2 class="text-lg font-bold text-gray-800">รายการตรวจเช็ค (Checklist)</h2>
-                    <span class="text-xs text-gray-500">เลือกสถานะทุกข้อ</span>
-                </div>
-                
-                <!-- 1. กรองฝุ่น -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1">
-                    <span class="text-gray-700 font-medium">1. ฟิลเตอร์กรองฝุ่นก่อนเข้าเซ็นเซอร์</span>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_filter" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_filter" value="ต้องแก้ไข/เปลี่ยน" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqName">
+                            ชื่อเครื่องมือ (Equipment Name) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="eqName" value="Flue Gas Analyzer" required
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                     </div>
-                </div>
-
-                <!-- 2. ปั๊มดูดอากาศ -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-200">
-                    <span class="text-gray-700 font-medium">2. การทำงานของปั๊มดูดอากาศ</span>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_pump" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_pump" value="ต้องแก้ไข/ซ่อมแซม" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqModel">
+                            ยี่ห้อ / รุ่น (Brand / Model) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="eqModel" value="Testo 327-1" required
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                     </div>
-                </div>
-
-                <!-- 3. แบตเตอรี่ -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-200">
-                    <span class="text-gray-700 font-medium">3. ความพร้อมของแบตเตอรี่</span>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_battery" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_battery" value="เสื่อม/ต้องชาร์จ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqSerial">
+                            หมายเลขเครื่อง (S/N) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="eqSerial" value="01563443" required
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white font-mono">
                     </div>
-                </div>
-
-                <!-- 4. ความสะอาด -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-200">
-                    <span class="text-gray-700 font-medium">4. ความสะอาดของเครื่องมือ</span>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_clean" value="สะอาด/ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                        <label class="flex items-center cursor-pointer"><input type="radio" name="chk_clean" value="ต้องทำความสะอาด" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
-                    </div>
-                </div>
-
-                <!-- รายการตรวจเช็คเซ็นเซอร์ (5-9) -->
-                <div class="pt-2 border-t-2 border-gray-200">
-                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">สถานะเซ็นเซอร์วัดก๊าซ (Gas Sensors)</p>
-
-                    <!-- 5. O2 -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1">
-                        <span class="text-gray-700 font-medium">5. เซ็นเซอร์ O<sub>2</sub> (Oxygen)</span>
-                        <div class="flex gap-4">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_o2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_o2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 6. CO -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-100">
-                        <span class="text-gray-700 font-medium">6. เซ็นเซอร์ CO (Carbon Monoxide)</span>
-                        <div class="flex gap-4">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_co" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_co" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 7. NO -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-100">
-                        <span class="text-gray-700 font-medium">7. เซ็นเซอร์ NO (Nitric Oxide)</span>
-                        <div class="flex gap-4">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 8. NO2 -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-100">
-                        <span class="text-gray-700 font-medium">8. เซ็นเซอร์ NO<sub>2</sub> (Nitrogen Dioxide)</span>
-                        <div class="flex gap-4">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_no2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 9. SO2 -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-t border-gray-100">
-                        <span class="text-gray-700 font-medium">9. เซ็นเซอร์ SO<sub>2</sub> (Sulfur Dioxide)</span>
-                        <div class="flex gap-4">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_so2" value="ปกติ" required class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-gray-600">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor_so2" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600"><span class="ml-2 text-sm text-gray-600">ต้องแก้ไข</span></label>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqCode">
+                            หมายเลขเครื่องมือ (Equipment Code)
+                        </label>
+                        <input type="text" id="eqCode" placeholder="รหัสเครื่องมือ (ถ้ามี)"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                     </div>
                 </div>
             </div>
 
+            <!-- ===================================================================== -->
+            <!-- ส่วนที่ 2: แถบเลือกเมนูการทำงาน (4 Tabs: 3 แบบฟอร์ม + 1 ดึงข้อมูลย้อนหลัง) -->
+            <!-- ===================================================================== -->
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2" for="notes">ภาพรวมหรือรายละเอียดเพิ่มเติม / Notes</label>
-                <textarea id="notes" name="notes" rows="3" maxlength="1000" placeholder="ระบุรายละเอียดการตรวจสอบ หรือปัญหาที่พบ..."
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"></textarea>
-                <p id="notesHint" class="hidden mt-1 text-sm text-red-600">กรุณาระบุรายละเอียดปัญหา เนื่องจากมีรายการที่ "ต้องแก้ไข"</p>
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">2</span>
+                    <span class="text-base md:text-lg font-bold text-slate-800">เลือกเมนูบันทึกข้อมูล หรือ ดาวน์โหลดข้อมูลย้อนหลัง</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5" role="tablist">
+                    <button type="button" id="tabBtn1" onclick="switchTab(1)"
+                            class="tab-active flex flex-col items-start p-3 rounded-xl border text-left transition">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-900/30">แบบฟอร์มที่ 1</span>
+                            <span class="text-base">📋</span>
+                        </div>
+                        <div class="font-bold text-sm mt-1.5">สอบเทียบและบำรุงรักษา</div>
+                        <div class="text-[11px] opacity-80 mt-0.5">ตรวจสภาพรายสัปดาห์ / ผลสอบเทียบ</div>
+                    </button>
+
+                    <button type="button" id="tabBtn2" onclick="switchTab(2)"
+                            class="tab-inactive flex flex-col items-start p-3 rounded-xl border text-left transition">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-200 text-slate-700">แบบฟอร์มที่ 2</span>
+                            <span class="text-base">🔧</span>
+                        </div>
+                        <div class="font-bold text-sm mt-1.5">บันทึกประวัติเครื่องมือ</div>
+                        <div class="text-[11px] opacity-80 mt-0.5">ประวัติความเสียหาย / ซ่อมแซม</div>
+                    </button>
+
+                    <button type="button" id="tabBtn3" onclick="switchTab(3)"
+                            class="tab-inactive flex flex-col items-start p-3 rounded-xl border text-left transition">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-200 text-slate-700">แบบฟอร์มที่ 3</span>
+                            <span class="text-base">🧪</span>
+                        </div>
+                        <div class="font-bold text-sm mt-1.5">Gas Verification</div>
+                        <div class="text-[11px] opacity-80 mt-0.5">ทวนสอบค่าก๊าซ NO, NO2, SO2</div>
+                    </button>
+
+                    <button type="button" id="tabBtn4" onclick="switchTab(4)"
+                            class="tab-inactive flex flex-col items-start p-3 rounded-xl border text-left transition">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">ดึงข้อมูลย้อนหลัง</span>
+                            <span class="text-base">📂</span>
+                        </div>
+                        <div class="font-bold text-sm mt-1.5">ค้นหา & ดาวน์โหลดฟอร์ม</div>
+                        <div class="text-[11px] opacity-80 mt-0.5">ส่งออก PDF / Excel / Word</div>
+                    </button>
+                </div>
             </div>
 
-            <!-- กลุ่มปุ่มส่งข้อมูล & ปุ่มพิมพ์รายงาน -->
-            <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                <button type="submit" id="submitBtn"
-                        class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition disabled:cursor-not-allowed">
-                    <svg id="loadingSpinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                    </svg>
-                    <span id="submitText">บันทึกรายงาน</span>
+            <!-- ===================================================================== -->
+            <!-- แท็บที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ (Form 1)             -->
+            <!-- ===================================================================== -->
+            <form id="formTab1" class="space-y-5 border-t border-slate-200 pt-5" novalidate>
+                <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h3 class="font-bold text-blue-900">แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ</h3>
+                        <p class="text-xs text-blue-700">ห้องปฏิบัติการตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-semibold text-blue-900">ประเภทงาน:</label>
+                        <select id="f1_subType" class="text-xs font-semibold bg-white border border-blue-300 rounded-lg px-2.5 py-1.5 text-slate-800 outline-none">
+                            <option value="weekly_check">ตรวจสภาพและบำรุงรักษา (Checklist)</option>
+                            <option value="calibration">บันทึกผลการสอบเทียบ (Calibration)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- วันที่ครั้งนี้ และ ครั้งต่อไป -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1" for="f1_date">
+                            ว/ด/ป (ครั้งนี้) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="f1_date" required
+                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-sm font-semibold text-slate-700" for="f1_nextDate">
+                                ว/ด/ป (ครั้งต่อไป / Due Date)
+                            </label>
+                            <div class="flex gap-1">
+                                <button type="button" onclick="addDaysToDate('f1_date', 'f1_nextDate', 7)" class="text-[11px] bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-0.5 rounded transition">+7 วัน</button>
+                                <button type="button" onclick="addDaysToDate('f1_date', 'f1_nextDate', 30)" class="text-[11px] bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-0.5 rounded transition">+1 เดือน</button>
+                                <button type="button" onclick="addDaysToDate('f1_date', 'f1_nextDate', 365)" class="text-[11px] bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-0.5 rounded transition">+1 ปี</button>
+                            </div>
+                        </div>
+                        <input type="date" id="f1_nextDate"
+                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <!-- กล่อง Checklist 5 ข้อ -->
+                <div id="f1_checklistBox" class="bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-200 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-2 mb-2 gap-2">
+                        <h4 class="text-sm font-bold text-slate-800">รายการตรวจเช็คสภาพเครื่องมือ (Checklist 5 ข้อ)</h4>
+                        <button type="button" onclick="checkAllNormal()"
+                                class="self-start sm:self-auto text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-3 py-1 rounded-lg transition">
+                            ✓ เลือก "ปกติ" ทั้งหมด
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-b border-slate-100">
+                        <span class="text-sm text-slate-700 font-medium">1. ฟิลเตอร์กรองฝุ่นก่อนเข้าเซ็นเซอร์</span>
+                        <div class="flex gap-5">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_filter" value="ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_filter" value="ต้องแก้ไข/เปลี่ยน" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-b border-slate-100">
+                        <span class="text-sm text-slate-700 font-medium">2. การทำงานของปั๊มดูดอากาศ</span>
+                        <div class="flex gap-5">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_pump" value="ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_pump" value="ต้องแก้ไข/ซ่อมแซม" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-b border-slate-100">
+                        <span class="text-sm text-slate-700 font-medium">3. ความพร้อมของแบตเตอรี่</span>
+                        <div class="flex gap-5">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_battery" value="ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_battery" value="เสื่อม/ต้องชาร์จ" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-b border-slate-100">
+                        <span class="text-sm text-slate-700 font-medium">4. ความสะอาดของเครื่องมือ</span>
+                        <div class="flex gap-5">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_clean" value="สะอาด/ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_clean" value="ต้องทำความสะอาด" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1">
+                        <span class="text-sm text-slate-700 font-medium">5. สถานะเซ็นเซอร์ (O2, CO, NO, NO2, SO2)</span>
+                        <div class="flex gap-5">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor" value="ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- รายละเอียดตามคอลัมน์ในแบบฟอร์มที่ 1 -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1" for="f1_description">
+                            บันทึกการสอบเทียบ / การตรวจสภาพเครื่องมือ <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="f1_description" required
+                               value="ตรวจสภาพและบำรุงรักษาเครื่องมือประจำสัปดาห์ (กรองฝุ่น, ปั๊ม, แบตเตอรี่, ความสะอาด, เซ็นเซอร์)"
+                               class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_correction">
+                                Correction / Error
+                            </label>
+                            <input type="text" id="f1_correction" value="-" placeholder="เช่น - หรือ 0.2%"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_uncertainty">
+                                Uncertainty
+                            </label>
+                            <input type="text" id="f1_uncertainty" value="-" placeholder="เช่น - หรือ ±1.5 PPM"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_tolerance">
+                                เกณฑ์การยอมรับ (Tolerance)
+                            </label>
+                            <input type="text" id="f1_tolerance" value="สภาพพร้อมใช้งาน" placeholder="เช่น ±5% หรือ พร้อมใช้งาน"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">
+                                ผลการสอบเทียบ / ตรวจสภาพ <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex gap-4 pt-1.5">
+                                <label class="flex items-center gap-2 cursor-pointer bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-lg">
+                                    <input type="radio" name="f1_result" value="ผ่าน" checked class="w-4 h-4 text-emerald-600">
+                                    <span class="text-sm font-semibold text-emerald-800">ผ่าน (Pass)</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer bg-red-50 border border-red-200 px-3.5 py-1.5 rounded-lg">
+                                    <input type="radio" name="f1_result" value="ไม่ผ่าน" class="w-4 h-4 text-red-600">
+                                    <span class="text-sm font-semibold text-red-800">ไม่ผ่าน (Fail)</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_agency">
+                                หน่วยงานให้บริการ
+                            </label>
+                            <input type="text" id="f1_agency" value="ภายในห้องปฏิบัติการ (ETC)" placeholder="ระบุหน่วยงานให้บริการ"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_operator">
+                                ผู้ดำเนินการ <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="f1_operator" required placeholder="ระบุชื่อผู้ดำเนินการ"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_supervisor">
+                                ผู้รับผิดชอบ
+                            </label>
+                            <input type="text" id="f1_supervisor" placeholder="ระบุชื่อผู้รับผิดชอบ"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_notes">
+                            หมายเหตุ / รายละเอียดเพิ่มเติม
+                        </label>
+                        <textarea id="f1_notes" rows="2" placeholder="ระบุหมายเหตุ หรือรายละเอียดปัญหาที่พบ..."
+                                  class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                    </div>
+
+                    <div id="f1_autoRepairBox" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-4 space-y-2">
+                        <label class="flex items-start gap-2.5 cursor-pointer">
+                            <input type="checkbox" id="f1_sendToForm2" checked class="mt-1 w-4 h-4 text-amber-600 rounded">
+                            <div>
+                                <span class="text-sm font-bold text-amber-900">
+                                    🔗 ส่งข้อมูลเข้า "แบบฟอร์มที่ 2: บันทึกประวัติเครื่องมือ (ความเสียหาย/ซ่อมแซม)" อัตโนมัติ
+                                </span>
+                                <p class="text-xs text-amber-700">
+                                    เนื่องจากพบรายการที่ต้องแก้ไขหรือไม่ผ่าน ระบบจะสร้างประวัติความผิดปกติลงในแบบฟอร์มที่ 2 ให้พร้อมกันทันที
+                                </p>
+                            </div>
+                        </label>
+                        <div>
+                            <label class="block text-xs font-semibold text-amber-900 mb-1" for="f1_repairDetail">
+                                รายการเสียหาย / ความผิดปกติ / การซ่อมแซม (สำหรับบันทึกในแบบฟอร์มที่ 2)
+                            </label>
+                            <input type="text" id="f1_repairDetail" placeholder="ระบุอาการผิดปกติหรือการแก้ไข..."
+                                   class="w-full px-3 py-2 text-sm border border-amber-300 rounded-lg bg-white outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn1"
+                        class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+                    <span>💾 บันทึกข้อมูลลงแบบฟอร์มที่ 1 (สอบเทียบและบำรุงรักษา)</span>
                 </button>
-                <button type="button" id="printFormBtn"
-                        class="flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-5 rounded-lg shadow-md transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                    </svg>
-                    <span>พิมพ์รายงาน / PDF</span>
+            </form>
+
+            <!-- ===================================================================== -->
+            <!-- แท็บที่ 2: บันทึกประวัติเครื่องมือ - ความเสียหาย/ซ่อมแซม (Form 2)        -->
+            <!-- ===================================================================== -->
+            <form id="formTab2" class="hidden space-y-5 border-t border-slate-200 pt-5" novalidate>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                    <h3 class="font-bold text-amber-900">แบบฟอร์มที่ 2: บันทึกประวัติเครื่องมือ (Equipment History)</h3>
+                    <p class="text-xs text-amber-700">ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซมเครื่องมือ — ฝ่ายตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1" for="f2_date">
+                            ว/ด/ป ที่พบความผิดปกติ / ซ่อมแซม <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="f2_date" required
+                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1" for="f2_notes">
+                            หมายเหตุ (Remarks)
+                        </label>
+                        <input type="text" id="f2_notes" placeholder="เช่น ส่งซ่อมศูนย์ / เปลี่ยนอะไหล่เรียบร้อย"
+                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="f2_damageDetail">
+                        รายการเสียหาย / ความผิดปกติ / การซ่อมแซม <span class="text-red-500">*</span>
+                    </label>
+                    <textarea id="f2_damageDetail" rows="4" required
+                              placeholder="ระบุรายละเอียดความเสียหาย อาการผิดปกติ หรือการซ่อมแซมแก้ไข..."
+                              class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1" for="f2_operator">
+                            ผู้ดำเนินการ <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="f2_operator" required placeholder="ระบุชื่อผู้ดำเนินการ"
+                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1" for="f2_supervisor">
+                            ผู้รับผิดชอบ
+                        </label>
+                        <input type="text" id="f2_supervisor" placeholder="ระบุชื่อผู้รับผิดชอบ"
+                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn2"
+                        class="w-full flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+                    <span>💾 บันทึกข้อมูลลงแบบฟอร์มที่ 2 (ประวัติความเสียหาย/ซ่อมแซม)</span>
                 </button>
+            </form>
+
+            <!-- ===================================================================== -->
+            <!-- แท็บที่ 3: Flue Gas Analyzer Verification (Form 3)                    -->
+            <!-- ===================================================================== -->
+            <form id="formTab3" class="hidden space-y-5 border-t border-slate-200 pt-5" novalidate>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h3 class="font-bold text-indigo-950">แบบฟอร์มที่ 3: Flue Gas Analyzer Verification</h3>
+                        <p class="text-xs text-indigo-700">ทวนสอบค่าก๊าซมาตรฐาน NO, NO2, SO2 (คำนวณ Difference และ Calibration Error % อัตโนมัติ)</p>
+                    </div>
+                    <button type="button" onclick="printCurrentForm3Input()"
+                            class="self-start sm:self-auto flex items-center gap-1.5 text-xs font-semibold bg-white hover:bg-indigo-100 text-indigo-800 border border-indigo-300 px-3 py-2 rounded-lg shadow-sm transition">
+                        🖨️ พิมพ์ / บันทึก PDF ใบ Verification นี้
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_date">
+                            Calibrated Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="f3_date" required
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_time">
+                            Calibrated Time <span class="text-red-500">*</span>
+                        </label>
+                        <input type="time" id="f3_time" required
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_nextDate">
+                            วันครบกำหนดครั้งต่อไป (Due Date)
+                        </label>
+                        <input type="date" id="f3_nextDate"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_tolerancePct">
+                            เกณฑ์ยอมรับ Error (± %)
+                        </label>
+                        <input type="number" id="f3_tolerancePct" value="5" step="0.1" min="0"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">
+                        Environment Status (สภาวะแวดล้อมขณะทวนสอบ)
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_temp">
+                                Temperature (°C)
+                            </label>
+                            <input type="number" id="f3_temp" step="0.1" placeholder="เช่น 25.0"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_pressure">
+                                Pressure (Mbar)
+                            </label>
+                            <input type="number" id="f3_pressure" step="0.1" placeholder="เช่น 1013.0"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_humidity">
+                                Humidity (%RH)
+                            </label>
+                            <input type="number" id="f3_humidity" step="0.1" placeholder="เช่น 55.0"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="gasTablesContainer" class="space-y-5"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_calibratedBy">
+                            Calibrated By (ผู้ทวนสอบ) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="f3_calibratedBy" required placeholder="ระบุชื่อผู้ทวนสอบ"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_approvedBy">
+                            Approve By (ผู้อนุมัติ / ผู้รับผิดชอบ)
+                        </label>
+                        <input type="text" id="f3_approvedBy" placeholder="ระบุชื่อผู้อนุมัติ"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_overallResult">
+                            ผลการทวนสอบ (Result)
+                        </label>
+                        <select id="f3_overallResult"
+                                class="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-lg bg-white outline-none">
+                            <option value="ผ่าน">ผ่าน (Pass)</option>
+                            <option value="ไม่ผ่าน">ไม่ผ่าน (Fail)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <label class="flex items-start gap-2.5 cursor-pointer">
+                        <input type="checkbox" id="f3_syncToForm1" checked class="mt-1 w-4 h-4 text-blue-600 rounded">
+                        <div>
+                            <span class="text-sm font-bold text-blue-900">
+                                🔗 ส่งผลสรุปการทวนสอบก๊าซนี้เข้า "แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษา" อัตโนมัติ
+                            </span>
+                            <p class="text-xs text-blue-700 mt-0.5">
+                                ระบบจะนำค่า Error สูงสุด, เกณฑ์ยอมรับ และผลการทวนสอบ ไปบันทึกต่อท้ายในตารางแบบฟอร์มที่ 1 ใน Google Sheet ให้โดยอัตโนมัติ
+                            </p>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button type="submit" id="submitBtn3"
+                            class="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+                        <span>💾 บันทึกผล Verification ลงฐานข้อมูล Google Sheet</span>
+                    </button>
+                    <button type="button" onclick="printCurrentForm3Input()"
+                            class="sm:w-auto flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold px-5 py-3 rounded-xl shadow-md transition">
+                        <span>🖨️ พิมพ์ใบ Verification</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- ===================================================================== -->
+            <!-- แท็บที่ 4: ค้นหาและดาวน์โหลดข้อมูลย้อนหลัง (History & Export)          -->
+            <!-- ===================================================================== -->
+            <div id="formTab4" class="hidden space-y-5 border-t border-slate-200 pt-5">
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h3 class="font-bold text-emerald-950">📂 ค้นหาและดาวน์โหลดข้อมูลแต่ละแบบฟอร์มย้อนหลัง</h3>
+                        <p class="text-xs text-emerald-700">ดึงข้อมูลจากฐานข้อมูล Google Sheet มาแสดงในรูปแบบฟอร์มมาตรฐาน พร้อมส่งออกเป็น PDF, Excel (.xls/.csv) และ Word (.doc)</p>
+                    </div>
+                </div>
+
+                <!-- แผงตัวกรองการค้นหาย้อนหลัง -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="q_targetForm">
+                                1. เลือกแบบฟอร์มที่ต้องการดึงข้อมูล
+                            </label>
+                            <select id="q_targetForm" onchange="fetchHistoricalRecords()"
+                                    class="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="FORM_1">แบบฟอร์มที่ 1: สอบเทียบและบำรุงรักษา</option>
+                                <option value="FORM_2">แบบฟอร์มที่ 2: ประวัติเครื่องมือ (ซ่อมแซม)</option>
+                                <option value="FORM_3">แบบฟอร์มที่ 3: Gas Verification</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="q_serial">
+                                2. เลือกหมายเลขเครื่อง (S/N)
+                            </label>
+                            <select id="q_serial" onchange="fetchHistoricalRecords()"
+                                    class="w-full px-3 py-2 text-sm font-mono font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="01563443">01563443 (Testo 327-1)</option>
+                                <option value="01807527">01807527 (Testo 350XL)</option>
+                                <option value="01859560">01859560 (Testo 350XL)</option>
+                                <option value="60378478">60378478 (Testo 350New)</option>
+                                <option value="63455616">63455616 (Testo 350New)</option>
+                                <option value="63455658">63455658 (Testo 350New)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="q_startDate">
+                                3. ตั้งแต่วันที่ (เว้นว่าง = ทั้งหมด)
+                            </label>
+                            <input type="date" id="q_startDate"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="q_endDate">
+                                4. ถึงวันที่ (เว้นว่าง = ทั้งหมด)
+                            </label>
+                            <input type="date" id="q_endDate"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="text-xs text-slate-500 mr-1">ช่วงเวลาด่วน:</span>
+                            <button type="button" onclick="setQuickRange('ALL')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg transition">ดูทั้งหมด</button>
+                            <button type="button" onclick="setQuickRange('MONTH')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg transition">เดือนนี้</button>
+                            <button type="button" onclick="setQuickRange('YEAR')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg transition">ปีนี้</button>
+                        </div>
+
+                        <button type="button" id="btnQueryHistory" onclick="fetchHistoricalRecords()"
+                                class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm transition">
+                            🔍 ดึงข้อมูลจาก Google Sheet
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ตัวเลือกรายการใบทวนสอบย้อนหลัง (แสดงเฉพาะเมื่อเลือก แบบฟอร์มที่ 3) -->
+                <div id="q_form3RecordPickerBox" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <label class="text-xs font-bold text-indigo-950" for="q_form3RecordSelect">
+                        📑 เลือกใบทวนสอบก๊าซ (Verification) ย้อนหลังที่ต้องการดู/ดาวน์โหลด:
+                    </label>
+                    <select id="q_form3RecordSelect" onchange="renderHistoricalPreview()"
+                            class="sm:w-96 px-3 py-1.5 text-sm font-semibold bg-white border border-indigo-300 rounded-lg text-slate-800 outline-none">
+                    </select>
+                </div>
+
+                <!-- แถบปุ่มดาวน์โหลด 4 รูปแบบ -->
+                <div class="bg-slate-800 text-white p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-3">
+                    <div class="text-xs">
+                        <span class="font-bold text-emerald-300" id="q_statusText">พร้อมดึงข้อมูล</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="printHistoricalForm()"
+                                class="flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition">
+                            🖨️ พิมพ์ / บันทึกเป็น PDF
+                        </button>
+                        <button type="button" onclick="exportHistoricalToExcelXls()"
+                                class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition">
+                            📊 ดาวน์โหลด Excel (.xls ตามแบบฟอร์ม)
+                        </button>
+                        <button type="button" onclick="exportHistoricalToCsv()"
+                                class="flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition">
+                            📑 ดาวน์โหลด CSV (.csv)
+                        </button>
+                        <button type="button" onclick="exportHistoricalToWord()"
+                                class="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition">
+                            📝 ดาวน์โหลด Word (.doc)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- พื้นที่แสดงตัวอย่างหน้าตาแบบฟอร์มพร้อมข้อมูลย้อนหลัง (Live Preview) -->
+                <div class="border border-slate-300 rounded-xl bg-white p-4 md:p-6 overflow-x-auto shadow-inner">
+                    <div id="historicalFormPreview" class="min-w-[720px]">
+                        <div class="text-center py-12 text-slate-400 text-sm">
+                            กดปุ่ม <b>"🔍 ดึงข้อมูลจาก Google Sheet"</b> เพื่อแสดงข้อมูลย้อนหลังตามแบบฟอร์ม
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
+
+        </div>
     </div>
+
+    <!-- ========================================================================= -->
+    <!-- พื้นที่กลางสำหรับสั่งพิมพ์เอกสาร (รองรับทั้งแบบฟอร์มที่ 1, 2 และ 3)             -->
+    <!-- ========================================================================= -->
+    <div id="universalPrintArea" class="hidden bg-white text-black max-w-5xl mx-auto p-6 text-sm"></div>
 
     <!-- Modal แจ้งเตือนผลการบันทึก -->
-    <div id="messageModal" class="hidden-modal fixed inset-0 bg-black/50 items-center justify-center p-4 z-50 no-print" role="dialog" aria-modal="true">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+    <div id="messageModal" class="no-print hidden-modal fixed inset-0 bg-black/50 items-center justify-center p-4 z-50" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 text-center">
             <div id="modalIcon" class="mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4"></div>
-            <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
-            <p id="modalMessage" class="mt-2 text-gray-600 text-sm"></p>
-            <div class="mt-6 space-y-2">
-                <button type="button" id="modalPrintBtn"
-                        class="hidden w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition flex items-center justify-center gap-2 text-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                    </svg>
-                    <span>พิมพ์ใบรายงานฉบับนี้ (PDF)</span>
-                </button>
-                <button type="button" id="modalCloseBtn"
-                        class="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 rounded-lg transition text-sm">ตกลง</button>
-            </div>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-800"></h3>
+            <p id="modalMessage" class="mt-2 text-sm text-slate-600 whitespace-pre-line"></p>
+            <button type="button" id="modalCloseBtn"
+                    class="mt-6 w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-xl transition">
+                ตกลง
+            </button>
         </div>
     </div>
 
-    <!-- Modal ประวัติการบันทึก & จัดการคิว Offline (History & Offline Queue) -->
-    <div id="historyModal" class="hidden-modal fixed inset-0 bg-black/50 items-center justify-center p-3 md:p-4 z-50 no-print" role="dialog" aria-modal="true">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
-            <div class="p-5 border-b border-gray-200 flex items-center justify-between bg-gray-50">
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800">ประวัติการบันทึกในเครื่อง</h3>
-                    <p class="text-xs text-gray-500">ข้อมูลที่บันทึกไว้ในอุปกรณ์นี้ รองรับการทำงาน Offline</p>
-                </div>
-                <button type="button" id="closeHistoryBtn" class="text-gray-400 hover:text-gray-600 p-1">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            
-            <!-- แถบเครื่องมือใน History -->
-            <div class="p-4 bg-gray-100 border-b border-gray-200 flex flex-wrap items-center justify-between gap-2 text-xs">
-                <div class="flex items-center gap-2">
-                    <span class="font-medium text-gray-700">ทั้งหมด: <strong id="histTotalCount">0</strong> รายการ</span>
-                    <span class="text-gray-400">|</span>
-                    <span class="text-amber-700 font-medium">รอ Sync: <strong id="histPendingCount">0</strong></span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" id="histSyncAllBtn" class="bg-amber-600 hover:bg-amber-700 text-white font-medium px-3 py-1.5 rounded transition">
-                        🔄 Sync ข้อมูลทั้งหมด
-                    </button>
-                    <button type="button" id="clearSyncedHistoryBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-2.5 py-1.5 rounded transition">
-                        ล้างรายการที่ส่งแล้ว
-                    </button>
-                </div>
-            </div>
-
-            <!-- รายการประวัติ -->
-            <div id="historyList" class="p-4 overflow-y-auto flex-1 space-y-3">
-                <!-- Javascript จะเรนเดอร์การ์ดรายการตรงนี้ -->
-            </div>
-
-            <div class="p-4 border-t border-gray-200 text-right bg-gray-50">
-                <button type="button" id="historyDoneBtn" class="px-5 py-2 bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-lg text-sm transition">
-                    ปิดหน้าต่าง
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================= -->
-    <!-- หน้าใบรายงานทางการสำหรับสั่ง Print / บันทึกเป็น PDF (Print Template) -->
-    <!-- ============================================================= -->
-    <div id="printableReport">
-        <!-- หัวเอกสาร -->
-        <div style="border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <h1 style="font-size: 20pt; font-weight: 700; color: #1e3a8a; margin: 0; line-height: 1.2;">ใบรายงานการตรวจสอบและบำรุงรักษา Testo</h1>
-                    <p style="font-size: 11pt; color: #4b5563; margin: 4px 0 0 0;">เครื่องวัดประสิทธิภาพการเผาไหม้และก๊าซไอเสีย (Flue Gas Analyzer Maintenance Report)</p>
-                </div>
-                <div style="text-align: right; font-size: 9pt; color: #6b7280;">
-                    <div style="border: 1px solid #d1d5db; padding: 4px 8px; border-radius: 4px; display: inline-block;">
-                        สถานะ: <strong><span id="printReportDocStatus">บันทึกเรียบร้อย</span></strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ข้อมูลทั่วไปของเครื่องและผู้ตรวจสอบ -->
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 10.5pt;">
-            <tr>
-                <td style="padding: 6px 10px; border: 1px solid #d1d5db; background: #f9fafb; font-weight: 600; width: 22%;">วันที่ตรวจสอบ:</td>
-                <td style="padding: 6px 10px; border: 1px solid #d1d5db; width: 28%;"><span id="printDate">-</span></td>
-                <td style="padding: 6px 10px; border: 1px solid #d1d5db; background: #f9fafb; font-weight: 600; width: 22%;">ชื่อผู้ตรวจสอบ:</td>
-                <td style="padding: 6px 10px; border: 1px solid #d1d5db; width: 28%;"><span id="printTechnician">-</span></td>
-            </tr>
-            <tr>
-                <td style="padding: 6px 10px; border: 1px solid #d1d5db; background: #f9fafb; font-weight: 600;">รุ่นเครื่องมือ (Model):</td>
-                <td style="padding: 6px 10px; border: 1px solid #d1d5db;"><span id="printModel">-</span></td>
-                <td style="padding: 6px 10px; border: 1px solid #d1d5db; background: #f9fafb; font-weight: 600;">หมายเลขเครื่อง (S/N):</td>
-                <td style="padding: 6px 10px; border: 1px solid #d1d5db;"><span id="printSerial">-</span></td>
-            </tr>
-        </table>
-
-        <!-- ตารางรายการตรวจเช็ค 9 ข้อ -->
-        <h2 style="font-size: 12pt; font-weight: 700; color: #1f2937; margin: 12px 0 6px 0;">ผลการตรวจเช็คสภาพเครื่องมือ (Checklist Summary)</h2>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 10pt;">
-            <thead>
-                <tr style="background-color: #2563eb; color: white;">
-                    <th style="padding: 6px 8px; border: 1px solid #2563eb; width: 8%; text-align: center;">ข้อที่</th>
-                    <th style="padding: 6px 10px; border: 1px solid #2563eb; text-align: left;">รายการตรวจเช็ค</th>
-                    <th style="padding: 6px 10px; border: 1px solid #2563eb; width: 26%; text-align: center;">ผลการตรวจสอบ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center;">1</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db;">ฟิลเตอร์กรองฝุ่นก่อนเข้าเซ็นเซอร์</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_filter">-</span></td>
-                </tr>
-                <tr style="background: #fbfbfb;">
-                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center;">2</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db;">การทำงานของปั๊มดูดอากาศ</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_pump">-</span></td>
-                </tr>
-                <tr>
-                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center;">3</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db;">ความพร้อมของแบตเตอรี่</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_battery">-</span></td>
-                </tr>
-                <tr style="background: #fbfbfb;">
-                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center;">4</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db;">ความสะอาดของเครื่องมือ</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_clean">-</span></td>
-                </tr>
-                <tr style="background: #eff6ff;">
-                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">5</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ O<sub>2</sub> (Oxygen)</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_o2">-</span></td>
-                </tr>
-                <tr style="background: #eff6ff;">
-                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">6</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ CO (Carbon Monoxide)</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_co">-</span></td>
-                </tr>
-                <tr style="background: #eff6ff;">
-                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">7</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ NO (Nitric Oxide)</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_no">-</span></td>
-                </tr>
-                <tr style="background: #eff6ff;">
-                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">8</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ NO<sub>2</sub> (Nitrogen Dioxide)</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_no2">-</span></td>
-                </tr>
-                <tr style="background: #eff6ff;">
-                    <td style="padding: 5px; border: 1px solid #d1d5db; text-align: center; font-weight: bold;">9</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; font-weight: 500;">เซ็นเซอร์ SO<sub>2</sub> (Sulfur Dioxide)</td>
-                    <td style="padding: 5px 10px; border: 1px solid #d1d5db; text-align: center;"><span id="print_chk_sensor_so2">-</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- รายละเอียดเพิ่มเติม / หมายเหตุ -->
-        <div style="border: 1px solid #d1d5db; border-radius: 4px; padding: 10px; margin-bottom: 25px; background: #fff;">
-            <div style="font-weight: 600; font-size: 10.5pt; color: #374151; margin-bottom: 4px;">รายละเอียดการตรวจสอบ / ปัญหาและแนวทางแก้ไข (Notes):</div>
-            <div id="printNotes" style="font-size: 10pt; min-height: 40px; color: #111827; white-space: pre-wrap;">- ไม่มี -</div>
-        </div>
-
-        <!-- ช่องลงลายมือชื่อ (Signature Section) -->
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 10pt;">
-            <tr>
-                <td style="width: 50%; text-align: center; vertical-align: bottom; padding: 10px;">
-                    <div style="margin-bottom: 45px;">ลงชื่อ ................................................................ ผู้ตรวจสอบ</div>
-                    <div>( <span id="printSignTech">................................................................</span> )</div>
-                    <div style="margin-top: 6px; color: #6b7280; font-size: 9pt;">วันที่ ......... / ......... / .............</div>
-                </td>
-                <td style="width: 50%; text-align: center; vertical-align: bottom; padding: 10px;">
-                    <div style="margin-bottom: 45px;">ลงชื่อ ................................................................ ผู้รับรอง/หัวหน้างาน</div>
-                    <div>( ................................................................ )</div>
-                    <div style="margin-top: 6px; color: #6b7280; font-size: 9pt;">วันที่ ......... / ......... / .............</div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- ============================================================= -->
-    <!-- Script การทำงานหลักของระบบ -->
-    <!-- ============================================================= -->
     <script>
-        // URL ของ Google Apps Script Web App
+        // ===== ตั้งค่า URL ของ Google Apps Script Web App =====
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnP_bgn93tKB2FzcpJIH_9vAT7a6Sz8YHkVtB6EiNaYuAT4z292QU74jkiMLf2Rq9E/exec';
 
-        const form = document.getElementById('maintenanceForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const submitText = document.getElementById('submitText');
-        const loadingSpinner = document.getElementById('loadingSpinner');
+        const GAS_TYPES = [
+            { key: 'NO', label: 'NO Calibrated Data' },
+            { key: 'NO2', label: 'NO2 Calibrated Data' },
+            { key: 'SO2', label: 'SO2 Calibrated Data' }
+        ];
+
+        const equipmentPreset = document.getElementById('equipmentPreset');
+        const eqName = document.getElementById('eqName');
+        const eqModel = document.getElementById('eqModel');
+        const eqSerial = document.getElementById('eqSerial');
+        const eqCode = document.getElementById('eqCode');
         const messageModal = document.getElementById('messageModal');
-        const technicianInput = document.getElementById('technician');
-        const notesInput = document.getElementById('notes');
-        const notesHint = document.getElementById('notesHint');
-        const printFormBtn = document.getElementById('printFormBtn');
-        const modalPrintBtn = document.getElementById('modalPrintBtn');
-        
-        // History & Network Elements
-        const networkStatusDot = document.getElementById('networkStatusDot');
-        const networkStatusText = document.getElementById('networkStatusText');
-        const pendingBadge = document.getElementById('pendingBadge');
-        const pendingCount = document.getElementById('pendingCount');
-        const syncNowBtn = document.getElementById('syncNowBtn');
-        const openHistoryBtn = document.getElementById('openHistoryBtn');
-        const historyCount = document.getElementById('historyCount');
-        const historyModal = document.getElementById('historyModal');
-        const closeHistoryBtn = document.getElementById('closeHistoryBtn');
-        const historyDoneBtn = document.getElementById('historyDoneBtn');
-        const historyList = document.getElementById('historyList');
-        const histTotalCount = document.getElementById('histTotalCount');
-        const histPendingCount = document.getElementById('histPendingCount');
-        const histSyncAllBtn = document.getElementById('histSyncAllBtn');
-        const clearSyncedHistoryBtn = document.getElementById('clearSyncedHistoryBtn');
 
-        let lastReportData = null; // เก็บข้อมูลรายงานล่าสุดสำหรับพิมพ์
+        // เก็บข้อมูลย้อนหลังที่ดึงมาจาก Google Sheet ล่าสุด
+        let currentHistoricalData = {
+            targetForm: 'FORM_1',
+            equipment: { name: 'Flue Gas Analyzer', model: 'Testo 327-1', serial: '01563443', code: '' },
+            records: []
+        };
 
-        // ==========================================
-        // 1. ตรวจจับสถานะการเชื่อมต่อ (Online / Offline)
-        // ==========================================
-        function updateNetworkStatus() {
-            const isOnline = navigator.onLine;
-            if (isOnline) {
-                networkStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-green-400';
-                networkStatusText.textContent = 'ออนไลน์';
-            } else {
-                networkStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse';
-                networkStatusText.textContent = 'ออฟไลน์ (ไม่มีอินเทอร์เน็ต)';
-            }
-            updatePendingBadges();
+        // 1. สร้างตารางกรอกค่าก๊าซ NO, NO2, SO2 ในแท็บที่ 3
+        function renderGasTables() {
+            const container = document.getElementById('gasTablesContainer');
+            container.innerHTML = GAS_TYPES.map(gas => `
+                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                    <div class="bg-slate-800 text-white px-4 py-2 text-sm font-bold flex items-center justify-between">
+                        <span>${gas.label}</span>
+                        <span class="text-xs font-normal text-slate-300">Difference = Response - Standard | Error (%) = ((Response - Standard) / Standard) × 100</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 text-xs border-b border-slate-200">
+                                    <th class="py-2.5 px-3 text-center w-12">#</th>
+                                    <th class="py-2.5 px-3">Standard Gas Value (PPM)</th>
+                                    <th class="py-2.5 px-3">Flue Gas Analyzer Response (PPM)</th>
+                                    <th class="py-2.5 px-3 bg-slate-50">Difference (PPM)</th>
+                                    <th class="py-2.5 px-3 bg-slate-50">Calibration Error (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                ${[1, 2, 3].map(rowIdx => `
+                                    <tr>
+                                        <td class="py-2 px-3 text-center font-semibold text-slate-500">${rowIdx}</td>
+                                        <td class="py-2 px-3">
+                                            <input type="number" step="any" id="${gas.key}_std_${rowIdx}"
+                                                   oninput="recalculateGasTables()"
+                                                   placeholder="ค่าก๊าซมาตรฐาน"
+                                                   class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                        </td>
+                                        <td class="py-2 px-3">
+                                            <input type="number" step="any" id="${gas.key}_res_${rowIdx}"
+                                                   oninput="recalculateGasTables()"
+                                                   placeholder="ค่าที่เครื่องอ่านได้"
+                                                   class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                        </td>
+                                        <td class="py-2 px-3 bg-slate-50">
+                                            <input type="text" id="${gas.key}_diff_${rowIdx}" readonly tabindex="-1"
+                                                   placeholder="-"
+                                                   class="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center outline-none">
+                                        </td>
+                                        <td class="py-2 px-3 bg-slate-50">
+                                            <input type="text" id="${gas.key}_err_${rowIdx}" readonly tabindex="-1"
+                                                   placeholder="-"
+                                                   class="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center font-semibold outline-none">
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        window.addEventListener('online', () => {
-            updateNetworkStatus();
-            // เมื่อกลับมาออนไลน์ ถ้ามีคิวค้าง ให้แจ้งเตือนและชวน Sync
-            const queue = getOfflineQueue();
-            if (queue.length > 0) {
-                showModal('info', 'กลับมาเชื่อมต่ออินเทอร์เน็ตแล้ว', `พบข้อมูลที่บันทึกแบบ Offline จำนวน ${queue.length} รายการ คุณสามารถกดปุ่ม "Sync ทันที" ได้เลยครับ`);
+        function recalculateGasTables() {
+            const tol = parseFloat(document.getElementById('f3_tolerancePct').value) || 5;
+            let anyExceed = false;
+            let hasAnyValue = false;
+
+            GAS_TYPES.forEach(gas => {
+                for (let i = 1; i <= 3; i++) {
+                    const stdRaw = document.getElementById(`${gas.key}_std_${i}`).value;
+                    const resRaw = document.getElementById(`${gas.key}_res_${i}`).value;
+                    const diffEl = document.getElementById(`${gas.key}_diff_${i}`);
+                    const errEl = document.getElementById(`${gas.key}_err_${i}`);
+
+                    if (stdRaw !== '' && resRaw !== '') {
+                        const std = parseFloat(stdRaw);
+                        const res = parseFloat(resRaw);
+                        if (!isNaN(std) && !isNaN(res)) {
+                            hasAnyValue = true;
+                            const diff = res - std;
+                            diffEl.value = diff.toFixed(2);
+
+                            if (std !== 0) {
+                                const err = ((res - std) / std) * 100;
+                                errEl.value = err.toFixed(2) + '%';
+                                if (Math.abs(err) > tol) {
+                                    anyExceed = true;
+                                    errEl.className = 'w-full px-2.5 py-1.5 bg-red-100 border border-red-300 rounded-lg text-red-700 font-mono text-center font-bold outline-none';
+                                } else {
+                                    errEl.className = 'w-full px-2.5 py-1.5 bg-emerald-50 border border-emerald-300 rounded-lg text-emerald-700 font-mono text-center font-bold outline-none';
+                                }
+                            } else {
+                                errEl.value = '0.00%';
+                                errEl.className = 'w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center outline-none';
+                            }
+                            continue;
+                        }
+                    }
+                    diffEl.value = '';
+                    errEl.value = '';
+                    errEl.className = 'w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center outline-none';
+                }
+            });
+
+            if (hasAnyValue) {
+                document.getElementById('f3_overallResult').value = anyExceed ? 'ไม่ผ่าน' : 'ผ่าน';
+            }
+        }
+
+        document.getElementById('f3_tolerancePct').addEventListener('input', recalculateGasTables);
+
+        function applyEquipmentPreset() {
+            const val = equipmentPreset.value;
+            if (val === 'CUSTOM') {
+                eqModel.readOnly = false;
+                eqSerial.readOnly = false;
+                eqModel.value = '';
+                eqSerial.value = '';
+                eqCode.value = '';
+                eqModel.focus();
+                return;
+            }
+            const [brand, model, serial] = val.split('|');
+            eqName.value = 'Flue Gas Analyzer';
+            eqModel.value = `${brand} ${model}`;
+            eqSerial.value = serial;
+            const savedCode = localStorage.getItem(`etc_eqcode_${serial}`) || '';
+            eqCode.value = savedCode;
+
+            // ซิงค์ค่า S/N ไปยังตัวกรองในแท็บที่ 4 ด้วย
+            const qSerial = document.getElementById('q_serial');
+            if (qSerial) qSerial.value = serial;
+        }
+
+        equipmentPreset.addEventListener('change', applyEquipmentPreset);
+        eqCode.addEventListener('change', () => {
+            if (eqSerial.value.trim()) {
+                localStorage.setItem(`etc_eqcode_${eqSerial.value.trim()}`, eqCode.value.trim());
             }
         });
-        window.addEventListener('offline', updateNetworkStatus);
 
-        // ==========================================
-        // 2. จัดการประวัติในเครื่อง & คิว Offline (Local Storage)
-        // ==========================================
-        function getHistory() {
-            try {
-                return JSON.parse(localStorage.getItem('testo_history') || '[]');
-            } catch (e) {
-                console.warn('Error reading history:', e);
-                return [];
+        // สลับแท็บ 1 / 2 / 3 / 4
+        function switchTab(tabNum) {
+            [1, 2, 3, 4].forEach(n => {
+                const form = document.getElementById(`formTab${n}`);
+                const btn = document.getElementById(`tabBtn${n}`);
+                if (n === tabNum) {
+                    form.classList.remove('hidden');
+                    btn.className = 'tab-active flex flex-col items-start p-3 rounded-xl border text-left transition';
+                } else {
+                    form.classList.add('hidden');
+                    btn.className = 'tab-inactive flex flex-col items-start p-3 rounded-xl border text-left transition';
+                }
+            });
+
+            if (tabNum === 4) {
+                fetchHistoricalRecords();
             }
         }
 
-        function saveHistory(historyArr) {
-            try {
-                localStorage.setItem('testo_history', JSON.stringify(historyArr));
-                updatePendingBadges();
-            } catch (e) {
-                console.warn('Error saving history:', e);
-            }
-        }
-
-        function getOfflineQueue() {
-            return getHistory().filter(item => !item.synced);
-        }
-
-        function updatePendingBadges() {
-            const allItems = getHistory();
-            const pendingItems = allItems.filter(item => !item.synced);
-            
-            historyCount.textContent = allItems.length;
-            pendingCount.textContent = pendingItems.length;
-
-            if (pendingItems.length > 0) {
-                pendingBadge.classList.remove('hidden');
-                syncNowBtn.classList.remove('hidden');
-            } else {
-                pendingBadge.classList.add('hidden');
-                syncNowBtn.classList.add('hidden');
-            }
-
-            histTotalCount.textContent = allItems.length;
-            histPendingCount.textContent = pendingItems.length;
-        }
-
-        // ==========================================
-        // 3. ฟังก์ชันเริ่มต้นหน้าเว็บ & การตรวจสอบ
-        // ==========================================
-        function setToday() {
+        function getLocalTodayStr() {
             const d = new Date();
             const pad = n => String(n).padStart(2, '0');
-            const today = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-            const dateInput = document.getElementById('date');
-            dateInput.value = today;
-            dateInput.max = today;
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
         }
 
-        function restoreTechnician() {
-            try {
-                const saved = localStorage.getItem('testo_technician');
-                if (saved) technicianInput.value = saved;
-            } catch (e) {
-                console.warn('Cannot access localStorage:', e);
+        function getLocalTimeStr() {
+            const d = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        }
+
+        function addDaysToDate(sourceId, targetId, days) {
+            const srcVal = document.getElementById(sourceId).value || getLocalTodayStr();
+            const parts = srcVal.split('-').map(Number);
+            const d = new Date(parts[0], parts[1] - 1, parts[2] + days);
+            const pad = n => String(n).padStart(2, '0');
+            document.getElementById(targetId).value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+        }
+
+        function initDatesAndUsers() {
+            const today = getLocalTodayStr();
+            document.getElementById('f1_date').value = today;
+            document.getElementById('f2_date').value = today;
+            document.getElementById('f3_date').value = today;
+            document.getElementById('f3_time').value = getLocalTimeStr();
+            addDaysToDate('f1_date', 'f1_nextDate', 7);
+            addDaysToDate('f3_date', 'f3_nextDate', 30);
+
+            const savedOp = localStorage.getItem('etc_operator') || '';
+            const savedSup = localStorage.getItem('etc_supervisor') || '';
+            if (savedOp) {
+                document.getElementById('f1_operator').value = savedOp;
+                document.getElementById('f2_operator').value = savedOp;
+                document.getElementById('f3_calibratedBy').value = savedOp;
+            }
+            if (savedSup) {
+                document.getElementById('f1_supervisor').value = savedSup;
+                document.getElementById('f2_supervisor').value = savedSup;
+                document.getElementById('f3_approvedBy').value = savedSup;
             }
         }
 
-        function hasIssue() {
-            return [...form.querySelectorAll('input[type=radio]:checked')]
-                .some(r => r.classList.contains('text-red-600') || r.value.includes('ต้อง') || r.value.includes('เสื่อม') || r.value.includes('ผิดปกติ'));
-        }
+        const f1SubType = document.getElementById('f1_subType');
+        const f1ChecklistBox = document.getElementById('f1_checklistBox');
+        const f1AutoRepairBox = document.getElementById('f1_autoRepairBox');
 
-        form.addEventListener('change', () => {
-            notesInput.required = hasIssue();
-            if (!notesInput.required) notesHint.classList.add('hidden');
-        });
-
-        notesInput.addEventListener('input', () => {
-            if (notesInput.value.trim()) notesHint.classList.add('hidden');
-        });
-
-        function setLoading(isLoading, text = 'กำลังบันทึก...') {
-            submitBtn.disabled = isLoading;
-            submitBtn.classList.toggle('bg-blue-600', !isLoading);
-            submitBtn.classList.toggle('bg-blue-400', isLoading);
-            loadingSpinner.classList.toggle('hidden', !isLoading);
-            submitText.textContent = isLoading ? text : 'บันทึกรายงาน';
-        }
-
-        // รวบรวมข้อมูลจากฟอร์มปัจจุบัน
-        function getFormDataObj() {
-            const dataObj = {};
-            for (const [k, v] of new FormData(form).entries()) dataObj[k] = String(v).trim();
-            
-            // สรุปสถานะเซ็นเซอร์รวมเพื่อความเข้ากันได้ย้อนหลัง
-            const sensorKeys = ['chk_sensor_o2', 'chk_sensor_co', 'chk_sensor_no', 'chk_sensor_no2', 'chk_sensor_so2'];
-            const hasSensorIssue = sensorKeys.some(key => dataObj[key] && dataObj[key].includes('ผิดปกติ'));
-            dataObj['chk_sensor'] = hasSensorIssue ? 'ผิดปกติ/รอสอบเทียบ' : 'ปกติ';
-
-            return dataObj;
-        }
-
-        // ==========================================
-        // 4. การส่งข้อมูล (Submit & Offline Support)
-        // ==========================================
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (submitBtn.disabled) return;
-
-            // ตรวจสอบความถูกต้องของข้อมูล
-            notesInput.required = hasIssue();
-            const isNotesMissing = notesInput.required && !notesInput.value.trim();
-
-            if (!form.checkValidity() || isNotesMissing) {
-                if (isNotesMissing) {
-                    notesHint.classList.remove('hidden');
-                    notesInput.focus();
-                }
-                form.reportValidity();
-                return;
+        f1SubType.addEventListener('change', () => {
+            if (f1SubType.value === 'weekly_check') {
+                f1ChecklistBox.classList.remove('hidden');
+                document.getElementById('f1_description').value = 'ตรวจสภาพและบำรุงรักษาเครื่องมือประจำสัปดาห์';
+                document.getElementById('f1_tolerance').value = 'สภาพพร้อมใช้งาน';
+            } else {
+                f1ChecklistBox.classList.add('hidden');
+                document.getElementById('f1_description').value = 'สอบเทียบเครื่องมือวัดประสิทธิภาพการเผาไหม้';
+                document.getElementById('f1_tolerance').value = '± 5%';
             }
+            evaluateForm1Issues();
+        });
 
-            const dataObj = getFormDataObj();
-            lastReportData = dataObj; // เก็บไว้อ้างอิงการพิมพ์
-
-            // สร้าง Record สำหรับบันทึกในเครื่อง
-            const record = {
-                id: 'testo_' + Date.now(),
-                createdAt: new Date().toLocaleString('th-TH'),
-                synced: false,
-                data: dataObj
+        function evaluateForm1Issues() {
+            const checkedIssues = [];
+            const labels = {
+                chk_filter: 'ฟิลเตอร์กรองฝุ่น',
+                chk_pump: 'ปั๊มดูดอากาศ',
+                chk_battery: 'แบตเตอรี่',
+                chk_clean: 'ความสะอาด',
+                chk_sensor: 'สถานะเซ็นเซอร์'
             };
 
-            // กรณีไม่มีอินเทอร์เน็ต (Offline โดยตรง)
-            if (!navigator.onLine) {
-                saveRecordOffline(record, 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต');
-                return;
+            if (f1SubType.value === 'weekly_check') {
+                Object.keys(labels).forEach(name => {
+                    const r = document.querySelector(`input[name="${name}"]:checked`);
+                    if (r && r.classList.contains('issue-radio')) {
+                        checkedIssues.push(`${labels[name]} (${r.value})`);
+                    }
+                });
+
+                if (checkedIssues.length > 0) {
+                    document.querySelector('input[name="f1_result"][value="ไม่ผ่าน"]').checked = true;
+                    document.getElementById('f1_repairDetail').value = 'พบความผิดปกติจากการตรวจเช็ค: ' + checkedIssues.join(', ');
+                } else {
+                    document.querySelector('input[name="f1_result"][value="ผ่าน"]').checked = true;
+                }
             }
 
-            setLoading(true);
+            const isFail = document.querySelector('input[name="f1_result"]:checked')?.value === 'ไม่ผ่าน';
+            if (checkedIssues.length > 0 || isFail) {
+                f1AutoRepairBox.classList.remove('hidden');
+            } else {
+                f1AutoRepairBox.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('formTab1').addEventListener('change', evaluateForm1Issues);
+
+        function checkAllNormal() {
+            ['chk_filter', 'chk_pump', 'chk_battery', 'chk_clean', 'chk_sensor'].forEach(name => {
+                const normalRadio = document.querySelector(`input[name="${name}"]:not(.issue-radio)`);
+                if (normalRadio) normalRadio.checked = true;
+            });
+            evaluateForm1Issues();
+        }
+
+        // ส่งข้อมูลบันทึกไปยัง Google Apps Script
+        async function postToGoogleSheet(payload, btnId, defaultBtnHtml) {
+            const btn = document.getElementById(btnId);
+            if (!eqName.value.trim() || !eqModel.value.trim() || !eqSerial.value.trim()) {
+                showModal('error', 'ข้อมูลเครื่องมือไม่ครบ', 'กรุณาระบุ ชื่อเครื่องมือ, ยี่ห้อ/รุ่น และหมายเลขเครื่อง (S/N) ด้านบนสุดก่อนบันทึกครับ');
+                return false;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<span>⏳ กำลังบันทึกข้อมูลลง Google Sheet...</span>`;
+
+            payload.equipment = {
+                name: eqName.value.trim(),
+                model: eqModel.value.trim(),
+                serial: eqSerial.value.trim(),
+                code: eqCode.value.trim()
+            };
+
+            if (eqCode.value.trim()) {
+                localStorage.setItem(`etc_eqcode_${eqSerial.value.trim()}`, eqCode.value.trim());
+            }
 
             try {
-                // ส่งคำขอแบบมี Timeout 10 วินาที ป้องกันหน้าเว็บค้างถ้าเน็ตช้ามาก
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000);
-
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(dataObj),
-                    signal: controller.signal
+                    body: JSON.stringify(payload)
                 });
-                clearTimeout(timeoutId);
-
-                if (!response.ok) {
-                    throw new Error(`Server returned status: ${response.status}`);
-                }
 
                 const result = await response.json();
                 if (result.status !== 'success') {
-                    throw new Error(result.message || 'Server error');
+                    throw new Error(result.message || 'เกิดข้อผิดพลาดที่ฝั่งเซิร์ฟเวอร์');
                 }
 
-                // ส่งขึ้นชีตสำเร็จ -> บันทึกลงประวัติพร้อมสถานะ synced = true
-                record.synced = true;
-                const history = getHistory();
-                history.unshift(record);
-                saveHistory(history);
-
-                try { localStorage.setItem('testo_technician', dataObj.technician); } catch(e){}
-
-                showModal('success', 'บันทึกสำเร็จ (ออนไลน์)!', 'ข้อมูลการตรวจสอบของคุณถูกส่งไปยัง Google Sheet เรียบร้อยแล้ว');
-                modalPrintBtn.classList.remove('hidden');
-                
-                resetFormState();
-
+                showModal('success', 'บันทึกข้อมูลสำเร็จ!', result.summary || 'จัดเก็บข้อมูลลงฐานข้อมูลและอัปเดตแบบฟอร์มใน Google Sheet เรียบร้อยแล้ว');
+                return true;
             } catch (error) {
-                console.warn('Online sync failed, saving offline:', error);
-                // หากส่งไม่ผ่าน (เน็ตหลุด / Timeout / Google Script มีปัญหา) ให้บันทึกแบบ Offline อัตโนมัติ
-                saveRecordOffline(record, error.name === 'AbortError' ? 'การเชื่อมต่อหมดเวลา (Timeout)' : error.message);
+                console.error('Submit Error:', error);
+                showModal('error', 'การบันทึกล้มเหลว', 'ไม่สามารถบันทึกข้อมูลได้: ' + error.message);
+                return false;
             } finally {
-                setLoading(false);
+                btn.disabled = false;
+                btn.innerHTML = defaultBtnHtml;
+            }
+        }
+
+        // Submit แท็บที่ 1
+        document.getElementById('formTab1').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const f = e.target;
+            if (!f.checkValidity()) {
+                f.reportValidity();
+                return;
+            }
+
+            const operator = document.getElementById('f1_operator').value.trim();
+            const supervisor = document.getElementById('f1_supervisor').value.trim();
+            localStorage.setItem('etc_operator', operator);
+            if (supervisor) localStorage.setItem('etc_supervisor', supervisor);
+
+            const chkData = {
+                chk_filter: document.querySelector('input[name="chk_filter"]:checked')?.value || 'ปกติ',
+                chk_pump: document.querySelector('input[name="chk_pump"]:checked')?.value || 'ปกติ',
+                chk_battery: document.querySelector('input[name="chk_battery"]:checked')?.value || 'ปกติ',
+                chk_clean: document.querySelector('input[name="chk_clean"]:checked')?.value || 'สะอาด/ปกติ',
+                chk_sensor: document.querySelector('input[name="chk_sensor"]:checked')?.value || 'ปกติ'
+            };
+
+            const resultVal = document.querySelector('input[name="f1_result"]:checked')?.value || 'ผ่าน';
+            const autoSendForm2 = !f1AutoRepairBox.classList.contains('hidden') && document.getElementById('f1_sendToForm2').checked;
+
+            const payload = {
+                formType: 'FORM_1_MAINTENANCE_CAL',
+                subType: f1SubType.value,
+                date: document.getElementById('f1_date').value,
+                nextDate: document.getElementById('f1_nextDate').value,
+                description: document.getElementById('f1_description').value.trim(),
+                correction: document.getElementById('f1_correction').value.trim() || '-',
+                uncertainty: document.getElementById('f1_uncertainty').value.trim() || '-',
+                tolerance: document.getElementById('f1_tolerance').value.trim() || '-',
+                result: resultVal,
+                agency: document.getElementById('f1_agency').value.trim(),
+                operator: operator,
+                supervisor: supervisor,
+                notes: document.getElementById('f1_notes').value.trim(),
+                technician: operator,
+                model: eqModel.value.trim(),
+                serial: eqSerial.value.trim(),
+                ...chkData,
+                syncToForm2: autoSendForm2,
+                repairDetail: document.getElementById('f1_repairDetail').value.trim() || document.getElementById('f1_notes').value.trim()
+            };
+
+            const ok = await postToGoogleSheet(payload, 'submitBtn1', '<span>💾 บันทึกข้อมูลลงแบบฟอร์มที่ 1 (สอบเทียบและบำรุงรักษา)</span>');
+            if (ok) {
+                document.getElementById('f1_notes').value = '';
+                document.getElementById('f1_repairDetail').value = '';
+                checkAllNormal();
             }
         });
 
-        // ฟังก์ชันช่วยบันทึก Record เมื่อออฟไลน์
-        function saveRecordOffline(record, reason) {
-            record.synced = false;
-            const history = getHistory();
-            history.unshift(record);
-            saveHistory(history);
+        // Submit แท็บที่ 2
+        document.getElementById('formTab2').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const f = e.target;
+            if (!f.checkValidity()) {
+                f.reportValidity();
+                return;
+            }
 
-            try { localStorage.setItem('testo_technician', record.data.technician); } catch(e){}
+            const operator = document.getElementById('f2_operator').value.trim();
+            const supervisor = document.getElementById('f2_supervisor').value.trim();
+            localStorage.setItem('etc_operator', operator);
+            if (supervisor) localStorage.setItem('etc_supervisor', supervisor);
 
-            showModal('offline', 'บันทึกในเครื่องเรียบร้อย (ออฟไลน์)', 
-                `เนื่องจาก${reason} ข้อมูลจึงถูกเก็บไว้ในเครื่องอย่างปลอดภัย เมื่อเชื่อมต่อเน็ตสามารถกด "Sync ทันที" เพื่อส่งขึ้น Google Sheet ได้ครับ`);
-            modalPrintBtn.classList.remove('hidden');
-            resetFormState();
+            const payload = {
+                formType: 'FORM_2_REPAIR_HISTORY',
+                date: document.getElementById('f2_date').value,
+                damageDetail: document.getElementById('f2_damageDetail').value.trim(),
+                operator: operator,
+                supervisor: supervisor,
+                notes: document.getElementById('f2_notes').value.trim()
+            };
+
+            const ok = await postToGoogleSheet(payload, 'submitBtn2', '<span>💾 บันทึกข้อมูลลงแบบฟอร์มที่ 2 (ประวัติความเสียหาย/ซ่อมแซม)</span>');
+            if (ok) {
+                document.getElementById('f2_damageDetail').value = '';
+                document.getElementById('f2_notes').value = '';
+            }
+        });
+
+        // Submit แท็บที่ 3
+        function collectGasVerificationData() {
+            const gasData = {};
+            let maxAbsError = 0;
+            let hasMeasuredValue = false;
+
+            GAS_TYPES.forEach(gas => {
+                gasData[gas.key] = [];
+                for (let i = 1; i <= 3; i++) {
+                    const std = document.getElementById(`${gas.key}_std_${i}`).value;
+                    const res = document.getElementById(`${gas.key}_res_${i}`).value;
+                    const diff = document.getElementById(`${gas.key}_diff_${i}`).value;
+                    const err = document.getElementById(`${gas.key}_err_${i}`).value;
+
+                    if (std !== '' && res !== '') {
+                        hasMeasuredValue = true;
+                        const numErr = parseFloat(err);
+                        if (!isNaN(numErr) && Math.abs(numErr) > maxAbsError) {
+                            maxAbsError = Math.abs(numErr);
+                        }
+                    }
+
+                    gasData[gas.key].push({ row: i, std, res, diff, err });
+                }
+            });
+
+            return { gasData, maxAbsError, hasMeasuredValue };
         }
 
-        function resetFormState() {
-            form.reset();
-            notesInput.required = false;
-            notesHint.classList.add('hidden');
-            setToday();
-            restoreTechnician();
+        document.getElementById('formTab3').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const f = e.target;
+            if (!f.checkValidity()) {
+                f.reportValidity();
+                return;
+            }
+
+            const { gasData, maxAbsError, hasMeasuredValue } = collectGasVerificationData();
+            if (!hasMeasuredValue) {
+                showModal('error', 'ยังไม่ได้กรอกค่าก๊าซ', 'กรุณากรอกค่า Standard Gas Value และ Analyzer Response อย่างน้อย 1 รายการครับ');
+                return;
+            }
+
+            const calBy = document.getElementById('f3_calibratedBy').value.trim();
+            const appBy = document.getElementById('f3_approvedBy').value.trim();
+            localStorage.setItem('etc_operator', calBy);
+            if (appBy) localStorage.setItem('etc_supervisor', appBy);
+
+            const tolPct = document.getElementById('f3_tolerancePct').value || '5';
+
+            const payload = {
+                formType: 'FORM_3_GAS_VERIFICATION',
+                date: document.getElementById('f3_date').value,
+                time: document.getElementById('f3_time').value,
+                nextDate: document.getElementById('f3_nextDate').value,
+                temp: document.getElementById('f3_temp').value || '-',
+                pressure: document.getElementById('f3_pressure').value || '-',
+                humidity: document.getElementById('f3_humidity').value || '-',
+                tolerancePct: `±${tolPct}%`,
+                maxErrorPct: `${maxAbsError.toFixed(2)}%`,
+                result: document.getElementById('f3_overallResult').value,
+                calibratedBy: calBy,
+                approvedBy: appBy,
+                syncToForm1: document.getElementById('f3_syncToForm1').checked,
+                gasData: gasData
+            };
+
+            await postToGoogleSheet(payload, 'submitBtn3', '<span>💾 บันทึกผล Verification ลงฐานข้อมูล Google Sheet</span>');
+        });
+
+        // พิมพ์ใบ Verification จากแท็บที่ 3 ทันที
+        function printCurrentForm3Input() {
+            const { gasData } = collectGasVerificationData();
+            const rec = {
+                date: document.getElementById('f3_date').value || '....................',
+                time: document.getElementById('f3_time').value || '....................',
+                eqModel: eqModel.value || '....................',
+                serial: eqSerial.value || '....................',
+                temp: document.getElementById('f3_temp').value || '..........',
+                pressure: document.getElementById('f3_pressure').value || '..........',
+                humidity: document.getElementById('f3_humidity').value || '..........',
+                calibratedBy: document.getElementById('f3_calibratedBy').value || '........................................',
+                approvedBy: document.getElementById('f3_approvedBy').value || '........................................',
+                gasData: gasData
+            };
+            const html = buildOfficialForm3Html(rec, {
+                name: eqName.value,
+                model: eqModel.value,
+                serial: eqSerial.value,
+                code: eqCode.value
+            });
+            const printArea = document.getElementById('universalPrintArea');
+            printArea.innerHTML = html;
+            window.print();
         }
 
-        // ==========================================
-        // 5. ระบบซิงค์ข้อมูลค้างส่ง (Sync Pending Queue)
-        // ==========================================
-        async function syncRecord(recordId) {
-            const history = getHistory();
-            const record = history.find(r => r.id === recordId);
-            if (!record || record.synced) return true;
+        // =========================================================================
+        // ส่วนของแท็บที่ 4: ค้นหาและดาวน์โหลดข้อมูลแต่ละแบบฟอร์มย้อนหลัง
+        // =========================================================================
+
+        function setQuickRange(mode) {
+            const d = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            const startEl = document.getElementById('q_startDate');
+            const endEl = document.getElementById('q_endDate');
+
+            if (mode === 'ALL') {
+                startEl.value = '';
+                endEl.value = '';
+            } else if (mode === 'MONTH') {
+                startEl.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-01`;
+                endEl.value = getLocalTodayStr();
+            } else if (mode === 'YEAR') {
+                startEl.value = `${d.getFullYear()}-01-01`;
+                endEl.value = getLocalTodayStr();
+            }
+            fetchHistoricalRecords();
+        }
+
+        async function fetchHistoricalRecords() {
+            const targetForm = document.getElementById('q_targetForm').value;
+            const serial = document.getElementById('q_serial').value;
+            const startDate = document.getElementById('q_startDate').value;
+            const endDate = document.getElementById('q_endDate').value;
+            const statusText = document.getElementById('q_statusText');
+            const btn = document.getElementById('btnQueryHistory');
+            const previewEl = document.getElementById('historicalFormPreview');
+
+            statusText.textContent = '⏳ กำลังดึงข้อมูลย้อนหลังจากฐานข้อมูล Google Sheet...';
+            btn.disabled = true;
+            previewEl.innerHTML = `<div class="text-center py-12 text-slate-500 text-sm">⏳ กำลังโหลดข้อมูลจาก Google Sheet...</div>`;
 
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(record.data)
+                    body: JSON.stringify({
+                        action: 'QUERY_HISTORY',
+                        targetForm: targetForm,
+                        serial: serial,
+                        startDate: startDate,
+                        endDate: endDate
+                    })
                 });
-                const result = await response.json();
-                if (result.status === 'success') {
-                    record.synced = true;
-                    saveHistory(history);
-                    return true;
+
+                const res = await response.json();
+                if (res.status !== 'success') {
+                    throw new Error(res.message || 'ไม่สามารถดึงข้อมูลได้');
                 }
-            } catch (e) {
-                console.error(`Sync failed for ${recordId}:`, e);
-            }
-            return false;
-        }
 
-        async function syncAllPending() {
-            if (!navigator.onLine) {
-                showModal('error', 'ไม่สามารถ Sync ได้', 'กรุณาเชื่อมต่ออินเทอร์เน็ตก่อนทำการ Sync ข้อมูลครับ');
-                return;
-            }
+                // เติมรหัสเครื่องมือจาก localStorage หากใน Sheet ยังว่าง
+                const localCode = localStorage.getItem(`etc_eqcode_${serial}`) || '';
+                if (!res.equipment.code && localCode) {
+                    res.equipment.code = localCode;
+                }
 
-            const queue = getOfflineQueue();
-            if (queue.length === 0) {
-                showModal('info', 'ไม่มีข้อมูลค้างส่ง', 'ข้อมูลทั้งหมดในเครื่องได้รับการ Sync เรียบร้อยแล้ว');
-                return;
-            }
+                currentHistoricalData = res;
+                statusText.textContent = `✓ พบข้อมูลทั้งหมด ${res.records.length} รายการ (S/N: ${serial})`;
 
-            setLoading(true, `กำลัง Sync ${queue.length} รายการ...`);
-            let successCount = 0;
-
-            for (const item of queue) {
-                const ok = await syncRecord(item.id);
-                if (ok) successCount++;
-            }
-
-            setLoading(false);
-            renderHistoryModal();
-
-            if (successCount === queue.length) {
-                showModal('success', 'Sync สำเร็จทั้งหมด!', `ส่งข้อมูลขึ้น Google Sheet ครบทั้ง ${successCount} รายการเรียบร้อยแล้ว`);
-            } else {
-                showModal('warning', 'Sync สำเร็จบางส่วน', `Sync สำเร็จ ${successCount} จาก ${queue.length} รายการ (รายการที่เหลือจะถูกเก็บไว้ลองใหม่รอบหน้า)`);
-            }
-        }
-
-        syncNowBtn.addEventListener('click', syncAllPending);
-        histSyncAllBtn.addEventListener('click', syncAllPending);
-
-        // ==========================================
-        // 6. ระบบพิมพ์รายงาน / Export เป็น PDF
-        // ==========================================
-        function populatePrintableReport(data) {
-            document.getElementById('printDate').textContent = data.date || '-';
-            document.getElementById('printTechnician').textContent = data.technician || '-';
-            document.getElementById('printSignTech').textContent = data.technician || '................................................................';
-            document.getElementById('printModel').textContent = data.model || '-';
-            document.getElementById('printSerial').textContent = data.serial || '-';
-            document.getElementById('printNotes').textContent = data.notes ? data.notes : '- ไม่มีรายละเอียดเพิ่มเติม -';
-
-            // รายการตรวจเช็ค 9 ข้อ
-            const checkMap = [
-                { id: 'print_chk_filter', val: data.chk_filter },
-                { id: 'print_chk_pump', val: data.chk_pump },
-                { id: 'print_chk_battery', val: data.chk_battery },
-                { id: 'print_chk_clean', val: data.chk_clean },
-                { id: 'print_chk_sensor_o2', val: data.chk_sensor_o2 },
-                { id: 'print_chk_sensor_co', val: data.chk_sensor_co },
-                { id: 'print_chk_sensor_no', val: data.chk_sensor_no },
-                { id: 'print_chk_sensor_no2', val: data.chk_sensor_no2 },
-                { id: 'print_chk_sensor_so2', val: data.chk_sensor_so2 }
-            ];
-
-            checkMap.forEach(item => {
-                const el = document.getElementById(item.id);
-                if (!el) return;
-                const v = item.val || '';
-                if (v === 'ปกติ' || v.includes('สะอาด')) {
-                    el.innerHTML = '<span style="color: #16a34a; font-weight: bold;">✓ ปกติ</span>';
-                } else if (v.includes('ต้อง') || v.includes('เสื่อม') || v.includes('ผิดปกติ')) {
-                    el.innerHTML = `<span style="color: #dc2626; font-weight: bold;">✗ ${v}</span>`;
+                // จัดการตัวเลือกใบรายงานสำหรับแบบฟอร์มที่ 3
+                const pickerBox = document.getElementById('q_form3RecordPickerBox');
+                const pickerSelect = document.getElementById('q_form3RecordSelect');
+                if (targetForm === 'FORM_3' && res.records.length > 0) {
+                    pickerBox.classList.remove('hidden');
+                    pickerSelect.innerHTML = res.records.map((r, idx) =>
+                        `<option value="${idx}" ${idx === res.records.length - 1 ? 'selected' : ''}>ครั้งที่ ${r.seq}: วันที่ ${r.date} เวลา ${r.time} (ผล: ${r.result} | Max Error: ${r.maxErrorPct})</option>`
+                    ).join('');
                 } else {
-                    el.textContent = v || '-';
+                    pickerBox.classList.add('hidden');
+                    pickerSelect.innerHTML = '';
                 }
-            });
-        }
 
-        function triggerPrint(data) {
-            populatePrintableReport(data);
-            // เรียกคำสั่งพิมพ์ของเบราว์เซอร์ ซึ่งผู้ใช้สามารถเลือกเครื่องพิมพ์จริง หรือ "Save as PDF" ได้ทันที
-            setTimeout(() => {
-                window.print();
-            }, 100);
-        }
-
-        // ปุ่มพิมพ์จากหน้าฟอร์มโดยตรง
-        printFormBtn.addEventListener('click', () => {
-            const dataObj = getFormDataObj();
-            if (!dataObj.technician && !dataObj.model) {
-                showModal('info', 'ยังไม่มีข้อมูล', 'กรุณากรอกข้อมูลในฟอร์มก่อนทำการพิมพ์ หรือเลือกพิมพ์จาก "ประวัติบันทึก" ได้ครับ');
-                return;
-            }
-            lastReportData = dataObj;
-            triggerPrint(dataObj);
-        });
-
-        // ปุ่มพิมพ์จาก Modal เมื่อบันทึกเสร็จ
-        modalPrintBtn.addEventListener('click', () => {
-            if (lastReportData) {
-                closeModal();
-                triggerPrint(lastReportData);
-            }
-        });
-
-        // ==========================================
-        // 7. จัดการหน้าต่างประวัติการบันทึก (History Modal)
-        // ==========================================
-        function renderHistoryModal() {
-            const history = getHistory();
-            updatePendingBadges();
-
-            if (history.length === 0) {
-                historyList.innerHTML = `
-                    <div class="text-center py-10 text-gray-400">
-                        <svg class="mx-auto w-12 h-12 mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <p>ยังไม่มีประวัติการบันทึกข้อมูลบนอุปกรณ์นี้</p>
+                renderHistoricalPreview();
+            } catch (err) {
+                console.error('Query Error:', err);
+                statusText.textContent = '⚠️ ดึงข้อมูลไม่สำเร็จ (ตรวจสอบการอัปเดต Deploy ของ Apps Script)';
+                previewEl.innerHTML = `
+                    <div class="text-center py-10 text-red-600 text-sm space-y-2">
+                        <div class="font-bold">ไม่สามารถดึงข้อมูลย้อนหลังได้: ${escapeHtml(err.message)}</div>
+                        <div class="text-xs text-slate-600">หมายเหตุ: กรุณาตรวจสอบว่าได้คัดลอกโค้ด <code>Code.gs</code> เวอร์ชันล่าสุดไปวางใน Google Apps Script และกด <b>Manage deployments &gt; New version</b> เรียบร้อยแล้ว</div>
                     </div>`;
-                return;
+            } finally {
+                btn.disabled = false;
             }
-
-            historyList.innerHTML = history.map(item => {
-                const d = item.data;
-                const isSynced = item.synced;
-                return `
-                <div class="border border-gray-200 rounded-xl p-3.5 hover:border-blue-300 transition bg-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold px-2 py-0.5 rounded ${isSynced ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-800 animate-pulse'}">
-                                ${isSynced ? '✓ ส่งแล้ว (Synced)' : '⏳ รอ Sync'}
-                            </span>
-                            <span class="text-xs text-gray-400">${item.createdAt || ''}</span>
-                        </div>
-                        <div class="font-bold text-gray-800 text-sm">
-                            ${d.model || 'Testo'} (S/N: ${d.serial || '-'})
-                        </div>
-                        <div class="text-xs text-gray-600">
-                            วันที่ตรวจ: <strong>${d.date}</strong> | ผู้ตรวจ: <strong>${d.technician}</strong>
-                        </div>
-                        ${d.notes ? `<div class="text-xs text-gray-500 italic truncate max-w-sm">หมายเหตุ: ${d.notes}</div>` : ''}
-                    </div>
-                    <div class="flex items-center gap-2 self-end sm:self-center">
-                        ${!isSynced ? `
-                            <button type="button" onclick="handleSyncSingle('${item.id}')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded text-xs font-semibold flex items-center gap-1 transition">
-                                🔄 Sync
-                            </button>
-                        ` : ''}
-                        <button type="button" onclick="handlePrintHistory('${item.id}')" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold flex items-center gap-1 transition">
-                            🖨️ พิมพ์/PDF
-                        </button>
-                        <button type="button" onclick="handleDeleteHistory('${item.id}')" class="p-1.5 text-gray-400 hover:text-red-600 rounded transition" title="ลบรายการนี้">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    </div>
-                </div>`;
-            }).join('');
         }
 
-        // จัดการคลิกใน History
-        window.handlePrintHistory = function(id) {
-            const record = getHistory().find(r => r.id === id);
-            if (record) triggerPrint(record.data);
-        };
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
 
-        window.handleSyncSingle = async function(id) {
-            const ok = await syncRecord(id);
-            renderHistoryModal();
-            if (ok) {
-                showModal('success', 'Sync รายการสำเร็จ', 'ข้อมูลถูกส่งไปยัง Google Sheet เรียบร้อยแล้วครับ');
+        // สร้าง HTML ตารางแบบฟอร์มที่ 1 (บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ)
+        function buildOfficialForm1Html(records, eq) {
+            const minRows = Math.max(records.length, 10);
+            let rowsHtml = '';
+            for (let i = 0; i < minRows; i++) {
+                const r = records[i];
+                if (r) {
+                    const isPass = String(r.result).indexOf('ไม่ผ่าน') === -1;
+                    const opSup = [r.operator, r.supervisor].filter(Boolean).join(' / ');
+                    rowsHtml += `
+                        <tr>
+                            <td style="text-align:center;">${r.seq}</td>
+                            <td style="text-align:center;">${escapeHtml(r.date)}</td>
+                            <td style="text-align:center;">${escapeHtml(r.nextDate)}</td>
+                            <td>${escapeHtml(r.description)}</td>
+                            <td style="text-align:center;">${escapeHtml(r.correction)}</td>
+                            <td style="text-align:center;">${escapeHtml(r.uncertainty)}</td>
+                            <td style="text-align:center;">${escapeHtml(r.tolerance)}</td>
+                            <td style="text-align:center; font-weight:bold;">${isPass ? '✓' : ''}</td>
+                            <td style="text-align:center; font-weight:bold; color:#dc2626;">${!isPass ? '✓' : ''}</td>
+                            <td style="text-align:center;">${escapeHtml(r.agency)}</td>
+                            <td>${escapeHtml(opSup)}</td>
+                            <td>${escapeHtml(r.notes)}</td>
+                        </tr>`;
+                } else {
+                    rowsHtml += `
+                        <tr>
+                            <td style="height:24px;">&nbsp;</td><td></td><td></td><td></td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>`;
+                }
+            }
+
+            return `
+                <div style="font-family:'Sarabun', sans-serif; color:#000;">
+                    <div style="text-align:center; font-size:16px; font-weight:bold;">บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ</div>
+                    <div style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:10px;">ห้องปฏิบัติการตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>
+                    <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:8px;">
+                        <tr>
+                            <td style="padding:3px 0; width:50%;"><b>ชื่อเครื่องมือ :</b> ${escapeHtml(eq.name || 'Flue Gas Analyzer')}</td>
+                            <td style="padding:3px 0; width:50%;"><b>ยี่ห้อ/รุ่น :</b> ${escapeHtml(eq.model || '')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>หมายเลขเครื่องมือ :</b> ${escapeHtml(eq.code || '-')}</td>
+                            <td style="padding:3px 0;"><b>หมายเลขเครื่อง (S/N) :</b> ${escapeHtml(eq.serial || '')}</td>
+                        </tr>
+                    </table>
+                    <table class="official-form-table" border="1" cellspacing="0" cellpadding="4">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width:45px;">ลำดับที่</th>
+                                <th colspan="2">ว/ด/ป</th>
+                                <th rowspan="2">บันทึกการสอบเทียบ /<br>การตรวจสภาพเครื่องมือ</th>
+                                <th rowspan="2" style="width:75px;">Correction/<br>Error</th>
+                                <th rowspan="2" style="width:75px;">Uncertainty</th>
+                                <th rowspan="2" style="width:95px;">เกณฑ์การยอมรับ<br>(Tolerance)</th>
+                                <th colspan="2">ผลการสอบเทียบ</th>
+                                <th rowspan="2" style="width:105px;">หน่วยงาน<br>ให้บริการ</th>
+                                <th rowspan="2" style="width:115px;">ผู้ดำเนินการ/<br>ผู้รับผิดชอบ</th>
+                                <th rowspan="2" style="width:110px;">หมายเหตุ</th>
+                            </tr>
+                            <tr>
+                                <th style="width:75px;">ครั้งนี้</th>
+                                <th style="width:75px;">ครั้งต่อไป</th>
+                                <th style="width:45px;">ผ่าน</th>
+                                <th style="width:45px;">ไม่ผ่าน</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                </div>`;
+        }
+
+        // สร้าง HTML ตารางแบบฟอร์มที่ 2 (บันทึกประวัติเครื่องมือ)
+        function buildOfficialForm2Html(records, eq) {
+            const minRows = Math.max(records.length, 10);
+            let rowsHtml = '';
+            for (let i = 0; i < minRows; i++) {
+                const r = records[i];
+                if (r) {
+                    rowsHtml += `
+                        <tr>
+                            <td style="text-align:center;">${r.seq}</td>
+                            <td style="text-align:center;">${escapeHtml(r.date)}</td>
+                            <td>${escapeHtml(r.damageDetail)}</td>
+                            <td style="text-align:center;">${escapeHtml(r.operator)}</td>
+                            <td style="text-align:center;">${escapeHtml(r.supervisor)}</td>
+                            <td>${escapeHtml(r.notes)}</td>
+                        </tr>`;
+                } else {
+                    rowsHtml += `
+                        <tr>
+                            <td style="height:24px;">&nbsp;</td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>`;
+                }
+            }
+
+            return `
+                <div style="font-family:'Sarabun', sans-serif; color:#000;">
+                    <div style="text-align:center; font-size:16px; font-weight:bold;">บันทึกประวัติเครื่องมือ</div>
+                    <div style="text-align:center; font-size:13px; font-weight:bold;">ฝ่ายตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>
+                    <div style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:10px;">ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซมเครื่องมือ</div>
+                    <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:8px;">
+                        <tr>
+                            <td style="padding:3px 0; width:50%;"><b>Equipment Name :</b> ${escapeHtml(eq.name || 'Flue Gas Analyzer')}</td>
+                            <td style="padding:3px 0; width:50%;"><b>Brand/Model :</b> ${escapeHtml(eq.model || '')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Equipment Code :</b> ${escapeHtml(eq.code || '-')}</td>
+                            <td style="padding:3px 0;"><b>Serial No.(S/N) :</b> ${escapeHtml(eq.serial || '')}</td>
+                        </tr>
+                    </table>
+                    <table class="official-form-table" border="1" cellspacing="0" cellpadding="5">
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">ลำดับที่</th>
+                                <th style="width:95px;">ว/ด/ป</th>
+                                <th>รายการเสียหาย / ซ่อมแซม</th>
+                                <th style="width:125px;">ผู้ดำเนินการ</th>
+                                <th style="width:125px;">ผู้รับผิดชอบ</th>
+                                <th style="width:140px;">หมายเหตุ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                </div>`;
+        }
+
+        // สร้าง HTML แบบฟอร์มที่ 3 (Flue Gas Analyzer Verification)
+        function buildOfficialForm3Html(rec, eq) {
+            const data = rec || {
+                date: '....................',
+                time: '....................',
+                temp: '..........',
+                pressure: '..........',
+                humidity: '..........',
+                calibratedBy: '........................................',
+                approvedBy: '........................................',
+                gasData: { NO: [], NO2: [], SO2: [] }
+            };
+
+            const gasTablesHtml = GAS_TYPES.map(gas => {
+                const rows = (data.gasData && data.gasData[gas.key]) ? data.gasData[gas.key] : [];
+                let trs = '';
+                for (let i = 0; i < 3; i++) {
+                    const r = rows[i] || {};
+                    trs += `
+                        <tr>
+                            <td style="text-align:center; height:24px;">${escapeHtml(r.std || '')}</td>
+                            <td style="text-align:center;">${escapeHtml(r.res || '')}</td>
+                            <td style="text-align:center;">${escapeHtml(r.diff || '')}</td>
+                            <td style="text-align:center;">${escapeHtml(r.err || '')}</td>
+                        </tr>`;
+                }
+                return `
+                    <div style="margin-top:12px;">
+                        <div style="font-weight:bold; font-size:13px; margin-bottom:4px;">${gas.label}</div>
+                        <table class="official-form-table" border="1" cellspacing="0" cellpadding="4">
+                            <thead>
+                                <tr>
+                                    <th style="width:25%;">Standard Gas Value (PPM)</th>
+                                    <th style="width:25%;">Flue Gas Analyzer Response (PPM)</th>
+                                    <th style="width:25%;">Difference (PPM)</th>
+                                    <th style="width:25%;">Calibration Error (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>${trs}</tbody>
+                        </table>
+                    </div>`;
+            }).join('');
+
+            return `
+                <div style="font-family:'Sarabun', sans-serif; color:#000; max-width:760px; margin:0 auto;">
+                    <div style="text-align:center; font-size:18px; font-weight:bold; text-decoration:underline; margin-bottom:14px;">
+                        Flue Gas Analyzer Verification
+                    </div>
+                    <table style="width:100%; font-size:13px; margin-bottom:8px;">
+                        <tr>
+                            <td style="padding:3px 0;"><b>Calibrated Date :</b> ${escapeHtml(data.date || '....................')}</td>
+                            <td style="padding:3px 0;"><b>Calibrated Time :</b> ${escapeHtml(data.time || '....................')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Flue Gas Analyzer Model :</b> ${escapeHtml(data.eqModel || eq.model || '')}</td>
+                            <td style="padding:3px 0;"><b>Serial No. :</b> ${escapeHtml(data.serial || eq.serial || '')}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:4px 0;">
+                                <b>Environment Status</b> &nbsp;&nbsp;
+                                Temperature : <u>&nbsp;&nbsp;${escapeHtml(data.temp || '......')}&nbsp;&nbsp;</u> °C &nbsp;&nbsp;&nbsp;
+                                Pressure : <u>&nbsp;&nbsp;${escapeHtml(data.pressure || '......')}&nbsp;&nbsp;</u> Mbar &nbsp;&nbsp;&nbsp;
+                                Humidity : <u>&nbsp;&nbsp;${escapeHtml(data.humidity || '......')}&nbsp;&nbsp;</u> %RH
+                            </td>
+                        </tr>
+                    </table>
+                    ${gasTablesHtml}
+                    <table style="width:100%; margin-top:36px; font-size:13px; text-align:center;">
+                        <tr>
+                            <td style="width:50%;">
+                                <div>Calibrated By .......................................................</div>
+                                <div style="margin-top:6px;">( ${escapeHtml(data.calibratedBy || '........................................')} )</div>
+                            </td>
+                            <td style="width:50%;">
+                                <div>Approve By .......................................................</div>
+                                <div style="margin-top:6px;">( ${escapeHtml(data.approvedBy || '........................................')} )</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>`;
+        }
+
+        function getCurrentRenderedHistoricalHtml() {
+            const { targetForm, equipment, records } = currentHistoricalData;
+            if (targetForm === 'FORM_1') {
+                return buildOfficialForm1Html(records, equipment);
+            } else if (targetForm === 'FORM_2') {
+                return buildOfficialForm2Html(records, equipment);
             } else {
-                showModal('error', 'Sync ไม่สำเร็จ', 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่อีกครั้ง');
+                const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
+                const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : records[records.length - 1];
+                return buildOfficialForm3Html(chosen, equipment);
             }
-        };
+        }
 
-        window.handleDeleteHistory = function(id) {
-            if (confirm('คุณต้องการลบประวัติรายการนี้ออกจากอุปกรณ์ใช่หรือไม่?')) {
-                const history = getHistory().filter(r => r.id !== id);
-                saveHistory(history);
-                renderHistoryModal();
+        function renderHistoricalPreview() {
+            const previewEl = document.getElementById('historicalFormPreview');
+            previewEl.innerHTML = getCurrentRenderedHistoricalHtml();
+        }
+
+        // 1. สั่งพิมพ์ / บันทึกเป็น PDF ตามหน้าตาแบบฟอร์มมาตรฐาน
+        function printHistoricalForm() {
+            const printArea = document.getElementById('universalPrintArea');
+            printArea.innerHTML = getCurrentRenderedHistoricalHtml();
+            window.print();
+        }
+
+        // 2. ดาวน์โหลดเป็นไฟล์ Excel (.xls) ที่รักษาโครงสร้างตารางและหัวกระดาษแบบฟอร์มครบถ้วน
+        function exportHistoricalToExcelXls() {
+            const { targetForm, equipment } = currentHistoricalData;
+            const htmlBody = getCurrentRenderedHistoricalHtml();
+            const fullExcelHtml = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office"
+                      xmlns:x="urn:schemas-microsoft-com:office:excel"
+                      xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body, table { font-family: 'Sarabun', Tahoma, sans-serif; font-size: 11pt; }
+                        .official-form-table th { background-color: #e2e8f0; font-weight: bold; border: 1px solid #000; }
+                        .official-form-table td { border: 1px solid #000; }
+                    </style>
+                </head>
+                <body>${htmlBody}</body>
+                </html>`;
+
+            const blob = new Blob(['\ufeff', fullExcelHtml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+            const filename = `${targetForm}_SN_${equipment.serial}_${getLocalTodayStr()}.xls`;
+            triggerDownloadBlob(blob, filename);
+        }
+
+        // 3. ดาวน์โหลดเป็นไฟล์ CSV (.csv) สำหรับเปิดใน Excel
+        function exportHistoricalToCsv() {
+            const { targetForm, equipment, records } = currentHistoricalData;
+            let csvRows = [];
+
+            const escCsv = val => `"${String(val ?? '').replace(/"/g, '""')}"`;
+
+            if (targetForm === 'FORM_1') {
+                csvRows.push(['บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ']);
+                csvRows.push(['ห้องปฏิบัติการตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด']);
+                csvRows.push(['ชื่อเครื่องมือ', equipment.name, 'ยี่ห้อ/รุ่น', equipment.model]);
+                csvRows.push(['หมายเลขเครื่องมือ', equipment.code || '-', 'หมายเลขเครื่อง (S/N)', `'${equipment.serial}`]);
+                csvRows.push([]);
+                csvRows.push(['ลำดับที่', 'ว/ด/ป (ครั้งนี้)', 'ว/ด/ป (ครั้งต่อไป)', 'บันทึกการสอบเทียบ / การตรวจสภาพเครื่องมือ', 'Correction/Error', 'Uncertainty', 'เกณฑ์การยอมรับ (Tolerance)', 'ผ่าน', 'ไม่ผ่าน', 'หน่วยงานให้บริการ', 'ผู้ดำเนินการ/ผู้รับผิดชอบ', 'หมายเหตุ']);
+                records.forEach(r => {
+                    const isPass = String(r.result).indexOf('ไม่ผ่าน') === -1;
+                    const opSup = [r.operator, r.supervisor].filter(Boolean).join(' / ');
+                    csvRows.push([r.seq, r.date, r.nextDate, r.description, r.correction, r.uncertainty, r.tolerance, isPass ? 'ผ่าน' : '', !isPass ? 'ไม่ผ่าน' : '', r.agency, opSup, r.notes]);
+                });
+            } else if (targetForm === 'FORM_2') {
+                csvRows.push(['บันทึกประวัติเครื่องมือ']);
+                csvRows.push(['ฝ่ายตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด']);
+                csvRows.push(['ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซมเครื่องมือ']);
+                csvRows.push(['Equipment Name', equipment.name, 'Brand/Model', equipment.model]);
+                csvRows.push(['Equipment Code', equipment.code || '-', 'Serial No.(S/N)', `'${equipment.serial}`]);
+                csvRows.push([]);
+                csvRows.push(['ลำดับที่', 'ว/ด/ป', 'รายการเสียหาย / ซ่อมแซม', 'ผู้ดำเนินการ', 'ผู้รับผิดชอบ', 'หมายเหตุ']);
+                records.forEach(r => {
+                    csvRows.push([r.seq, r.date, r.damageDetail, r.operator, r.supervisor, r.notes]);
+                });
+            } else {
+                const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
+                const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records[records.length - 1] || {});
+                csvRows.push(['Flue Gas Analyzer Verification']);
+                csvRows.push(['Calibrated Date', chosen.date || '', 'Calibrated Time', chosen.time || '']);
+                csvRows.push(['Model', chosen.eqModel || equipment.model, 'Serial No.', `'${equipment.serial}`]);
+                csvRows.push(['Temperature (C)', chosen.temp || '', 'Pressure (Mbar)', chosen.pressure || '', 'Humidity (%RH)', chosen.humidity || '']);
+                csvRows.push([]);
+                GAS_TYPES.forEach(g => {
+                    csvRows.push([g.label]);
+                    csvRows.push(['Standard Gas Value (PPM)', 'Flue Gas Analyzer Response (PPM)', 'Difference (PPM)', 'Calibration Error (%)']);
+                    const gRows = (chosen.gasData && chosen.gasData[g.key]) ? chosen.gasData[g.key] : [];
+                    for (let i = 0; i < 3; i++) {
+                        const gr = gRows[i] || {};
+                        csvRows.push([gr.std || '', gr.res || '', gr.diff || '', gr.err || '']);
+                    }
+                    csvRows.push([]);
+                });
+                csvRows.push(['Calibrated By', chosen.calibratedBy || '', 'Approve By', chosen.approvedBy || '']);
             }
-        };
 
-        clearSyncedHistoryBtn.addEventListener('click', () => {
-            if (confirm('ต้องการลบเฉพาะรายการที่ส่งข้อมูลขึ้น Google Sheet แล้ว ออกจากอุปกรณ์เพื่อประหยัดพื้นที่หรือไม่?')) {
-                const history = getHistory().filter(r => !r.synced);
-                saveHistory(history);
-                renderHistoryModal();
-            }
-        });
+            const csvString = csvRows.map(row => row.map(escCsv).join(',')).join('\r\n');
+            const blob = new Blob(['\ufeff', csvString], { type: 'text/csv;charset=utf-8;' });
+            const filename = `${targetForm}_SN_${equipment.serial}_${getLocalTodayStr()}.csv`;
+            triggerDownloadBlob(blob, filename);
+        }
 
-        openHistoryBtn.addEventListener('click', () => {
-            renderHistoryModal();
-            historyModal.style.display = 'flex';
-        });
+        // 4. ดาวน์โหลดเป็นไฟล์ Microsoft Word (.doc) ตามหน้าตาแบบฟอร์มจริง
+        function exportHistoricalToWord() {
+            const { targetForm, equipment } = currentHistoricalData;
+            const htmlBody = getCurrentRenderedHistoricalHtml();
+            const wordHtml = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office"
+                      xmlns:w="urn:schemas-microsoft-com:office:word"
+                      xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: 'Sarabun', 'TH SarabunPSK', sans-serif; font-size: 12pt; }
+                        table { border-collapse: collapse; width: 100%; }
+                        .official-form-table th, .official-form-table td { border: 1px solid #000000; padding: 4px 6px; font-size: 10pt; }
+                        .official-form-table th { background-color: #e2e8f0; font-weight: bold; text-align: center; }
+                    </style>
+                </head>
+                <body>${htmlBody}</body>
+                </html>`;
 
-        closeHistoryBtn.addEventListener('click', () => { historyModal.style.display = 'none'; });
-        historyDoneBtn.addEventListener('click', () => { historyModal.style.display = 'none'; });
+            const blob = new Blob(['\ufeff', wordHtml], { type: 'application/msword;charset=utf-8' });
+            const filename = `${targetForm}_SN_${equipment.serial}_${getLocalTodayStr()}.doc`;
+            triggerDownloadBlob(blob, filename);
+        }
 
-        // ==========================================
-        // 8. การควบคุม Modal แจ้งเตือน
-        // ==========================================
+        function triggerDownloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Modal แจ้งเตือน
         function showModal(type, title, message) {
             const modalTitle = document.getElementById('modalTitle');
             const modalMessage = document.getElementById('modalMessage');
@@ -914,11 +1718,8 @@
             modalMessage.textContent = message;
 
             if (type === 'success') {
-                modalIcon.className = 'mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 bg-green-100 text-green-600';
+                modalIcon.className = 'mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 bg-emerald-100 text-emerald-600';
                 modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-            } else if (type === 'offline' || type === 'info') {
-                modalIcon.className = 'mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 bg-amber-100 text-amber-600';
-                modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
             } else {
                 modalIcon.className = 'mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 bg-red-100 text-red-600';
                 modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
@@ -930,24 +1731,16 @@
 
         function closeModal() {
             messageModal.style.display = 'none';
-            modalPrintBtn.classList.add('hidden');
         }
 
         document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
         messageModal.addEventListener('click', (e) => { if (e.target === messageModal) closeModal(); });
-        historyModal.addEventListener('click', (e) => { if (e.target === historyModal) historyModal.style.display = 'none'; });
-        document.addEventListener('keydown', (e) => { 
-            if (e.key === 'Escape') {
-                closeModal(); 
-                historyModal.style.display = 'none';
-            } 
-        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-        // เริ่มต้นการทำงานเมื่อโหลดหน้า
-        setToday();
-        restoreTechnician();
-        updateNetworkStatus();
-        updatePendingBadges();
+        // เริ่มต้นระบบ
+        renderGasTables();
+        applyEquipmentPreset();
+        initDatesAndUsers();
     </script>
 </body>
 </html>
