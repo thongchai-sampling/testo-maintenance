@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือวัดประสิทธิภาพการเผาไหม้ Testo
- * ห้องปฏิบัติการตรวจวิเคราะห์ / ฝ่ายตรวจวิเคราะห์
+ * แผนกปฏิบัติการภาคสนาม
  * บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด
  * Backend: Google Apps Script (GAS) - รองรับการบันทึกและดึงข้อมูลย้อนหลังครบ 3 แบบฟอร์ม
  * ==============================================================================
@@ -185,12 +185,12 @@ function doPost(e) {
           subType: "verification",
           date: data.date,
           nextDate: data.nextDate || "",
-          description: "ทวนสอบค่าก๊าซมาตรฐาน (Flue Gas Verification: NO, NO2, SO2)",
+          description: "ทวนสอบค่าก๊าซมาตรฐาน (Flue Gas Verification: O2, CO, NO, NO2, SO2)",
           correction: "Max Error: " + (data.maxErrorPct || "-"),
           uncertainty: "-",
           tolerance: data.tolerancePct || "±5%",
           result: data.result || "ผ่าน",
-          agency: "ภายในห้องปฏิบัติการ (ETC)",
+          agency: "ภายในแผนกปฏิบัติการภาคสนาม (ETC)",
           operator: data.calibratedBy || "",
           supervisor: data.approvedBy || "",
           notes: "Temp: " + (data.temp || "-") + "°C, P: " + (data.pressure || "-") + " Mbar, RH: " + (data.humidity || "-") + "%"
@@ -331,11 +331,11 @@ function queryHistoricalData(params) {
       if (startDt && recDate3 && recDate3 < startDt) continue;
       if (endDt && recDate3 && recDate3 > endDt) continue;
 
-      var parsedGas = { NO: [], NO2: [], SO2: [] };
+      var parsedGas = { O2: [], CO: [], NO: [], NO2: [], SO2: [] };
       try {
         parsedGas = JSON.parse(r3[13] || "{}");
       } catch (err) {
-        parsedGas = { NO: [], NO2: [], SO2: [] };
+        parsedGas = { O2: [], CO: [], NO: [], NO2: [], SO2: [] };
       }
 
       records.push({
@@ -400,7 +400,7 @@ function recordForm1Data(data, eq) {
     data.uncertainty || "-",
     data.tolerance || "-",
     data.result || "ผ่าน",
-    data.agency || "ภายในห้องปฏิบัติการ (ETC)",
+    data.agency || "ภายในแผนกปฏิบัติการภาคสนาม (ETC)",
     data.operator || "",
     data.supervisor || "",
     data.notes || ""
@@ -574,7 +574,7 @@ function populateForm1BySerial(targetSerial, startDateVal, endDateVal) {
   // หัวกระดาษ
   sheet.getRange("A1:L1").merge().setValue("บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ")
        .setFontSize(14).setFontWeight("bold").setHorizontalAlignment("center");
-  sheet.getRange("A2:L2").merge().setValue("ห้องปฏิบัติการตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด")
+  sheet.getRange("A2:L2").merge().setValue("แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด")
        .setFontSize(11).setFontWeight("bold").setHorizontalAlignment("center");
 
   sheet.getRange("A3:B3").merge().setValue("ชื่อเครื่องมือ").setFontWeight("bold");
@@ -697,7 +697,7 @@ function populateForm2BySerial(targetSerial, startDateVal, endDateVal) {
 
   sheet.getRange("A1:F1").merge().setValue("บันทึกประวัติเครื่องมือ")
        .setFontSize(14).setFontWeight("bold").setHorizontalAlignment("center");
-  sheet.getRange("A2:F2").merge().setValue("ฝ่ายตรวจวิเคราะห์  บริษัท  อีสเทิร์น ไทย คอนซัลติ้ง  1992  จำกัด")
+  sheet.getRange("A2:F2").merge().setValue("แผนกปฏิบัติการภาคสนาม  บริษัท  อีสเทิร์น ไทย คอนซัลติ้ง  1992  จำกัด")
        .setFontSize(11).setFontWeight("bold").setHorizontalAlignment("center");
   sheet.getRange("A3:F3").merge().setValue("ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซมเครื่องมือ")
        .setFontSize(11).setFontWeight("bold").setHorizontalAlignment("center");
@@ -805,7 +805,7 @@ function populateForm3BySerialAndRecord(targetSerial, selectedRecordLabel) {
     humidity: "-",
     calibratedBy: "........................................",
     approvedBy: "........................................",
-    gasData: { NO: [], NO2: [], SO2: [] }
+    gasData: { O2: [], CO: [], NO: [], NO2: [], SO2: [] }
   };
 
   renderForm3Sheet(payload, eqInfo, recordOptions, selectedRecordLabel || "ล่าสุด");
@@ -858,9 +858,11 @@ function renderForm3Sheet(data, eq, recordOptions, currentLabel) {
   sheet.getRange("A4:D4").merge().setValue(envText).setFontWeight("bold");
 
   var gasList = [
-    { key: "NO", title: "NO Calibrated Data", startRow: 6 },
-    { key: "NO2", title: "NO2 Calibrated Data", startRow: 12 },
-    { key: "SO2", title: "SO2 Calibrated Data", startRow: 18 }
+    { key: "O2", title: "O2 Calibrated Data", startRow: 6 },
+    { key: "CO", title: "CO Calibrated Data", startRow: 12 },
+    { key: "NO", title: "NO Calibrated Data", startRow: 18 },
+    { key: "NO2", title: "NO2 Calibrated Data", startRow: 24 },
+    { key: "SO2", title: "SO2 Calibrated Data", startRow: 30 }
   ];
 
   var gasObj = data.gasData || {};
@@ -872,10 +874,11 @@ function renderForm3Sheet(data, eq, recordOptions, currentLabel) {
     sheet.getRange(rIdx, 1, 1, 4).merge().setValue(item.title)
          .setFontWeight("bold").setBackground("#f1f5f9");
 
+    var unitLabel = item.key === "O2" ? "PPM / %" : "PPM";
     var colHeaders = [
-      "Standard Gas Value (PPM)",
-      "Flue Gas Analyzer Response (PPM)",
-      "Difference (PPM)",
+      "Standard Gas Value (" + unitLabel + ")",
+      "Flue Gas Analyzer Response (" + unitLabel + ")",
+      "Difference (" + unitLabel + ")",
       "Calibration Error (%)"
     ];
     sheet.getRange(rIdx + 1, 1, 1, 4).setValues([colHeaders])
@@ -901,14 +904,14 @@ function renderForm3Sheet(data, eq, recordOptions, currentLabel) {
          .setBorder(true, true, true, true, true, true);
   }
 
-  sheet.getRange("A24:B24").merge().setValue("Calibrated By .......................................................")
+  sheet.getRange("A36:B36").merge().setValue("Calibrated By .......................................................")
        .setHorizontalAlignment("center");
-  sheet.getRange("C24:D24").merge().setValue("Approve By .......................................................")
+  sheet.getRange("C36:D36").merge().setValue("Approve By .......................................................")
        .setHorizontalAlignment("center");
 
-  sheet.getRange("A25:B25").merge().setValue("( " + (data.calibratedBy || "........................................") + " )")
+  sheet.getRange("A37:B37").merge().setValue("( " + (data.calibratedBy || "........................................") + " )")
        .setHorizontalAlignment("center");
-  sheet.getRange("C25:D25").merge().setValue("( " + (data.approvedBy || "........................................") + " )")
+  sheet.getRange("C37:D37").merge().setValue("( " + (data.approvedBy || "........................................") + " )")
        .setHorizontalAlignment("center");
 
   sheet.setColumnWidth(1, 200);

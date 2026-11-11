@@ -79,7 +79,7 @@
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                 <div>
                     <span class="inline-block px-3 py-0.5 text-xs font-semibold bg-blue-900/60 border border-blue-400/30 rounded-full text-blue-100 mb-2">
-                        ห้องปฏิบัติการตรวจวิเคราะห์ / ฝ่ายตรวจวิเคราะห์
+                        แผนกปฏิบัติการภาคสนาม
                     </span>
                     <h1 class="text-xl md:text-2xl font-bold tracking-wide">
                         ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ
@@ -133,28 +133,31 @@
                             ชื่อเครื่องมือ (Equipment Name) <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="eqName" value="Flue Gas Analyzer" required
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                               placeholder="เช่น Flue Gas Analyzer"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white placeholder:text-slate-400 placeholder:italic">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqModel">
                             ยี่ห้อ / รุ่น (Brand / Model) <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="eqModel" value="Testo 327-1" required
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                               placeholder="เช่น Testo 350XL หรือ Testo 327-1"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white placeholder:text-slate-400 placeholder:italic">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqSerial">
                             หมายเลขเครื่อง (S/N) <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="eqSerial" value="01563443" required
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white font-mono">
+                               placeholder="เช่น 01563443 หรือ 60378478"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white font-mono placeholder:text-slate-400 placeholder:italic">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqCode">
                             หมายเลขเครื่องมือ (Equipment Code)
                         </label>
-                        <input type="text" id="eqCode" placeholder="รหัสเครื่องมือ (ถ้ามี)"
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                        <input type="text" id="eqCode" placeholder="เช่น EQ-ETC-ENV-01 (ระบุรหัสถ้ามี)"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white placeholder:text-slate-400 placeholder:italic">
                     </div>
                 </div>
             </div>
@@ -218,7 +221,7 @@
                 <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                         <h3 class="font-bold text-blue-900">แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ</h3>
-                        <p class="text-xs text-blue-700">ห้องปฏิบัติการตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</p>
+                        <p class="text-xs text-blue-700">แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <label class="text-xs font-semibold text-blue-900">ประเภทงาน:</label>
@@ -313,7 +316,8 @@
                         </label>
                         <input type="text" id="f1_description" required
                                value="ตรวจสภาพและบำรุงรักษาเครื่องมือประจำสัปดาห์ (กรองฝุ่น, ปั๊ม, แบตเตอรี่, ความสะอาด, เซ็นเซอร์)"
-                               class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                               placeholder="เช่น ตรวจสภาพและบำรุงรักษาประจำสัปดาห์ หรือ สอบเทียบเซ็นเซอร์ก๊าซ"
+                               class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -321,22 +325,22 @@
                             <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_correction">
                                 Correction / Error
                             </label>
-                            <input type="text" id="f1_correction" value="-" placeholder="เช่น - หรือ 0.2%"
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="text" id="f1_correction" value="-" placeholder="เช่น - หรือ +0.20 หรือระบุค่า Correction"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_uncertainty">
                                 Uncertainty
                             </label>
-                            <input type="text" id="f1_uncertainty" value="-" placeholder="เช่น - หรือ ±1.5 PPM"
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="text" id="f1_uncertainty" value="-" placeholder="เช่น - หรือ ±1.5 PPM หรือระบุค่าความไม่แน่นอน"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_tolerance">
                                 เกณฑ์การยอมรับ (Tolerance)
                             </label>
-                            <input type="text" id="f1_tolerance" value="สภาพพร้อมใช้งาน" placeholder="เช่น ±5% หรือ พร้อมใช้งาน"
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="text" id="f1_tolerance" value="สภาพพร้อมใช้งาน" placeholder="เช่น สภาพพร้อมใช้งาน หรือ ±5% หรือเกณฑ์ที่กำหนด"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                     </div>
 
@@ -360,8 +364,8 @@
                             <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_agency">
                                 หน่วยงานให้บริการ
                             </label>
-                            <input type="text" id="f1_agency" value="ภายในห้องปฏิบัติการ (ETC)" placeholder="ระบุหน่วยงานให้บริการ"
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="text" id="f1_agency" value="ภายในแผนกปฏิบัติการภาคสนาม (ETC)" placeholder="เช่น ภายในแผนกปฏิบัติการภาคสนาม (ETC) หรือ บจก. เทสโต (ประเทศไทย)"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                     </div>
 
@@ -370,15 +374,15 @@
                             <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_operator">
                                 ผู้ดำเนินการ <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="f1_operator" required placeholder="ระบุชื่อผู้ดำเนินการ"
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="text" id="f1_operator" required placeholder="เช่น นายสมชาย ใจดี (ระบุชื่อผู้ดำเนินการ)"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_supervisor">
                                 ผู้รับผิดชอบ
                             </label>
-                            <input type="text" id="f1_supervisor" placeholder="ระบุชื่อผู้รับผิดชอบ"
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="text" id="f1_supervisor" placeholder="เช่น นายสมศักดิ์ รักงาน (ระบุชื่อผู้รับผิดชอบ/หัวหน้างาน)"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                     </div>
 
@@ -386,8 +390,8 @@
                         <label class="block text-xs font-semibold text-slate-600 mb-1" for="f1_notes">
                             หมายเหตุ / รายละเอียดเพิ่มเติม
                         </label>
-                        <textarea id="f1_notes" rows="2" placeholder="ระบุหมายเหตุ หรือรายละเอียดปัญหาที่พบ..."
-                                  class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                        <textarea id="f1_notes" rows="2" placeholder="เช่น อุปกรณ์พร้อมใช้งานปกติ หรือระบุข้อสังเกตเพิ่มเติม (ถ้ามี)..."
+                                  class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic"></textarea>
                     </div>
 
                     <div id="f1_autoRepairBox" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-4 space-y-2">
@@ -406,8 +410,8 @@
                             <label class="block text-xs font-semibold text-amber-900 mb-1" for="f1_repairDetail">
                                 รายการเสียหาย / ความผิดปกติ / การซ่อมแซม (สำหรับบันทึกในแบบฟอร์มที่ 2)
                             </label>
-                            <input type="text" id="f1_repairDetail" placeholder="ระบุอาการผิดปกติหรือการแก้ไข..."
-                                   class="w-full px-3 py-2 text-sm border border-amber-300 rounded-lg bg-white outline-none">
+                            <input type="text" id="f1_repairDetail" placeholder="เช่น เซ็นเซอร์ผิดปกติ ส่งตรวจสอบและสอบเทียบ หรือ เปลี่ยนชุดไส้กรอง..."
+                                   class="w-full px-3 py-2 text-sm border border-amber-300 rounded-lg bg-white outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                     </div>
                 </div>
@@ -424,7 +428,7 @@
             <form id="formTab2" class="hidden space-y-5 border-t border-slate-200 pt-5" novalidate>
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
                     <h3 class="font-bold text-amber-900">แบบฟอร์มที่ 2: บันทึกประวัติเครื่องมือ (Equipment History)</h3>
-                    <p class="text-xs text-amber-700">ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซมเครื่องมือ — ฝ่ายตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</p>
+                    <p class="text-xs text-amber-700">ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซมเครื่องมือ — แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -439,8 +443,8 @@
                         <label class="block text-sm font-semibold text-slate-700 mb-1" for="f2_notes">
                             หมายเหตุ (Remarks)
                         </label>
-                        <input type="text" id="f2_notes" placeholder="เช่น ส่งซ่อมศูนย์ / เปลี่ยนอะไหล่เรียบร้อย"
-                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="text" id="f2_notes" placeholder="เช่น ส่งซ่อมศูนย์บริการ Testo / เปลี่ยนอะไหล่เรียบร้อย / อยู่ระหว่างรออะไหล่"
+                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                     </div>
                 </div>
 
@@ -449,8 +453,8 @@
                         รายการเสียหาย / ความผิดปกติ / การซ่อมแซม <span class="text-red-500">*</span>
                     </label>
                     <textarea id="f2_damageDetail" rows="4" required
-                              placeholder="ระบุรายละเอียดความเสียหาย อาการผิดปกติ หรือการซ่อมแซมแก้ไข..."
-                              class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                              placeholder="อธิบายรายการความเสียหาย ความผิดปกติ หรือการซ่อมแซมอย่างละเอียด เช่น เซ็นเซอร์ NO เสื่อมสภาพ ส่งเปลี่ยนเซ็นเซอร์ใหม่และปรับจูน หรือ ปั๊มดูดก๊าซมีเสียงดังผิดปกติ..."
+                              class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic"></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -458,15 +462,15 @@
                         <label class="block text-sm font-semibold text-slate-700 mb-1" for="f2_operator">
                             ผู้ดำเนินการ <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="f2_operator" required placeholder="ระบุชื่อผู้ดำเนินการ"
-                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="text" id="f2_operator" required placeholder="เช่น นายสมชาย ใจดี (ระบุชื่อผู้ดำเนินการ/ผู้ส่งซ่อม)"
+                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1" for="f2_supervisor">
                             ผู้รับผิดชอบ
                         </label>
-                        <input type="text" id="f2_supervisor" placeholder="ระบุชื่อผู้รับผิดชอบ"
-                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="text" id="f2_supervisor" placeholder="เช่น นายสมศักดิ์ รักงาน (ระบุชื่อผู้รับผิดชอบ/ผู้อนุมัติ)"
+                               class="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                     </div>
                 </div>
 
@@ -483,7 +487,7 @@
                 <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <h3 class="font-bold text-indigo-950">แบบฟอร์มที่ 3: Flue Gas Analyzer Verification</h3>
-                        <p class="text-xs text-indigo-700">ทวนสอบค่าก๊าซมาตรฐาน NO, NO2, SO2 (คำนวณ Difference และ Calibration Error % อัตโนมัติ)</p>
+                        <p class="text-xs text-indigo-700">ทวนสอบค่าก๊าซมาตรฐาน O2, CO, NO, NO2, SO2 (คำนวณ Difference และ Calibration Error % อัตโนมัติ)</p>
                     </div>
                     <button type="button" onclick="printCurrentForm3Input()"
                             class="self-start sm:self-auto flex items-center gap-1.5 text-xs font-semibold bg-white hover:bg-indigo-100 text-indigo-800 border border-indigo-300 px-3 py-2 rounded-lg shadow-sm transition">
@@ -518,7 +522,8 @@
                             เกณฑ์ยอมรับ Error (± %)
                         </label>
                         <input type="number" id="f3_tolerancePct" value="5" step="0.1" min="0"
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                               placeholder="เช่น 5 (เกณฑ์ยอมรับ ±%)"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                     </div>
                 </div>
 
@@ -531,22 +536,22 @@
                             <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_temp">
                                 Temperature (°C)
                             </label>
-                            <input type="number" id="f3_temp" step="0.1" placeholder="เช่น 25.0"
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="number" id="f3_temp" step="0.1" placeholder="เช่น 25.0 (°C)"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_pressure">
                                 Pressure (Mbar)
                             </label>
-                            <input type="number" id="f3_pressure" step="0.1" placeholder="เช่น 1013.0"
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="number" id="f3_pressure" step="0.1" placeholder="เช่น 1013.2 (Mbar)"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_humidity">
                                 Humidity (%RH)
                             </label>
-                            <input type="number" id="f3_humidity" step="0.1" placeholder="เช่น 55.0"
-                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="number" id="f3_humidity" step="0.1" placeholder="เช่น 55.0 (%RH)"
+                                   class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                         </div>
                     </div>
                 </div>
@@ -558,15 +563,15 @@
                         <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_calibratedBy">
                             Calibrated By (ผู้ทวนสอบ) <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="f3_calibratedBy" required placeholder="ระบุชื่อผู้ทวนสอบ"
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="text" id="f3_calibratedBy" required placeholder="เช่น นายสมชาย ใจดี (ผู้ทวนสอบ)"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_approvedBy">
                             Approve By (ผู้อนุมัติ / ผู้รับผิดชอบ)
                         </label>
-                        <input type="text" id="f3_approvedBy" placeholder="ระบุชื่อผู้อนุมัติ"
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="text" id="f3_approvedBy" placeholder="เช่น นายสมศักดิ์ รักงาน (ผู้อนุมัติ)"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-400 placeholder:italic">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_overallResult">
@@ -750,9 +755,11 @@
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnP_bgn93tKB2FzcpJIH_9vAT7a6Sz8YHkVtB6EiNaYuAT4z292QU74jkiMLf2Rq9E/exec';
 
         const GAS_TYPES = [
-            { key: 'NO', label: 'NO Calibrated Data' },
-            { key: 'NO2', label: 'NO2 Calibrated Data' },
-            { key: 'SO2', label: 'SO2 Calibrated Data' }
+            { key: 'O2', label: 'O2 Calibrated Data', unit: 'PPM / %' },
+            { key: 'CO', label: 'CO Calibrated Data', unit: 'PPM' },
+            { key: 'NO', label: 'NO Calibrated Data', unit: 'PPM' },
+            { key: 'NO2', label: 'NO2 Calibrated Data', unit: 'PPM' },
+            { key: 'SO2', label: 'SO2 Calibrated Data', unit: 'PPM' }
         ];
 
         const equipmentPreset = document.getElementById('equipmentPreset');
@@ -769,13 +776,21 @@
             records: []
         };
 
-        // 1. สร้างตารางกรอกค่าก๊าซ NO, NO2, SO2 ในแท็บที่ 3
+        // 1. สร้างตารางกรอกค่าก๊าซ O2, CO, NO, NO2, SO2 ในแท็บที่ 3
         function renderGasTables() {
             const container = document.getElementById('gasTablesContainer');
-            container.innerHTML = GAS_TYPES.map(gas => `
+            container.innerHTML = GAS_TYPES.map(gas => {
+                const isO2 = gas.key === 'O2';
+                const unitText = isO2 ? 'PPM / %' : 'PPM';
+                const stdPlaceholder = isO2 ? 'เช่น 20.9% หรือ 0.0' : 'เช่น 100.0 PPM';
+                const resPlaceholder = isO2 ? 'เช่น 20.8% หรือ 0.0' : 'เช่น 99.5 PPM';
+                return `
                 <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                     <div class="bg-slate-800 text-white px-4 py-2 text-sm font-bold flex items-center justify-between">
-                        <span>${gas.label}</span>
+                        <span class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full ${isO2 ? 'bg-emerald-400' : 'bg-cyan-400'}"></span>
+                            ${gas.label}
+                        </span>
                         <span class="text-xs font-normal text-slate-300">Difference = Response - Standard | Error (%) = ((Response - Standard) / Standard) × 100</span>
                     </div>
                     <div class="overflow-x-auto">
@@ -783,9 +798,9 @@
                             <thead>
                                 <tr class="bg-slate-100 text-slate-700 text-xs border-b border-slate-200">
                                     <th class="py-2.5 px-3 text-center w-12">#</th>
-                                    <th class="py-2.5 px-3">Standard Gas Value (PPM)</th>
-                                    <th class="py-2.5 px-3">Flue Gas Analyzer Response (PPM)</th>
-                                    <th class="py-2.5 px-3 bg-slate-50">Difference (PPM)</th>
+                                    <th class="py-2.5 px-3">Standard Gas Value (${unitText})</th>
+                                    <th class="py-2.5 px-3">Flue Gas Analyzer Response (${unitText})</th>
+                                    <th class="py-2.5 px-3 bg-slate-50">Difference (${unitText})</th>
                                     <th class="py-2.5 px-3 bg-slate-50">Calibration Error (%)</th>
                                 </tr>
                             </thead>
@@ -796,24 +811,24 @@
                                         <td class="py-2 px-3">
                                             <input type="number" step="any" id="${gas.key}_std_${rowIdx}"
                                                    oninput="recalculateGasTables()"
-                                                   placeholder="ค่าก๊าซมาตรฐาน"
-                                                   class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                                   placeholder="${stdPlaceholder}"
+                                                   class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 font-mono placeholder:text-slate-400 placeholder:italic">
                                         </td>
                                         <td class="py-2 px-3">
                                             <input type="number" step="any" id="${gas.key}_res_${rowIdx}"
                                                    oninput="recalculateGasTables()"
-                                                   placeholder="ค่าที่เครื่องอ่านได้"
-                                                   class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                                   placeholder="${resPlaceholder}"
+                                                   class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 font-mono placeholder:text-slate-400 placeholder:italic">
                                         </td>
                                         <td class="py-2 px-3 bg-slate-50">
                                             <input type="text" id="${gas.key}_diff_${rowIdx}" readonly tabindex="-1"
-                                                   placeholder="-"
-                                                   class="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center outline-none">
+                                                   placeholder="คำนวณอัตโนมัติ"
+                                                   class="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center outline-none placeholder:text-slate-400 placeholder:italic">
                                         </td>
                                         <td class="py-2 px-3 bg-slate-50">
                                             <input type="text" id="${gas.key}_err_${rowIdx}" readonly tabindex="-1"
-                                                   placeholder="-"
-                                                   class="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center font-semibold outline-none">
+                                                   placeholder="คำนวณอัตโนมัติ"
+                                                   class="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center font-semibold outline-none placeholder:text-slate-400 placeholder:italic">
                                         </td>
                                     </tr>
                                 `).join('')}
@@ -821,7 +836,8 @@
                         </table>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function recalculateGasTables() {
@@ -1415,7 +1431,7 @@
             return `
                 <div style="font-family:'Sarabun', sans-serif; color:#000;">
                     <div style="text-align:center; font-size:16px; font-weight:bold;">บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ</div>
-                    <div style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:10px;">ห้องปฏิบัติการตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>
+                    <div style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:10px;">แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>
                     <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:8px;">
                         <tr>
                             <td style="padding:3px 0; width:50%;"><b>ชื่อเครื่องมือ :</b> ${escapeHtml(eq.name || 'Flue Gas Analyzer')}</td>
@@ -1481,7 +1497,7 @@
             return `
                 <div style="font-family:'Sarabun', sans-serif; color:#000;">
                     <div style="text-align:center; font-size:16px; font-weight:bold;">บันทึกประวัติเครื่องมือ</div>
-                    <div style="text-align:center; font-size:13px; font-weight:bold;">ฝ่ายตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>
+                    <div style="text-align:center; font-size:13px; font-weight:bold;">แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>
                     <div style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:10px;">ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซมเครื่องมือ</div>
                     <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:8px;">
                         <tr>
@@ -1521,11 +1537,12 @@
                 humidity: '..........',
                 calibratedBy: '........................................',
                 approvedBy: '........................................',
-                gasData: { NO: [], NO2: [], SO2: [] }
+                gasData: { O2: [], CO: [], NO: [], NO2: [], SO2: [] }
             };
 
             const gasTablesHtml = GAS_TYPES.map(gas => {
                 const rows = (data.gasData && data.gasData[gas.key]) ? data.gasData[gas.key] : [];
+                const unitLabel = gas.key === 'O2' ? 'PPM / %' : 'PPM';
                 let trs = '';
                 for (let i = 0; i < 3; i++) {
                     const r = rows[i] || {};
@@ -1543,9 +1560,9 @@
                         <table class="official-form-table" border="1" cellspacing="0" cellpadding="4">
                             <thead>
                                 <tr>
-                                    <th style="width:25%;">Standard Gas Value (PPM)</th>
-                                    <th style="width:25%;">Flue Gas Analyzer Response (PPM)</th>
-                                    <th style="width:25%;">Difference (PPM)</th>
+                                    <th style="width:25%;">Standard Gas Value (${unitLabel})</th>
+                                    <th style="width:25%;">Flue Gas Analyzer Response (${unitLabel})</th>
+                                    <th style="width:25%;">Difference (${unitLabel})</th>
                                     <th style="width:25%;">Calibration Error (%)</th>
                                 </tr>
                             </thead>
@@ -1671,7 +1688,7 @@
 
             if (targetForm === 'FORM_1') {
                 csvRows.push(['บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ']);
-                csvRows.push(['ห้องปฏิบัติการตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด']);
+                csvRows.push(['แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด']);
                 csvRows.push(['ชื่อเครื่องมือ', equipment.name, 'ยี่ห้อ/รุ่น', equipment.model]);
                 csvRows.push(['หมายเลขเครื่องมือ', equipment.code || '-', 'หมายเลขเครื่อง (S/N)', `'${equipment.serial}`]);
                 csvRows.push([]);
@@ -1683,7 +1700,7 @@
                 });
             } else if (targetForm === 'FORM_2') {
                 csvRows.push(['บันทึกประวัติเครื่องมือ']);
-                csvRows.push(['ฝ่ายตรวจวิเคราะห์ บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด']);
+                csvRows.push(['แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด']);
                 csvRows.push(['ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซมเครื่องมือ']);
                 csvRows.push(['Equipment Name', equipment.name, 'Brand/Model', equipment.model]);
                 csvRows.push(['Equipment Code', equipment.code || '-', 'Serial No.(S/N)', `'${equipment.serial}`]);
@@ -1701,8 +1718,9 @@
                 csvRows.push(['Temperature (C)', chosen.temp || '', 'Pressure (Mbar)', chosen.pressure || '', 'Humidity (%RH)', chosen.humidity || '']);
                 csvRows.push([]);
                 GAS_TYPES.forEach(g => {
+                    const u = g.key === 'O2' ? 'PPM / %' : 'PPM';
                     csvRows.push([g.label]);
-                    csvRows.push(['Standard Gas Value (PPM)', 'Flue Gas Analyzer Response (PPM)', 'Difference (PPM)', 'Calibration Error (%)']);
+                    csvRows.push([`Standard Gas Value (${u})`, `Flue Gas Analyzer Response (${u})`, `Difference (${u})`, 'Calibration Error (%)']);
                     const gRows = (chosen.gasData && chosen.gasData[g.key]) ? chosen.gasData[g.key] : [];
                     for (let i = 0; i < 3; i++) {
                         const gr = gRows[i] || {};
