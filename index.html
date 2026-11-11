@@ -1307,6 +1307,20 @@
                     throw new Error(res.message || 'ไม่สามารถดึงข้อมูลได้');
                 }
 
+                // ตรวจสอบว่า Google Apps Script ส่งฟิลด์ records กลับมาหรือไม่
+                // หากไม่มี records แสดงว่า Apps Script บนคลาวด์ยังเป็นโค้ดเวอร์ชันเก่าที่ยังไม่รู้จัก action: 'QUERY_HISTORY'
+                if (!res.records || !Array.isArray(res.records)) {
+                    throw new Error('Google Apps Script บน Google Drive ยังเป็นโค้ดเวอร์ชันเก่า กรุณานำโค้ด Code.gs ล่าสุดไปวางใน Apps Script แล้วกด Manage deployments > New version');
+                }
+
+                // ป้องกันกรณี equipment เป็น undefined หรือ null
+                res.equipment = res.equipment || {
+                    name: 'Flue Gas Analyzer',
+                    model: '',
+                    serial: serial,
+                    code: ''
+                };
+
                 // เติมรหัสเครื่องมือจาก localStorage หากใน Sheet ยังว่าง
                 const localCode = localStorage.getItem(`etc_eqcode_${serial}`) || '';
                 if (!res.equipment.code && localCode) {
@@ -1334,9 +1348,22 @@
                 console.error('Query Error:', err);
                 statusText.textContent = '⚠️ ดึงข้อมูลไม่สำเร็จ (ตรวจสอบการอัปเดต Deploy ของ Apps Script)';
                 previewEl.innerHTML = `
-                    <div class="text-center py-10 text-red-600 text-sm space-y-2">
-                        <div class="font-bold">ไม่สามารถดึงข้อมูลย้อนหลังได้: ${escapeHtml(err.message)}</div>
-                        <div class="text-xs text-slate-600">หมายเหตุ: กรุณาตรวจสอบว่าได้คัดลอกโค้ด <code>Code.gs</code> เวอร์ชันล่าสุดไปวางใน Google Apps Script และกด <b>Manage deployments &gt; New version</b> เรียบร้อยแล้ว</div>
+                    <div class="text-center py-10 text-red-600 text-sm space-y-3 max-w-xl mx-auto">
+                        <div class="font-bold text-base">⚠️ เกิดข้อผิดพลาดในการดึงข้อมูล</div>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-red-800 text-xs text-left">
+                            <b>รายละเอียด:</b> ${escapeHtml(err.message)}
+                        </div>
+                        <div class="text-xs text-slate-700 bg-amber-50 border border-amber-200 rounded-lg p-3 text-left space-y-1">
+                            <div class="font-bold text-amber-900">📌 วิธีแก้ไข (Deploy Apps Script เวอร์ชันใหม่):</div>
+                            <ol class="list-decimal pl-4 space-y-1">
+                                <li>เปิด Google Sheet ของท่าน แล้วไปที่เมนู <b>ส่วนขยาย (Extensions) &gt; Apps Script</b></li>
+                                <li>คัดลอกโค้ดทั้งหมดจากไฟล์ <code>Code.gs</code> ไปวางแทนที่โค้ดเดิม แล้วกดปุ่ม <b>บันทึก (Ctrl+S)</b></li>
+                                <li>คลิกปุ่ม <b>การทำให้ใช้งานได้ (Deploy) &gt; จัดการการทำให้ใช้งานได้ (Manage deployments)</b></li>
+                                <li>คลิกที่ไอคอน <b>ดินสอ (แก้ไข / Edit)</b> ที่มุมขวาบน</li>
+                                <li>ในช่อง <b>เวอร์ชัน (Version)</b> ให้เลือก <b>"เวอร์ชันใหม่" (New version)</b></li>
+                                <li>คลิกปุ่ม <b>ทำให้ใช้งานได้ (Deploy)</b> สีน้ำเงิน เพื่อให้ระบบเริ่มใช้โค้ดชุดใหม่ทันที</li>
+                            </ol>
+                        </div>
                     </div>`;
             } finally {
                 btn.disabled = false;
@@ -1567,13 +1594,19 @@
         }
 
         function getCurrentRenderedHistoricalHtml() {
-            const { targetForm, equipment, records } = currentHistoricalData;
+            if (!currentHistoricalData || !currentHistoricalData.records) {
+                return '<div style="text-align:center; padding:30px; color:#64748b;">ไม่มีข้อมูลที่จะแสดงผล</div>';
+            }
+            const targetForm = currentHistoricalData.targetForm || 'FORM_1';
+            const equipment = currentHistoricalData.equipment || { name: 'Flue Gas Analyzer', model: '', serial: '', code: '' };
+            const records = currentHistoricalData.records || [];
             if (targetForm === 'FORM_1') {
                 return buildOfficialForm1Html(records, equipment);
             } else if (targetForm === 'FORM_2') {
                 return buildOfficialForm2Html(records, equipment);
             } else {
-                const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
+                const selectEl = document.getElementById('q_form3RecordSelect');
+                const idx = selectEl ? parseInt(selectEl.value, 10) : NaN;
                 const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : records[records.length - 1];
                 return buildOfficialForm3Html(chosen, equipment);
             }
@@ -1586,6 +1619,10 @@
 
         // 1. สั่งพิมพ์ / บันทึกเป็น PDF ตามหน้าตาแบบฟอร์มมาตรฐาน
         function printHistoricalForm() {
+            if (!currentHistoricalData || !currentHistoricalData.records) {
+                alert('กรุณากดดึงข้อมูลย้อนหลังให้สำเร็จก่อนสั่งพิมพ์');
+                return;
+            }
             const printArea = document.getElementById('universalPrintArea');
             printArea.innerHTML = getCurrentRenderedHistoricalHtml();
             window.print();
@@ -1593,7 +1630,12 @@
 
         // 2. ดาวน์โหลดเป็นไฟล์ Excel (.xls) ที่รักษาโครงสร้างตารางและหัวกระดาษแบบฟอร์มครบถ้วน
         function exportHistoricalToExcelXls() {
-            const { targetForm, equipment } = currentHistoricalData;
+            if (!currentHistoricalData || !currentHistoricalData.records) {
+                alert('กรุณากดดึงข้อมูลย้อนหลังให้สำเร็จก่อนดาวน์โหลดไฟล์');
+                return;
+            }
+            const targetForm = currentHistoricalData.targetForm || 'FORM_REPORT';
+            const equipment = currentHistoricalData.equipment || { serial: 'UNKNOWN' };
             const htmlBody = getCurrentRenderedHistoricalHtml();
             const fullExcelHtml = `
                 <html xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -1617,8 +1659,13 @@
 
         // 3. ดาวน์โหลดเป็นไฟล์ CSV (.csv) สำหรับเปิดใน Excel
         function exportHistoricalToCsv() {
-            const { targetForm, equipment, records } = currentHistoricalData;
-            let csvRows = [];
+            if (!currentHistoricalData || !currentHistoricalData.records) {
+                alert('กรุณากดดึงข้อมูลย้อนหลังให้สำเร็จก่อนดาวน์โหลดไฟล์');
+                return;
+            }
+            const targetForm = currentHistoricalData.targetForm || 'FORM_REPORT';
+            const equipment = currentHistoricalData.equipment || { name: 'Flue Gas Analyzer', model: '', serial: '', code: '' };
+            const records = currentHistoricalData.records || [];
 
             const escCsv = val => `"${String(val ?? '').replace(/"/g, '""')}"`;
 
@@ -1674,7 +1721,12 @@
 
         // 4. ดาวน์โหลดเป็นไฟล์ Microsoft Word (.doc) ตามหน้าตาแบบฟอร์มจริง
         function exportHistoricalToWord() {
-            const { targetForm, equipment } = currentHistoricalData;
+            if (!currentHistoricalData || !currentHistoricalData.records) {
+                alert('กรุณากดดึงข้อมูลย้อนหลังให้สำเร็จก่อนดาวน์โหลดไฟล์');
+                return;
+            }
+            const targetForm = currentHistoricalData.targetForm || 'FORM_REPORT';
+            const equipment = currentHistoricalData.equipment || { serial: 'UNKNOWN' };
             const htmlBody = getCurrentRenderedHistoricalHtml();
             const wordHtml = `
                 <html xmlns:o="urn:schemas-microsoft-com:office:office"
