@@ -21,10 +21,11 @@ const CONFIG = {
   FORM3_TEMPLATE_SHEET: "Form3_Gas_Verification",
 
   // อีเมลผู้รับรายงานสรุปประจำสัปดาห์ (คั่นด้วย , หากมีหลายอีเมล)
-  EMAIL_RECIPIENTS: "your-email@example.com",
+  EMAIL_RECIPIENTS: "thongchai_b@etc1992.com",
   REPORT_LOOKBACK_DAYS: 7,
   TRIGGER_DAY_OF_WEEK: ScriptApp.WeekDay.MONDAY,
-  TRIGGER_HOUR: 8
+  TRIGGER_HOUR: 8,
+  WEBAPP_URL: "https://thongchai-sampling.github.io/testo-maintenance/"
 };
 
 // ทะเบียนเครื่องมือเริ่มต้นของบริษัท (Master Data 6 เครื่อง)
@@ -1030,103 +1031,434 @@ function formatCellTime(val) {
 }
 
 // =============================================================================
-// ส่วนรายงาน PDF สรุปประจำสัปดาห์ทางอีเมล (Weekly Dashboard Report)
+// ส่วนรายงาน PDF และอีเมลสรุปประจำสัปดาห์ (Weekly Executive Dashboard Report)
+// สรุปครบทั้ง 3 แบบฟอร์ม (สอบเทียบ, ประวัติซ่อม, Gas Verification) + Checklist
 // =============================================================================
 
 function sendWeeklyDashboardReport() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(CONFIG.LEGACY_SHEET);
-  if (!sheet || sheet.getLastRow() <= 1) return;
-
-  var data = sheet.getDataRange().getValues();
   var today = new Date();
   var cutoffDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - CONFIG.REPORT_LOOKBACK_DAYS, 0, 0, 0);
 
-  var records = [];
-  var issueCount = 0;
-
-  for (var i = 1; i < data.length; i++) {
-    var row = data[i];
-    var recordDate = parseDateValue(row[1]);
-    if (!recordDate) continue;
-
-    if (recordDate >= cutoffDate) {
-      var hasIssue = [row[5], row[6], row[7], row[8], row[9]].some(function(val) {
-        var str = String(val);
-        return str.indexOf("ต้องแก้ไข") !== -1 || str.indexOf("เสื่อม") !== -1 || str.indexOf("ผิดปกติ") !== -1;
-      });
-      if (hasIssue) issueCount++;
-
-      records.push({
-        date: formatDateDisplay(recordDate),
-        technician: row[2] || "-",
-        model: row[3] || "-",
-        serial: String(row[4] || "-").replace(/^'/, ""),
-        filter: row[5] || "-",
-        pump: row[6] || "-",
-        battery: row[7] || "-",
-        clean: row[8] || "-",
-        sensor: row[9] || "-",
-        notes: row[10] || "-",
-        hasIssue: hasIssue
+  // 1. ดึงข้อมูลแบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษา (DB_Maintenance_Cal)
+  var form1Records = [];
+  var form1FailCount = 0;
+  var sheet1 = ss.getSheetByName(CONFIG.DB_FORM1_SHEET);
+  if (sheet1 && sheet1.getLastRow() > 1) {
+    var data1 = sheet1.getDataRange().getValues();
+    for (var i = 1; i < data1.length; i++) {
+      var r1 = data1[i];
+      var d1 = parseDateValue(r1[5]);
+      if (!d1 || d1 < cutoffDate) continue;
+      var isFail1 = String(r1[11] || "").indexOf("ไม่ผ่าน") !== -1;
+      if (isFail1) form1FailCount++;
+      form1Records.push({
+        date: formatDateDisplay(d1),
+        model: r1[2] || "Testo",
+        serial: String(r1[4] || "").replace(/^'/, ""),
+        code: r1[3] || "-",
+        description: r1[7] || "-",
+        correction: r1[8] || "-",
+        uncertainty: r1[9] || "-",
+        tolerance: r1[10] || "-",
+        result: r1[11] || "ผ่าน",
+        isFail: isFail1,
+        agency: r1[12] || "-",
+        operator: r1[13] || "-",
+        supervisor: r1[14] || "-",
+        notes: r1[15] || "-"
       });
     }
   }
 
-  var htmlContent = buildWeeklyHtmlReport(records, issueCount, cutoffDate, today);
-  var blob = Utilities.newBlob(htmlContent, MimeType.HTML)
-    .setName("Testo_Weekly_Maintenance_Report_" + Utilities.formatDate(today, Session.getScriptTimeZone(), "yyyyMMdd") + ".pdf");
-  var pdfBlob = blob.getAs(MimeType.PDF);
+  // 2. ดึงข้อมูลแบบฟอร์มที่ 2: ประวัติความเสียหาย / การซ่อมแซม (DB_Repair_History)
+  var form2Records = [];
+  var sheet2 = ss.getSheetByName(CONFIG.DB_FORM2_SHEET);
+  if (sheet2 && sheet2.getLastRow() > 1) {
+    var data2 = sheet2.getDataRange().getValues();
+    for (var j = 1; j < data2.length; j++) {
+      var r2 = data2[j];
+      var d2 = parseDateValue(r2[5]);
+      if (!d2 || d2 < cutoffDate) continue;
+      form2Records.push({
+        date: formatDateDisplay(d2),
+        model: r2[2] || "Testo",
+        serial: String(r2[4] || "").replace(/^'/, ""),
+        code: r2[3] || "-",
+        damageDetail: r2[6] || "-",
+        operator: r2[7] || "-",
+        supervisor: r2[8] || "-",
+        notes: r2[9] || "-"
+      });
+    }
+  }
 
-  var emailSubject = (issueCount > 0 ? "⚠️ [ต้องติดตาม] " : "✅ [ปกติ] ") +
-    "รายงานสรุปการซ่อมบำรุงเครื่อง Testo ประจำสัปดาห์ (" +
+  // 3. ดึงข้อมูลแบบฟอร์มที่ 3: Flue Gas Analyzer Verification (DB_Gas_Verification)
+  var form3Records = [];
+  var form3FailCount = 0;
+  var maxErrorAll = 0;
+  var sheet3 = ss.getSheetByName(CONFIG.DB_FORM3_SHEET);
+  if (sheet3 && sheet3.getLastRow() > 1) {
+    var data3 = sheet3.getDataRange().getValues();
+    for (var k = 1; k < data3.length; k++) {
+      var r3 = data3[k];
+      var d3 = parseDateValue(r3[1]);
+      if (!d3 || d3 < cutoffDate) continue;
+      var isFail3 = String(r3[11] || "").indexOf("ไม่ผ่าน") !== -1;
+      if (isFail3) form3FailCount++;
+      var errNum = parseFloat(String(r3[12] || "").replace("%", ""));
+      if (!isNaN(errNum) && Math.abs(errNum) > maxErrorAll) {
+        maxErrorAll = Math.abs(errNum);
+      }
+      var parsedGas = {};
+      try {
+        parsedGas = JSON.parse(r3[13] || "{}");
+      } catch (e) {
+        parsedGas = {};
+      }
+      form3Records.push({
+        date: formatDateDisplay(d3),
+        time: formatCellTime(r3[2]),
+        model: r3[3] || "Testo",
+        serial: String(r3[4] || "").replace(/^'/, ""),
+        code: r3[5] || "-",
+        temp: r3[6] || "-",
+        pressure: r3[7] || "-",
+        humidity: r3[8] || "-",
+        calibratedBy: r3[9] || "-",
+        approvedBy: r3[10] || "-",
+        result: r3[11] || "ผ่าน",
+        isFail: isFail3,
+        maxErrorPct: r3[12] || "-",
+        gasData: parsedGas
+      });
+    }
+  }
+
+  // 4. ดึงข้อมูลการตรวจสภาพ 5 รายการ (Checklist ใน Maintenance_Logs)
+  var checklistRecords = [];
+  var checklistIssueCount = 0;
+  var sheetLegacy = ss.getSheetByName(CONFIG.LEGACY_SHEET);
+  if (sheetLegacy && sheetLegacy.getLastRow() > 1) {
+    var dataLegacy = sheetLegacy.getDataRange().getValues();
+    for (var m = 1; m < dataLegacy.length; m++) {
+      var rL = dataLegacy[m];
+      var dL = parseDateValue(rL[1]);
+      if (!dL || dL < cutoffDate) continue;
+      var hasIssueL = [rL[5], rL[6], rL[7], rL[8], rL[9]].some(function(val) {
+        var str = String(val);
+        return str.indexOf("ต้องแก้ไข") !== -1 || str.indexOf("เสื่อม") !== -1 || str.indexOf("ผิดปกติ") !== -1;
+      });
+      if (hasIssueL) checklistIssueCount++;
+      checklistRecords.push({
+        date: formatDateDisplay(dL),
+        technician: rL[2] || "-",
+        model: rL[3] || "-",
+        serial: String(rL[4] || "-").replace(/^'/, ""),
+        filter: rL[5] || "-",
+        pump: rL[6] || "-",
+        battery: rL[7] || "-",
+        clean: rL[8] || "-",
+        sensor: rL[9] || "-",
+        notes: rL[10] || "-",
+        hasIssue: hasIssueL
+      });
+    }
+  }
+
+  // คำนวณสรุปปัญหาทั้งหมด
+  var totalIssues = form1FailCount + form2Records.length + form3FailCount + checklistIssueCount;
+  var totalActivities = form1Records.length + form2Records.length + form3Records.length + checklistRecords.length;
+
+  var summaryData = {
+    cutoffDate: cutoffDate,
+    today: today,
+    totalIssues: totalIssues,
+    totalActivities: totalActivities,
+    form1: { records: form1Records, fails: form1FailCount },
+    form2: { records: form2Records },
+    form3: { records: form3Records, fails: form3FailCount, maxError: maxErrorAll },
+    checklist: { records: checklistRecords, issues: checklistIssueCount }
+  };
+
+  // สร้างเนื้อหา PDF และแปลงเป็น Blob
+  var htmlPdfContent = buildWeeklyHtmlReport(summaryData);
+  var pdfBlob = Utilities.newBlob(htmlPdfContent, MimeType.HTML)
+    .setName("Testo_Weekly_Executive_Report_" + Utilities.formatDate(today, Session.getScriptTimeZone(), "yyyyMMdd") + ".pdf")
+    .getAs(MimeType.PDF);
+
+  // หัวข้ออีเมล
+  var emailSubject = (totalIssues > 0 ? "⚠️ [ต้องติดตาม " + totalIssues + " รายการ] " : "✅ [ปกติทุกเครื่อง] ") +
+    "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่อง Testo ประจำสัปดาห์ (" +
     formatDateDisplay(cutoffDate) + " - " + formatDateDisplay(today) + ")";
 
-  var emailBody = "<div style='font-family: sans-serif; font-size: 14px; line-height: 1.6; color: #333;'>" +
-    "<p>เรียน ทีมงานและผู้เกี่ยวข้อง (บจก. อีสเทิร์น ไทย คอนซัลติ้ง 1992),</p>" +
-    "<p>ระบบได้สรุปผลการตรวจสอบและบำรุงรักษาเครื่องวัดประสิทธิภาพการเผาไหม้ Testo ในรอบ 7 วันที่ผ่านมา ดังนี้:</p>" +
-    "<ul>" +
-      "<li><b>จำนวนครั้งที่ตรวจสอบ:</b> " + records.length + " รายการ</li>" +
-      "<li><b>พบรายการที่ต้องแก้ไข:</b> <span style='color:" + (issueCount > 0 ? "#dc2626" : "#16a34a") + "; font-weight:bold;'>" + issueCount + " รายการ</span></li>" +
-    "</ul>" +
-    "<p>รายละเอียดครบถ้วนระบุอยู่ในเอกสาร PDF ที่แนบมาพร้อมอีเมลฉบับนี้</p>" +
-    "</div>";
+  // เนื้อหาอีเมล HTML แบบละเอียดและสวยงาม
+  var emailBody = buildWeeklyEmailHtmlBody(summaryData, ss.getUrl());
 
+  // ส่งอีเมล
   MailApp.sendEmail({
     to: CONFIG.EMAIL_RECIPIENTS,
     subject: emailSubject,
     htmlBody: emailBody,
     attachments: [pdfBlob]
   });
+
+  try {
+    ss.toast("ส่งอีเมลรายงานสรุปไปยัง " + CONFIG.EMAIL_RECIPIENTS + " เรียบร้อยแล้ว", "ส่งอีเมลสำเร็จ", 5);
+  } catch (err) {}
 }
 
-function buildWeeklyHtmlReport(records, issueCount, startDate, endDate) {
-  function renderBadge(val) {
-    if (!val || val === "-") return "<span style='color:#666;'>-</span>";
-    var str = String(val);
-    if (str.indexOf("ต้องแก้ไข") !== -1 || str.indexOf("เสื่อม") !== -1 || str.indexOf("ผิดปกติ") !== -1) {
-      return "<span style='background:#fee2e2; color:#b91c1c; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;'>ต้องแก้ไข</span>";
+/**
+ * สร้างเนื้อหา HTML สำหรับแสดงในกล่องข้อความอีเมล (Email Body)
+ */
+function buildWeeklyEmailHtmlBody(s, sheetUrl) {
+  var isOk = s.totalIssues === 0;
+  var statusBadge = isOk
+    ? "<span style='background:#dcfce7; color:#15803d; padding:6px 12px; border-radius:999px; font-weight:bold; font-size:13px;'>✓ อุปกรณ์ทุกเครื่องพร้อมใช้งานปกติ</span>"
+    : "<span style='background:#fee2e2; color:#b91c1c; padding:6px 12px; border-radius:999px; font-weight:bold; font-size:13px;'>⚠️ พบรายการที่ต้องติดตาม " + s.totalIssues + " รายการ</span>";
+
+  // ตารางย่อแบบฟอร์ม 1
+  var f1Rows = "";
+  if (s.form1.records.length === 0) {
+    f1Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการสอบเทียบ/บำรุงรักษาในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var i = 0; i < s.form1.records.length; i++) {
+      var r1 = s.form1.records[i];
+      var resColor = r1.isFail ? "#dc2626" : "#16a34a";
+      f1Rows += "<tr style='border-bottom:1px solid #e5e7eb; font-size:12px;'>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + r1.date + "</td>" +
+        "<td style='padding:8px 6px;'><b>" + escapeXml(r1.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(r1.serial) + "</small></td>" +
+        "<td style='padding:8px 6px;'>" + escapeXml(r1.description) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:" + resColor + ";'>" + escapeXml(r1.result) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(r1.operator) + "</td>" +
+      "</tr>";
     }
-    return "<span style='background:#dcfce7; color:#15803d; padding:3px 6px; border-radius:4px; font-size:11px;'>ปกติ</span>";
   }
 
-  var rowsHtml = "";
-  if (records.length === 0) {
-    rowsHtml = "<tr><td colspan='9' style='text-align:center; padding:20px; color:#6b7280;'>ไม่มีรายการซ่อมบำรุงในรอบสัปดาห์นี้</td></tr>";
+  // ตารางย่อแบบฟอร์ม 2
+  var f2Rows = "";
+  if (s.form2.records.length === 0) {
+    f2Rows = "<tr><td colspan='4' style='text-align:center; padding:10px; color:#15803d; font-size:12px;'>✓ ไม่พบประวัติความเสียหายหรือส่งซ่อมในรอบสัปดาห์นี้ (ปกติ)</td></tr>";
   } else {
-    for (var i = 0; i < records.length; i++) {
-      var r = records[i];
-      var rowBg = r.hasIssue ? "#fff7ed" : (i % 2 === 0 ? "#ffffff" : "#f9fafb");
-      rowsHtml += "<tr style='background-color:" + rowBg + ";'>" +
-        "<td style='padding:6px; border:1px solid #d1d5db; text-align:center; font-size:10px;'>" + r.date + "</td>" +
-        "<td style='padding:6px; border:1px solid #d1d5db; font-size:10px;'>" + escapeXml(r.technician) + "</td>" +
-        "<td style='padding:6px; border:1px solid #d1d5db; font-size:10px;'>" + escapeXml(r.model) + "<br><small style='color:#6b7280;'>S/N: " + escapeXml(r.serial) + "</small></td>" +
-        "<td style='padding:6px; border:1px solid #d1d5db; text-align:center;'>" + renderBadge(r.filter) + "</td>" +
-        "<td style='padding:6px; border:1px solid #d1d5db; text-align:center;'>" + renderBadge(r.pump) + "</td>" +
-        "<td style='padding:6px; border:1px solid #d1d5db; text-align:center;'>" + renderBadge(r.battery) + "</td>" +
-        "<td style='padding:6px; border:1px solid #d1d5db; text-align:center;'>" + renderBadge(r.clean) + "</td>" +
-        "<td style='padding:6px; border:1px solid #d1d5db; text-align:center;'>" + renderBadge(r.sensor) + "</td>" +
-        "<td style='padding:6px; border:1px solid #d1d5db; font-size:10px; color:#374151;'>" + escapeXml(r.notes) + "</td>" +
+    for (var j = 0; j < s.form2.records.length; j++) {
+      var r2 = s.form2.records[j];
+      f2Rows += "<tr style='border-bottom:1px solid #fed7aa; background-color:#fff7ed; font-size:12px;'>" +
+        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:#9a3412;'>" + r2.date + "</td>" +
+        "<td style='padding:8px 6px;'><b>" + escapeXml(r2.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(r2.serial) + "</small></td>" +
+        "<td style='padding:8px 6px; color:#c2410c;'><b>" + escapeXml(r2.damageDetail) + "</b></td>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(r2.operator) + "</td>" +
+      "</tr>";
+    }
+  }
+
+  // ตารางย่อแบบฟอร์ม 3
+  var f3Rows = "";
+  if (s.form3.records.length === 0) {
+    f3Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการทวนสอบก๊าซในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var k = 0; k < s.form3.records.length; k++) {
+      var r3 = s.form3.records[k];
+      var res3Color = r3.isFail ? "#dc2626" : "#16a34a";
+      f3Rows += "<tr style='border-bottom:1px solid #e5e7eb; font-size:12px;'>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + r3.date + "<br><small style='color:#6b7280;'>" + r3.time + "</small></td>" +
+        "<td style='padding:8px 6px;'><b>" + escapeXml(r3.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(r3.serial) + "</small></td>" +
+        "<td style='padding:8px 6px; text-align:center; font-family:monospace;'>" + escapeXml(r3.maxErrorPct) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:" + res3Color + ";'>" + escapeXml(r3.result) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(r3.calibratedBy) + "</td>" +
+      "</tr>";
+    }
+  }
+
+  var html = "<div style='font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; max-width:680px; margin:0 auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden;'>" +
+    "<div style='background:linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%); color:#ffffff; padding:24px 20px; text-align:center;'>" +
+      "<div style='font-size:12px; letter-spacing:1px; text-transform:uppercase; opacity:0.9; margin-bottom:4px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
+      "<h2 style='margin:0 0 8px 0; font-size:20px; font-weight:bold;'>รายงานสรุปการบำรุงรักษาและทวนสอบเครื่อง Testo</h2>" +
+      "<div style='font-size:13px; opacity:0.95;'>รอบสัปดาห์: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + "</div>" +
+      "<div style='margin-top:14px;'>" + statusBadge + "</div>" +
+    "</div>" +
+
+    "<div style='padding:20px;'>" +
+      "<p style='margin:0 0 16px 0; font-size:14px; color:#374151; line-height:1.6;'>" +
+        "เรียน คุณธงชัย และทีมงานแผนกปฏิบัติการภาคสนาม,<br>" +
+        "ระบบได้รวบรวมและสรุปผลการดำเนินงานเกี่ยวกับเครื่องวัดประสิทธิภาพการเผาไหม้ Flue Gas Analyzer (Testo) ครบทั้ง 3 แบบฟอร์มมาตรฐาน ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ:" +
+      "</p>" +
+
+      // 4 การ์ดสรุป KPI
+      "<table style='width:100%; border-collapse:separate; border-spacing:8px; margin-bottom:16px;'>" +
+        "<tr>" +
+          "<td style='width:50%; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:11px; font-weight:bold; color:#166534;'>📋 แบบฟอร์มที่ 1 (สอบเทียบ/ตรวจสภาพ)</div>" +
+            "<div style='font-size:18px; font-weight:bold; color:#15803d; margin-top:4px;'>" + s.form1.records.length + " <span style='font-size:12px; font-weight:normal;'>รายการ</span></div>" +
+            "<div style='font-size:11px; color:#166534; margin-top:2px;'>ผ่าน: " + (s.form1.records.length - s.form1.fails) + " | ไม่ผ่าน: " + s.form1.fails + "</div>" +
+          "</td>" +
+          "<td style='width:50%; background:" + (s.form2.records.length > 0 ? "#fff7ed" : "#f8fafc") + "; border:1px solid " + (s.form2.records.length > 0 ? "#fed7aa" : "#e2e8f0") + "; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:11px; font-weight:bold; color:" + (s.form2.records.length > 0 ? "#9a3412" : "#475569") + ";'>🛠️ แบบฟอร์มที่ 2 (ประวัติซ่อมแซม)</div>" +
+            "<div style='font-size:18px; font-weight:bold; color:" + (s.form2.records.length > 0 ? "#c2410c" : "#334155") + "; margin-top:4px;'>" + s.form2.records.length + " <span style='font-size:12px; font-weight:normal;'>รายการ</span></div>" +
+            "<div style='font-size:11px; color:#64748b; margin-top:2px;'>" + (s.form2.records.length > 0 ? "พบรายการแจ้งซ่อม" : "ไม่มีแจ้งซ่อม (ปกติ)") + "</div>" +
+          "</td>" +
+        "</tr>" +
+        "<tr>" +
+          "<td style='width:50%; background:#eef2ff; border:1px solid #c7d2fe; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:11px; font-weight:bold; color:#3730a3;'>🧪 แบบฟอร์มที่ 3 (Gas Verification)</div>" +
+            "<div style='font-size:18px; font-weight:bold; color:#4338ca; margin-top:4px;'>" + s.form3.records.length + " <span style='font-size:12px; font-weight:normal;'>ชุด</span></div>" +
+            "<div style='font-size:11px; color:#3730a3; margin-top:2px;'>Max Error: " + (s.form3.maxError > 0 ? s.form3.maxError.toFixed(2) + "%" : "-") + " (O2,CO,NO,NO2,SO2)</div>" +
+          "</td>" +
+          "<td style='width:50%; background:" + (s.checklist.issues > 0 ? "#fef2f2" : "#f8fafc") + "; border:1px solid " + (s.checklist.issues > 0 ? "#fecaca" : "#e2e8f0") + "; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:11px; font-weight:bold; color:" + (s.checklist.issues > 0 ? "#991b1b" : "#475569") + ";'>🔍 Checklist (ตรวจสภาพ 5 ระบบ)</div>" +
+            "<div style='font-size:18px; font-weight:bold; color:" + (s.checklist.issues > 0 ? "#dc2626" : "#334155") + "; margin-top:4px;'>" + s.checklist.records.length + " <span style='font-size:12px; font-weight:normal;'>ครั้ง</span></div>" +
+            "<div style='font-size:11px; color:" + (s.checklist.issues > 0 ? "#b91c1c" : "#64748b") + "; margin-top:2px;'>พบต้องแก้ไข: " + s.checklist.issues + " รายการ</div>" +
+          "</td>" +
+        "</tr>" +
+      "</table>" +
+
+      // ส่วนที่ 1: แบบฟอร์มที่ 1
+      "<div style='margin-top:20px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#f8fafc; padding:10px 14px; font-weight:bold; font-size:13px; color:#1e293b; border-bottom:1px solid #e5e7eb;'>" +
+          "📋 สรุปแบบฟอร์มที่ 1: การสอบเทียบและบำรุงรักษาเครื่องมือ" +
+        "</div>" +
+        "<table style='width:100%; border-collapse:collapse;'>" +
+          "<thead><tr style='background:#f1f5f9; font-size:11px; color:#475569; text-align:left;'>" +
+            "<th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายการ</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ตรวจ</th>" +
+          "</tr></thead>" +
+          "<tbody>" + f1Rows + "</tbody>" +
+        "</table>" +
+      "</div>" +
+
+      // ส่วนที่ 2: แบบฟอร์มที่ 2
+      "<div style='margin-top:16px; border:1px solid " + (s.form2.records.length > 0 ? "#fed7aa" : "#e5e7eb") + "; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:" + (s.form2.records.length > 0 ? "#ffedd5" : "#f8fafc") + "; padding:10px 14px; font-weight:bold; font-size:13px; color:" + (s.form2.records.length > 0 ? "#9a3412" : "#1e293b") + "; border-bottom:1px solid " + (s.form2.records.length > 0 ? "#fed7aa" : "#e5e7eb") + ";'>" +
+          "🛠️ สรุปแบบฟอร์มที่ 2: ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซม" +
+        "</div>" +
+        "<table style='width:100%; border-collapse:collapse;'>" +
+          "<thead><tr style='background:#f1f5f9; font-size:11px; color:#475569; text-align:left;'>" +
+            "<th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายละเอียดความเสียหาย / ซ่อมแซม</th><th style='padding:6px; text-align:center;'>ผู้ดำเนินการ</th>" +
+          "</tr></thead>" +
+          "<tbody>" + f2Rows + "</tbody>" +
+        "</table>" +
+      "</div>" +
+
+      // ส่วนที่ 3: แบบฟอร์มที่ 3
+      "<div style='margin-top:16px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#f8fafc; padding:10px 14px; font-weight:bold; font-size:13px; color:#1e293b; border-bottom:1px solid #e5e7eb;'>" +
+          "🧪 สรุปแบบฟอร์มที่ 3: ผลการทวนสอบก๊าซ (Flue Gas Verification: O2, CO, NO, NO2, SO2)" +
+        "</div>" +
+        "<table style='width:100%; border-collapse:collapse;'>" +
+          "<thead><tr style='background:#f1f5f9; font-size:11px; color:#475569; text-align:left;'>" +
+            "<th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Error</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th>" +
+          "</tr></thead>" +
+          "<tbody>" + f3Rows + "</tbody>" +
+        "</table>" +
+      "</div>" +
+
+      // ปุ่มดำเนินการ
+      "<div style='margin-top:24px; text-align:center;'>" +
+        "<a href='" + sheetUrl + "' style='display:inline-block; background:#1e40af; color:#ffffff; text-decoration:none; padding:10px 20px; border-radius:8px; font-size:13px; font-weight:bold; margin-right:8px;'>📊 เปิดดู Google Sheets ฐานข้อมูล</a>" +
+        "<a href='" + CONFIG.WEBAPP_URL + "' style='display:inline-block; background:#0f172a; color:#ffffff; text-decoration:none; padding:10px 20px; border-radius:8px; font-size:13px; font-weight:bold;'>🌐 เปิดหน้าเว็บแอปบันทึกข้อมูล</a>" +
+      "</div>" +
+
+      "<div style='margin-top:20px; padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; font-size:12px; color:#64748b; text-align:center;'>" +
+        "📎 เอกสารรายงานสรุปฉบับเต็มทั้ง 4 ตารางพร้อมรายละเอียดครบถ้วนถูกแนบมาเป็นไฟล์ PDF (<code>Testo_Weekly_Executive_Report</code>) ท้ายอีเมลฉบับนี้ครับ" +
+      "</div>" +
+    "</div>" +
+
+    "<div style='background:#f1f5f9; padding:14px 20px; text-align:center; font-size:11px; color:#64748b; border-top:1px solid #e2e8f0;'>" +
+      "ระบบรายงานผลอัตโนมัติ | แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด<br>" +
+      "อีเมลนี้ส่งไปยัง " + escapeXml(CONFIG.EMAIL_RECIPIENTS) + " ตามกำหนดการรายงานสรุปประจำสัปดาห์" +
+    "</div>" +
+  "</div>";
+
+  return html;
+}
+
+/**
+ * สร้างเอกสาร PDF สรุปประจำสัปดาห์ (ครอบคลุมทั้ง 3 แบบฟอร์ม + Checklist)
+ */
+function buildWeeklyHtmlReport(s) {
+  function renderBadgePdf(val) {
+    if (!val || val === "-") return "<span style='color:#666;'>-</span>";
+    var str = String(val);
+    if (str.indexOf("ต้องแก้ไข") !== -1 || str.indexOf("เสื่อม") !== -1 || str.indexOf("ผิดปกติ") !== -1 || str.indexOf("ไม่ผ่าน") !== -1) {
+      return "<span style='background:#fee2e2; color:#b91c1c; padding:2px 5px; border-radius:3px; font-weight:bold; font-size:9px;'>ต้องแก้ไข</span>";
+    }
+    return "<span style='background:#dcfce7; color:#15803d; padding:2px 5px; border-radius:3px; font-size:9px;'>ปกติ</span>";
+  }
+
+  // แถวตารางแบบฟอร์ม 1 (PDF)
+  var f1RowsPdf = "";
+  if (s.form1.records.length === 0) {
+    f1RowsPdf = "<tr><td colspan='7' style='text-align:center; padding:10px; color:#6b7280;'>ไม่มีรายการในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var i = 0; i < s.form1.records.length; i++) {
+      var r1 = s.form1.records[i];
+      var bg1 = r1.isFail ? "#fee2e2" : (i % 2 === 0 ? "#ffffff" : "#f9fafb");
+      f1RowsPdf += "<tr style='background-color:" + bg1 + ";'>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + r1.date + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'><b>" + escapeXml(r1.model) + "</b> (" + escapeXml(r1.serial) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'>" + escapeXml(r1.description) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + escapeXml(r1.correction) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + escapeXml(r1.tolerance) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-weight:bold; font-size:9px; color:" + (r1.isFail ? "#b91c1c" : "#15803d") + ";'>" + escapeXml(r1.result) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(r1.operator) + "</td>" +
+      "</tr>";
+    }
+  }
+
+  // แถวตารางแบบฟอร์ม 2 (PDF)
+  var f2RowsPdf = "";
+  if (s.form2.records.length === 0) {
+    f2RowsPdf = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#15803d;'>✓ ไม่พบประวัติความเสียหายหรือส่งซ่อมในรอบสัปดาห์นี้ (ปกติ)</td></tr>";
+  } else {
+    for (var j = 0; j < s.form2.records.length; j++) {
+      var r2 = s.form2.records[j];
+      f2RowsPdf += "<tr style='background-color:#fff7ed;'>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; text-align:center; font-size:9px; font-weight:bold; color:#9a3412;'>" + r2.date + "</td>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px;'><b>" + escapeXml(r2.model) + "</b> (" + escapeXml(r2.serial) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px; color:#9a3412; font-weight:bold;'>" + escapeXml(r2.damageDetail) + "</td>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px; text-align:center;'>" + escapeXml(r2.operator) + "</td>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px;'>" + escapeXml(r2.notes) + "</td>" +
+      "</tr>";
+    }
+  }
+
+  // แถวตารางแบบฟอร์ม 3 (PDF)
+  var f3RowsPdf = "";
+  if (s.form3.records.length === 0) {
+    f3RowsPdf = "<tr><td colspan='7' style='text-align:center; padding:10px; color:#6b7280;'>ไม่มีรายการทวนสอบก๊าซในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var k = 0; k < s.form3.records.length; k++) {
+      var r3 = s.form3.records[k];
+      var bg3 = r3.isFail ? "#fee2e2" : (k % 2 === 0 ? "#ffffff" : "#f9fafb");
+      var env = "T: " + r3.temp + "°C | P: " + r3.pressure + " | RH: " + r3.humidity + "%";
+      f3RowsPdf += "<tr style='background-color:" + bg3 + ";'>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + r3.date + " " + r3.time + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'><b>" + escapeXml(r3.model) + "</b> (" + escapeXml(r3.serial) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:8px; text-align:center;'>" + escapeXml(env) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px; font-weight:bold;'>" + escapeXml(r3.maxErrorPct) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-weight:bold; font-size:9px; color:" + (r3.isFail ? "#b91c1c" : "#15803d") + ";'>" + escapeXml(r3.result) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(r3.calibratedBy) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(r3.approvedBy) + "</td>" +
+      "</tr>";
+    }
+  }
+
+  // แถวตาราง Checklist (PDF)
+  var chkRowsPdf = "";
+  if (s.checklist.records.length === 0) {
+    chkRowsPdf = "<tr><td colspan='9' style='text-align:center; padding:10px; color:#6b7280;'>ไม่มีรายการตรวจสภาพในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var m = 0; m < s.checklist.records.length; m++) {
+      var rL = s.checklist.records[m];
+      var bgL = rL.hasIssue ? "#fff7ed" : (m % 2 === 0 ? "#ffffff" : "#f9fafb");
+      chkRowsPdf += "<tr style='background-color:" + bgL + ";'>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + rL.date + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; font-size:9px;'>" + escapeXml(rL.technician) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; font-size:9px;'>" + escapeXml(rL.model) + " (" + escapeXml(rL.serial) + ")</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.filter) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.pump) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.battery) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.clean) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.sensor) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; font-size:8px;'>" + escapeXml(rL.notes) + "</td>" +
       "</tr>";
     }
   }
@@ -1134,19 +1466,64 @@ function buildWeeklyHtmlReport(records, issueCount, startDate, endDate) {
   return "<!DOCTYPE html><html><head><meta charset='UTF-8'>" +
     "<style>" +
       "@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');" +
-      "body { font-family: 'Sarabun', Arial, sans-serif; color: #1f2937; margin: 0; padding: 15px; font-size: 11px; }" +
-      ".header { text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 10px; margin-bottom: 15px; }" +
-      ".header h1 { font-size: 18px; margin: 0 0 5px 0; color: #1e40af; }" +
-      "table { width: 100%; border-collapse: collapse; margin-top: 10px; }" +
-      "th { background-color: #2563eb; color: #ffffff; padding: 7px 4px; font-size: 10px; border: 1px solid #1d4ed8; text-align: center; }" +
+      "body { font-family: 'Sarabun', Tahoma, sans-serif; color:#1e293b; margin:0; padding:15px; font-size:10px; }" +
+      ".header { text-align:center; border-bottom:2px solid #1e40af; padding-bottom:8px; margin-bottom:12px; }" +
+      ".header h1 { font-size:16px; margin:0 0 4px 0; color:#1e40af; font-weight:bold; }" +
+      ".section-title { font-size:11px; font-weight:bold; color:#1e3a8a; margin:14px 0 6px 0; border-left:3px solid #2563eb; padding-left:6px; }" +
+      "table { width:100%; border-collapse:collapse; margin-bottom:10px; }" +
+      "th { background-color:#1e40af; color:#ffffff; padding:5px 4px; font-size:9px; border:1px solid #1e3a8a; text-align:center; }" +
+      "td { padding:4px; font-size:9px; }" +
+      ".badge-pass { color:#15803d; font-weight:bold; }" +
+      ".badge-fail { color:#b91c1c; font-weight:bold; }" +
     "</style></head><body>" +
     "<div class='header'>" +
-      "<h1>รายงานสรุปการซ่อมบำรุงเครื่องวัดประสิทธิภาพการเผาไหม้ Testo</h1>" +
-      "<p>บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด | รอบวันที่: " + formatDateDisplay(startDate) + " ถึง " + formatDateDisplay(endDate) + "</p>" +
+      "<div style='font-size:10px; font-weight:bold; color:#64748b; margin-bottom:2px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
+      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ Testo ประจำสัปดาห์</h1>" +
+      "<div style='font-size:10px; color:#475569;'>รอบวันที่: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + " &nbsp;|&nbsp; " +
+      "กิจกรรมทั้งหมด: " + s.totalActivities + " รายการ &nbsp;|&nbsp; " +
+      "<span style='color:" + (s.totalIssues > 0 ? "#b91c1c" : "#15803d") + "; font-weight:bold;'>" +
+        (s.totalIssues > 0 ? "⚠️ พบรายการต้องติดตาม " + s.totalIssues + " รายการ" : "✓ อุปกรณ์ทุกเครื่องอยู่ในสภาพปกติ") +
+      "</span></div>" +
     "</div>" +
+
+    // ตาราง 1 (PDF)
+    "<div class='section-title'>1. แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ (" + s.form1.records.length + " รายการ)</div>" +
     "<table><thead><tr>" +
-      "<th>วันที่</th><th>ผู้ตรวจเช็ค</th><th>รุ่น / S/N</th><th>กรอง</th><th>ปั๊ม</th><th>แบต</th><th>ความสะอาด</th><th>เซ็นเซอร์</th><th>หมายเหตุ</th>" +
-    "</tr></thead><tbody>" + rowsHtml + "</tbody></table></body></html>";
+      "<th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการตรวจสภาพ / สอบเทียบ</th><th style='width:60px;'>Correction</th><th style='width:75px;'>Tolerance</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ดำเนินการ</th>" +
+    "</tr></thead><tbody>" + f1RowsPdf + "</tbody></table>" +
+
+    // ตาราง 2 (PDF)
+    "<div class='section-title'>2. แบบฟอร์มที่ 2: ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซม (" + s.form2.records.length + " รายการ)</div>" +
+    "<table><thead><tr>" +
+      "<th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการเสียหาย / ความผิดปกติ / ซ่อมแซม</th><th style='width:90px;'>ผู้ดำเนินการ</th><th style='width:110px;'>หมายเหตุ</th>" +
+    "</tr></thead><tbody>" + f2RowsPdf + "</tbody></table>" +
+
+    // ตาราง 3 (PDF)
+    "<div class='section-title'>3. แบบฟอร์มที่ 3: Flue Gas Analyzer Verification (O2, CO, NO, NO2, SO2) (" + s.form3.records.length + " รายการ)</div>" +
+    "<table><thead><tr>" +
+      "<th style='width:80px;'>วัน/เวลา</th><th style='width:130px;'>รุ่น / S/N</th><th style='width:110px;'>สภาวะแวดล้อม</th><th style='width:65px;'>Max Error</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ทวนสอบ</th><th style='width:80px;'>ผู้อนุมัติ</th>" +
+    "</tr></thead><tbody>" + f3RowsPdf + "</tbody></table>" +
+
+    // ตาราง 4 (PDF)
+    "<div class='section-title'>4. ตรวจสอบสภาพเครื่องมือประจำสัปดาห์ (Checklist 5 รายการ) (" + s.checklist.records.length + " รายการ)</div>" +
+    "<table><thead><tr>" +
+      "<th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:50px;'>กรอง</th><th style='width:50px;'>ปั๊ม</th><th style='width:50px;'>แบต</th><th style='width:50px;'>สะอาด</th><th style='width:55px;'>เซ็นเซอร์</th><th>หมายเหตุ</th>" +
+    "</tr></thead><tbody>" + chkRowsPdf + "</tbody></table>" +
+
+    "<table style='width:100%; margin-top:25px; border:none;'>" +
+      "<tr style='border:none;'>" +
+        "<td style='width:50%; text-align:center; border:none; font-size:10px;'>" +
+          "<div>ลงชื่อ ........................................................... ผู้รายงาน</div>" +
+          "<div style='margin-top:4px;'>( เจ้าหน้าที่แผนกปฏิบัติการภาคสนาม )</div>" +
+        "</td>" +
+        "<td style='width:50%; text-align:center; border:none; font-size:10px;'>" +
+          "<div>ลงชื่อ ........................................................... ผู้รับทราบ / อนุมัติ</div>" +
+          "<div style='margin-top:4px;'>( ผู้จัดการแผนกปฏิบัติการภาคสนาม )</div>" +
+        "</td>" +
+      "</tr>" +
+    "</table>" +
+
+    "</body></html>";
 }
 
 function setupWeeklyTrigger() {
