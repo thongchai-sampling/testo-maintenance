@@ -1894,6 +1894,20 @@
             }
         }
 
+        function formatCellDate(val) {
+            if (!val) return '';
+            if (val instanceof Date) {
+                const pad = n => String(n).padStart(2, '0');
+                return `${pad(val.getDate())}/${pad(val.getMonth() + 1)}/${val.getFullYear()}`;
+            }
+            const s = String(val).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+                const parts = s.split('-');
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return s;
+        }
+
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str)
