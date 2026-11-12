@@ -6,31 +6,81 @@
     <title>ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ Testo | ETC 1992</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts (Sarabun) -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Prompt, Sarabun, JetBrains Mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --font-sans: 'Sarabun', sans-serif;
+            --font-heading: 'Prompt', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
         body {
-            font-family: 'Sarabun', sans-serif;
+            font-family: var(--font-sans);
             background-color: #f1f5f9;
+            color: #1e293b;
+        }
+        .font-heading, h1, h2, h3, h4, h5, .tab-btn-title {
+            font-family: var(--font-heading);
+        }
+        .font-mono {
+            font-family: var(--font-mono);
         }
         .hidden-modal {
             display: none;
         }
         .tab-active {
-            background-color: #1d4ed8;
-            color: #ffffff;
-            border-color: #1d4ed8;
-            box-shadow: 0 4px 6px -1px rgba(29, 78, 216, 0.25);
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
+            color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 10px 20px -3px rgba(37, 99, 235, 0.28), 0 4px 6px -4px rgba(37, 99, 235, 0.2) !important;
+            transform: translateY(-2px);
+        }
+        .tab-active .tab-badge {
+            background-color: rgba(255, 255, 255, 0.22) !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.35) !important;
         }
         .tab-inactive {
-            background-color: #ffffff;
-            color: #475569;
-            border-color: #cbd5e1;
+            background-color: #ffffff !important;
+            color: #475569 !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
         }
         .tab-inactive:hover {
-            background-color: #f8fafc;
-            color: #1e293b;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
+            transform: translateY(-1px);
         }
+        .tab-inactive .tab-badge {
+            background-color: #f1f5f9 !important;
+            color: #64748b !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Checkbox & Radio Touch Cards (Field Ergonomics) */
+        .radio-touch-card {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .radio-touch-card:hover {
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
+        }
+        .radio-touch-normal:has(input:checked) {
+            background-color: #ecfdf5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+            box-shadow: 0 2px 4px -1px rgba(16, 185, 129, 0.2) !important;
+        }
+        .radio-touch-issue:has(input:checked) {
+            background-color: #fff1f2 !important;
+            border-color: #f43f5e !important;
+            color: #9f1239 !important;
+            box-shadow: 0 2px 4px -1px rgba(244, 63, 94, 0.2) !important;
+        }
+
         /* ตารางแบบฟอร์มมาตรฐานสำหรับ Preview และ Print */
         .official-form-table {
             width: 100%;
@@ -72,26 +122,39 @@
 <body class="min-h-screen p-3 md:p-6 lg:p-8">
 
     <!-- กล่องหลักของเว็บแอป (ซ่อนเวลาสั่ง Print เอกสาร) -->
-    <div class="no-print max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+    <div class="no-print max-w-5xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200/80">
         
-        <!-- ส่วนหัวองค์กร -->
-        <div class="bg-gradient-to-r from-blue-800 via-blue-700 to-indigo-800 p-6 text-white">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+        <!-- ส่วนหัวองค์กร (Modern Environmental & Engineering Theme) -->
+        <div class="relative bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 p-6 md:p-8 text-white border-b border-indigo-500/20 overflow-hidden">
+            <!-- Decorative Glow Accents -->
+            <div class="absolute -right-12 -top-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-12 -bottom-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                    <span class="inline-block px-3 py-0.5 text-xs font-semibold bg-blue-900/60 border border-blue-400/30 rounded-full text-blue-100 mb-2">
-                        แผนกปฏิบัติการภาคสนาม
-                    </span>
-                    <h1 class="text-xl md:text-2xl font-bold tracking-wide">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold bg-indigo-500/20 border border-indigo-400/30 rounded-full text-indigo-200 mb-2.5 backdrop-blur-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>แผนกปฏิบัติการภาคสนาม | ETC 1992</span>
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-heading">
                         ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ
                     </h1>
-                    <p class="text-sm text-blue-100 mt-1">
+                    <p class="text-xs md:text-sm text-slate-300 mt-1">
                         บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด (Eastern Thai Consulting 1992 Co., Ltd.)
                     </p>
                 </div>
-                <div class="text-left md:text-right text-xs text-blue-200 bg-blue-950/40 p-3 rounded-xl border border-blue-500/20">
-                    <div class="font-semibold text-white">Flue Gas Analyzer</div>
-                    <div>ยี่ห้อ: Testo (327-1 / 350XL / 350New)</div>
-                    <div class="mt-1 text-[11px] text-emerald-300">● เชื่อมต่อฐานข้อมูล Google Sheet</div>
+                <div class="text-left md:text-right text-xs bg-slate-900/60 backdrop-blur-md p-3.5 rounded-2xl border border-slate-700/60 shadow-inner flex flex-col gap-1">
+                    <div class="font-bold text-white font-heading flex items-center md:justify-end gap-1.5">
+                        <span class="text-indigo-400">⚡</span> Flue Gas Analyzer
+                    </div>
+                    <div class="text-slate-300">Testo (327-1 / 350XL / 350New)</div>
+                    <div class="mt-1 inline-flex items-center md:justify-end gap-1.5 text-[11px] text-emerald-300">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span>Google Sheet Database Connected</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,22 +164,22 @@
             <!-- ===================================================================== -->
             <!-- ส่วนที่ 1: ข้อมูลประจำเครื่องมือ (Equipment Master - ใช้ร่วมกันทุกแบบฟอร์ม) -->
             <!-- ===================================================================== -->
-            <div class="bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-200">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3 mb-4">
-                    <h2 class="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">1</span>
-                        ข้อมูลเครื่องมือ (Equipment Information)
+            <div class="bg-slate-50/80 p-5 md:p-6 rounded-2xl border border-slate-200/90 shadow-xs space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                    <h2 class="text-base md:text-lg font-bold text-slate-800 font-heading flex items-center gap-2.5">
+                        <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white text-xs flex items-center justify-center font-bold shadow-sm shadow-indigo-200">1</span>
+                        <span>ข้อมูลเครื่องมือ (Equipment Information)</span>
                     </h2>
                     <span class="text-xs text-slate-500">เลือกเครื่องมือเพื่อดึง รุ่น และ S/N อัตโนมัติ</span>
                 </div>
 
                 <!-- ตัวเลือกเครื่องมือด่วน (6 เครื่องหลักตามทะเบียน) -->
-                <div class="mb-4">
-                    <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="equipmentPreset">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5" for="equipmentPreset">
                         เลือกเครื่องมือจากทะเบียน (Quick Select) <span class="text-red-500">*</span>
                     </label>
                     <select id="equipmentPreset"
-                            class="w-full px-3.5 py-2.5 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white font-medium text-slate-800">
+                            class="w-full px-4 py-2.5 border border-indigo-200 hover:border-indigo-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 rounded-xl bg-white font-medium text-slate-800 shadow-xs transition-all outline-none">
                         <option value="Testo|327-1|01563443">1. Testo รุ่น 327-1 — S/N: 01563443</option>
                         <option value="Testo|350XL|01807527">2. Testo รุ่น 350XL — S/N: 01807527</option>
                         <option value="Testo|350XL|01859560">3. Testo รุ่น 350XL — S/N: 01859560</option>
@@ -129,35 +192,35 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqName">
-                            ชื่อเครื่องมือ (Equipment Name) <span class="text-red-500">*</span>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5 flex items-center gap-1.5" for="eqName">
+                            <span>🏷️</span> ชื่อเครื่องมือ (Equipment Name) <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="eqName" value="Flue Gas Analyzer" required
                                placeholder="เช่น Flue Gas Analyzer"
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white placeholder:text-slate-400 placeholder:italic">
+                               class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white placeholder:text-slate-400 placeholder:italic transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqModel">
-                            ยี่ห้อ / รุ่น (Brand / Model) <span class="text-red-500">*</span>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5 flex items-center gap-1.5" for="eqModel">
+                            <span>⚙️</span> ยี่ห้อ / รุ่น (Brand / Model) <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="eqModel" value="Testo 327-1" required
                                placeholder="เช่น Testo 350XL หรือ Testo 327-1"
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white placeholder:text-slate-400 placeholder:italic">
+                               class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white placeholder:text-slate-400 placeholder:italic transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqSerial">
-                            หมายเลขเครื่อง (S/N) <span class="text-red-500">*</span>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5 flex items-center gap-1.5" for="eqSerial">
+                            <span>🔢</span> หมายเลขเครื่อง (S/N) <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="eqSerial" value="01563443" required
                                placeholder="เช่น 01563443 หรือ 60378478"
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white font-mono placeholder:text-slate-400 placeholder:italic">
+                               class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white font-mono font-semibold text-slate-800 placeholder:text-slate-400 placeholder:italic transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1" for="eqCode">
-                            หมายเลขเครื่องมือ (Equipment Code)
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5 flex items-center gap-1.5" for="eqCode">
+                            <span>🔖</span> หมายเลขเครื่องมือ (Equipment Code)
                         </label>
                         <input type="text" id="eqCode" placeholder="เช่น EQ-ETC-ENV-01 (ระบุรหัสถ้ามี)"
-                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white placeholder:text-slate-400 placeholder:italic">
+                               class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white placeholder:text-slate-400 placeholder:italic transition">
                     </div>
                 </div>
             </div>
@@ -166,49 +229,49 @@
             <!-- ส่วนที่ 2: แถบเลือกเมนูการทำงาน (4 Tabs: 3 แบบฟอร์ม + 1 ดึงข้อมูลย้อนหลัง) -->
             <!-- ===================================================================== -->
             <div>
-                <div class="flex items-center gap-2 mb-3">
-                    <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">2</span>
-                    <span class="text-base md:text-lg font-bold text-slate-800">เลือกเมนูบันทึกข้อมูล หรือ ดาวน์โหลดข้อมูลย้อนหลัง</span>
+                <div class="flex items-center gap-2.5 mb-3.5">
+                    <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white text-xs flex items-center justify-center font-bold shadow-sm shadow-indigo-200">2</span>
+                    <span class="text-base md:text-lg font-bold text-slate-800 font-heading">เลือกเมนูบันทึกข้อมูล หรือ ดาวน์โหลดข้อมูลย้อนหลัง</span>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5" role="tablist">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" role="tablist">
                     <button type="button" id="tabBtn1" onclick="switchTab(1)"
-                            class="tab-active flex flex-col items-start p-3 rounded-xl border text-left transition">
+                            class="tab-active flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all duration-200">
                         <div class="flex items-center justify-between w-full">
-                            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-900/30">แบบฟอร์มที่ 1</span>
-                            <span class="text-base">📋</span>
+                            <span class="tab-badge text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-lg border">แบบฟอร์มที่ 1</span>
+                            <span class="text-lg">📋</span>
                         </div>
-                        <div class="font-bold text-sm mt-1.5">สอบเทียบและบำรุงรักษา</div>
+                        <div class="font-bold text-sm font-heading mt-2">สอบเทียบและบำรุงรักษา</div>
                         <div class="text-[11px] opacity-80 mt-0.5">ตรวจสภาพรายสัปดาห์ / ผลสอบเทียบ</div>
                     </button>
 
                     <button type="button" id="tabBtn2" onclick="switchTab(2)"
-                            class="tab-inactive flex flex-col items-start p-3 rounded-xl border text-left transition">
+                            class="tab-inactive flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all duration-200">
                         <div class="flex items-center justify-between w-full">
-                            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-200 text-slate-700">แบบฟอร์มที่ 2</span>
-                            <span class="text-base">🔧</span>
+                            <span class="tab-badge text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-lg border">แบบฟอร์มที่ 2</span>
+                            <span class="text-lg">🔧</span>
                         </div>
-                        <div class="font-bold text-sm mt-1.5">บันทึกประวัติเครื่องมือ</div>
+                        <div class="font-bold text-sm font-heading mt-2">บันทึกประวัติเครื่องมือ</div>
                         <div class="text-[11px] opacity-80 mt-0.5">ประวัติความเสียหาย / ซ่อมแซม</div>
                     </button>
 
                     <button type="button" id="tabBtn3" onclick="switchTab(3)"
-                            class="tab-inactive flex flex-col items-start p-3 rounded-xl border text-left transition">
+                            class="tab-inactive flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all duration-200">
                         <div class="flex items-center justify-between w-full">
-                            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-200 text-slate-700">แบบฟอร์มที่ 3</span>
-                            <span class="text-base">🧪</span>
+                            <span class="tab-badge text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-lg border">แบบฟอร์มที่ 3</span>
+                            <span class="text-lg">🧪</span>
                         </div>
-                        <div class="font-bold text-sm mt-1.5">Gas Verification</div>
-                        <div class="text-[11px] opacity-80 mt-0.5">ทวนสอบค่าก๊าซ NO, NO2, SO2</div>
+                        <div class="font-bold text-sm font-heading mt-2">Gas Verification</div>
+                        <div class="text-[11px] opacity-80 mt-0.5">ทวนสอบค่าก๊าซ O2, CO, NO, NO2, SO2</div>
                     </button>
 
                     <button type="button" id="tabBtn4" onclick="switchTab(4)"
-                            class="tab-inactive flex flex-col items-start p-3 rounded-xl border text-left transition">
+                            class="tab-inactive flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all duration-200">
                         <div class="flex items-center justify-between w-full">
-                            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">ดึงข้อมูลย้อนหลัง</span>
-                            <span class="text-base">📂</span>
+                            <span class="tab-badge text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-lg border">ดึงข้อมูลย้อนหลัง</span>
+                            <span class="text-lg">📂</span>
                         </div>
-                        <div class="font-bold text-sm mt-1.5">ค้นหา & ดาวน์โหลดฟอร์ม</div>
+                        <div class="font-bold text-sm font-heading mt-2">ค้นหา & ดาวน์โหลดฟอร์ม</div>
                         <div class="text-[11px] opacity-80 mt-0.5">ส่งออก PDF / Excel / Word</div>
                     </button>
                 </div>
@@ -257,53 +320,108 @@
                     </div>
                 </div>
 
-                <!-- กล่อง Checklist 5 ข้อ -->
-                <div id="f1_checklistBox" class="bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-200 space-y-3">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-2 mb-2 gap-2">
-                        <h4 class="text-sm font-bold text-slate-800">รายการตรวจเช็คสภาพเครื่องมือ (Checklist 5 ข้อ)</h4>
+                <!-- กล่อง Checklist 5 ระบบ (Field Ergonomics Touch Cards) -->
+                <div id="f1_checklistBox" class="bg-slate-50/70 p-4 md:p-5 rounded-2xl border border-slate-200/90 space-y-3.5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200/80 pb-3 mb-2 gap-2">
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 font-heading flex items-center gap-2">
+                                <span>📋</span> รายการตรวจเช็คสภาพเครื่องมือ (Checklist 5 ระบบประจำสัปดาห์)
+                            </h4>
+                            <span class="text-xs text-slate-500">แตะเพื่อเปลี่ยนสถานะของแต่ละรายการ</span>
+                        </div>
                         <button type="button" onclick="checkAllNormal()"
-                                class="self-start sm:self-auto text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-3 py-1 rounded-lg transition">
+                                class="self-start sm:self-auto text-xs bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-3.5 py-1.5 rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5">
                             ✓ เลือก "ปกติ" ทั้งหมด
                         </button>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-b border-slate-100">
-                        <span class="text-sm text-slate-700 font-medium">1. ฟิลเตอร์กรองฝุ่นก่อนเข้าเซ็นเซอร์</span>
-                        <div class="flex gap-5">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_filter" value="ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_filter" value="ต้องแก้ไข/เปลี่ยน" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                    <!-- ข้อ 1 -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 transition-colors">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold flex items-center justify-center border border-blue-200/60">1</span>
+                            <span class="text-sm text-slate-800 font-medium">ฟิลเตอร์กรองฝุ่นก่อนเข้าเซ็นเซอร์</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
+                            <label class="radio-touch-card radio-touch-normal flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_filter" value="ปกติ" checked class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-xs sm:text-sm font-semibold">✓ ปกติ</span>
+                            </label>
+                            <label class="radio-touch-card radio-touch-issue flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_filter" value="ต้องแก้ไข/เปลี่ยน" class="w-4 h-4 text-rose-600 focus:ring-rose-500 issue-radio">
+                                <span class="text-xs sm:text-sm font-semibold">⚠️ ต้องแก้ไข</span>
+                            </label>
                         </div>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-b border-slate-100">
-                        <span class="text-sm text-slate-700 font-medium">2. การทำงานของปั๊มดูดอากาศ</span>
-                        <div class="flex gap-5">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_pump" value="ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_pump" value="ต้องแก้ไข/ซ่อมแซม" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                    <!-- ข้อ 2 -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 transition-colors">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold flex items-center justify-center border border-blue-200/60">2</span>
+                            <span class="text-sm text-slate-800 font-medium">การทำงานของปั๊มดูดอากาศ</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
+                            <label class="radio-touch-card radio-touch-normal flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_pump" value="ปกติ" checked class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-xs sm:text-sm font-semibold">✓ ปกติ</span>
+                            </label>
+                            <label class="radio-touch-card radio-touch-issue flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_pump" value="ต้องแก้ไข/ซ่อมแซม" class="w-4 h-4 text-rose-600 focus:ring-rose-500 issue-radio">
+                                <span class="text-xs sm:text-sm font-semibold">⚠️ ต้องแก้ไข</span>
+                            </label>
                         </div>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-b border-slate-100">
-                        <span class="text-sm text-slate-700 font-medium">3. ความพร้อมของแบตเตอรี่</span>
-                        <div class="flex gap-5">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_battery" value="ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_battery" value="เสื่อม/ต้องชาร์จ" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                    <!-- ข้อ 3 -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 transition-colors">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold flex items-center justify-center border border-blue-200/60">3</span>
+                            <span class="text-sm text-slate-800 font-medium">ความพร้อมของแบตเตอรี่</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
+                            <label class="radio-touch-card radio-touch-normal flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_battery" value="ปกติ" checked class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-xs sm:text-sm font-semibold">✓ ปกติ</span>
+                            </label>
+                            <label class="radio-touch-card radio-touch-issue flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_battery" value="เสื่อม/ต้องชาร์จ" class="w-4 h-4 text-rose-600 focus:ring-rose-500 issue-radio">
+                                <span class="text-xs sm:text-sm font-semibold">⚠️ ต้องแก้ไข</span>
+                            </label>
                         </div>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1 border-b border-slate-100">
-                        <span class="text-sm text-slate-700 font-medium">4. ความสะอาดของเครื่องมือ</span>
-                        <div class="flex gap-5">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_clean" value="สะอาด/ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_clean" value="ต้องทำความสะอาด" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                    <!-- ข้อ 4 -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 transition-colors">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold flex items-center justify-center border border-blue-200/60">4</span>
+                            <span class="text-sm text-slate-800 font-medium">ความสะอาดของเครื่องมือ</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
+                            <label class="radio-touch-card radio-touch-normal flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_clean" value="สะอาด/ปกติ" checked class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-xs sm:text-sm font-semibold">✓ สะอาด</span>
+                            </label>
+                            <label class="radio-touch-card radio-touch-issue flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_clean" value="ต้องทำความสะอาด" class="w-4 h-4 text-rose-600 focus:ring-rose-500 issue-radio">
+                                <span class="text-xs sm:text-sm font-semibold">⚠️ ต้องทำความสะอาด</span>
+                            </label>
                         </div>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1">
-                        <span class="text-sm text-slate-700 font-medium">5. สถานะเซ็นเซอร์ (O2, CO, NO, NO2, SO2)</span>
-                        <div class="flex gap-5">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor" value="ปกติ" checked class="w-4 h-4 text-blue-600"><span class="ml-2 text-sm text-slate-700">ปกติ</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="chk_sensor" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-red-600 issue-radio"><span class="ml-2 text-sm text-red-600 font-medium">ต้องแก้ไข</span></label>
+                    <!-- ข้อ 5 -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 transition-colors">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold flex items-center justify-center border border-blue-200/60">5</span>
+                            <span class="text-sm text-slate-800 font-medium">สถานะเซ็นเซอร์ (O2, CO, NO, NO2, SO2)</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
+                            <label class="radio-touch-card radio-touch-normal flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_sensor" value="ปกติ" checked class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-xs sm:text-sm font-semibold">✓ ปกติ</span>
+                            </label>
+                            <label class="radio-touch-card radio-touch-issue flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 cursor-pointer select-none">
+                                <input type="radio" name="chk_sensor" value="ผิดปกติ/รอสอบเทียบ" class="w-4 h-4 text-rose-600 focus:ring-rose-500 issue-radio">
+                                <span class="text-xs sm:text-sm font-semibold">⚠️ ต้องแก้ไข</span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -346,17 +464,17 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                                 ผลการสอบเทียบ / ตรวจสภาพ <span class="text-red-500">*</span>
                             </label>
-                            <div class="flex gap-4 pt-1.5">
-                                <label class="flex items-center gap-2 cursor-pointer bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-lg">
-                                    <input type="radio" name="f1_result" value="ผ่าน" checked class="w-4 h-4 text-emerald-600">
-                                    <span class="text-sm font-semibold text-emerald-800">ผ่าน (Pass)</span>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="radio-touch-card radio-touch-normal flex items-center justify-center gap-2 cursor-pointer border border-slate-200 px-4 py-2.5 rounded-xl select-none">
+                                    <input type="radio" name="f1_result" value="ผ่าน" checked class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-xs sm:text-sm font-bold">✓ ผ่าน (Pass)</span>
                                 </label>
-                                <label class="flex items-center gap-2 cursor-pointer bg-red-50 border border-red-200 px-3.5 py-1.5 rounded-lg">
-                                    <input type="radio" name="f1_result" value="ไม่ผ่าน" class="w-4 h-4 text-red-600">
-                                    <span class="text-sm font-semibold text-red-800">ไม่ผ่าน (Fail)</span>
+                                <label class="radio-touch-card radio-touch-issue flex items-center justify-center gap-2 cursor-pointer border border-slate-200 px-4 py-2.5 rounded-xl select-none">
+                                    <input type="radio" name="f1_result" value="ไม่ผ่าน" class="w-4 h-4 text-rose-600 focus:ring-rose-500">
+                                    <span class="text-xs sm:text-sm font-bold">✗ ไม่ผ่าน (Fail)</span>
                                 </label>
                             </div>
                         </div>
@@ -417,7 +535,7 @@
                 </div>
 
                 <button type="submit" id="submitBtn1"
-                        class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+                        class="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 active:scale-[0.99]">
                     <span>💾 บันทึกข้อมูลลงแบบฟอร์มที่ 1 (สอบเทียบและบำรุงรักษา)</span>
                 </button>
             </form>
@@ -475,7 +593,7 @@
                 </div>
 
                 <button type="submit" id="submitBtn2"
-                        class="w-full flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+                        class="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md shadow-amber-500/20 hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-200 active:scale-[0.99]">
                     <span>💾 บันทึกข้อมูลลงแบบฟอร์มที่ 2 (ประวัติความเสียหาย/ซ่อมแซม)</span>
                 </button>
             </form>
@@ -601,11 +719,11 @@
 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button type="submit" id="submitBtn3"
-                            class="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+                            class="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 active:scale-[0.99]">
                         <span>💾 บันทึกผล Verification ลงฐานข้อมูล Google Sheet</span>
                     </button>
                     <button type="button" onclick="printCurrentForm3Input()"
-                            class="sm:w-auto flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold px-5 py-3 rounded-xl shadow-md transition">
+                            class="sm:w-auto flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold px-6 py-3.5 rounded-2xl shadow-md transition-all duration-200 active:scale-[0.99]">
                         <span>🖨️ พิมพ์ใบ Verification</span>
                     </button>
                 </div>
@@ -672,55 +790,56 @@
                     <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
                         <div class="flex flex-wrap items-center gap-1.5">
                             <span class="text-xs text-slate-500 mr-1">ช่วงเวลาด่วน:</span>
-                            <button type="button" onclick="setQuickRange('ALL')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg transition">ดูทั้งหมด</button>
-                            <button type="button" onclick="setQuickRange('MONTH')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg transition">เดือนนี้</button>
-                            <button type="button" onclick="setQuickRange('YEAR')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg transition">ปีนี้</button>
+                            <button type="button" onclick="setQuickRange('ALL')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-xl transition shadow-xs">ดูทั้งหมด</button>
+                            <button type="button" onclick="setQuickRange('MONTH')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-xl transition shadow-xs">เดือนนี้</button>
+                            <button type="button" onclick="setQuickRange('YEAR')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-xl transition shadow-xs">ปีนี้</button>
                         </div>
 
                         <button type="button" id="btnQueryHistory" onclick="fetchHistoricalRecords()"
-                                class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm transition">
-                            🔍 ดึงข้อมูลจาก Google Sheet
+                                class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-md shadow-blue-500/20 transition active:scale-95">
+                            <span>🔍 ดึงข้อมูลจาก Google Sheet</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- ตัวเลือกรายการใบทวนสอบย้อนหลัง (แสดงเฉพาะเมื่อเลือก แบบฟอร์มที่ 3) -->
-                <div id="q_form3RecordPickerBox" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <label class="text-xs font-bold text-indigo-950" for="q_form3RecordSelect">
+                <div id="q_form3RecordPickerBox" class="hidden bg-indigo-50/80 border border-indigo-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <label class="text-xs font-bold text-indigo-950 font-heading" for="q_form3RecordSelect">
                         📑 เลือกใบทวนสอบก๊าซ (Verification) ย้อนหลังที่ต้องการดู/ดาวน์โหลด:
                     </label>
                     <select id="q_form3RecordSelect" onchange="renderHistoricalPreview()"
-                            class="sm:w-96 px-3 py-1.5 text-sm font-semibold bg-white border border-indigo-300 rounded-lg text-slate-800 outline-none">
+                            class="sm:w-96 px-3.5 py-2 text-sm font-semibold bg-white border border-indigo-300 rounded-xl text-slate-800 outline-none shadow-xs">
                     </select>
                 </div>
 
-                <!-- แถบปุ่มดาวน์โหลด 4 รูปแบบ -->
-                <div class="bg-slate-800 text-white p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-3">
-                    <div class="text-xs">
-                        <span class="font-bold text-emerald-300" id="q_statusText">พร้อมดึงข้อมูล</span>
+                <!-- แถบปุ่มดาวน์โหลด 4 รูปแบบ (Modern Document Export Toolbar) -->
+                <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-4 rounded-2xl shadow-sm border border-slate-700/60 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="font-bold text-emerald-300 font-heading" id="q_statusText">พร้อมดึงข้อมูล</span>
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <button type="button" onclick="printHistoricalForm()"
-                                class="flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition">
-                            🖨️ พิมพ์ / บันทึกเป็น PDF
+                                class="flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 shadow-sm shadow-rose-600/30 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition duration-150 active:scale-95">
+                            <span>🖨️ พิมพ์ / บันทึกเป็น PDF</span>
                         </button>
                         <button type="button" onclick="exportHistoricalToExcelXls()"
-                                class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition">
-                            📊 ดาวน์โหลด Excel (.xls ตามแบบฟอร์ม)
+                                class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/30 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition duration-150 active:scale-95">
+                            <span>📊 ดาวน์โหลด Excel (.xls)</span>
                         </button>
                         <button type="button" onclick="exportHistoricalToCsv()"
-                                class="flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition">
-                            📑 ดาวน์โหลด CSV (.csv)
+                                class="flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 shadow-sm shadow-teal-600/30 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition duration-150 active:scale-95">
+                            <span>📑 ดาวน์โหลด CSV (.csv)</span>
                         </button>
                         <button type="button" onclick="exportHistoricalToWord()"
-                                class="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition">
-                            📝 ดาวน์โหลด Word (.doc)
+                                class="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 shadow-sm shadow-sky-600/30 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition duration-150 active:scale-95">
+                            <span>📝 ดาวน์โหลด Word (.doc)</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- พื้นที่แสดงตัวอย่างหน้าตาแบบฟอร์มพร้อมข้อมูลย้อนหลัง (Live Preview) -->
-                <div class="border border-slate-300 rounded-xl bg-white p-4 md:p-6 overflow-x-auto shadow-inner">
+                <div class="border border-slate-300/80 rounded-2xl bg-white p-4 md:p-6 overflow-x-auto shadow-inner">
                     <div id="historicalFormPreview" class="min-w-[720px]">
                         <div class="text-center py-12 text-slate-400 text-sm">
                             กดปุ่ม <b>"🔍 ดึงข้อมูลจาก Google Sheet"</b> เพื่อแสดงข้อมูลย้อนหลังตามแบบฟอร์ม
@@ -738,13 +857,13 @@
     <div id="universalPrintArea" class="hidden bg-white text-black max-w-5xl mx-auto p-6 text-sm"></div>
 
     <!-- Modal แจ้งเตือนผลการบันทึก -->
-    <div id="messageModal" class="no-print hidden-modal fixed inset-0 bg-black/50 items-center justify-center p-4 z-50" role="dialog" aria-modal="true">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 text-center">
+    <div id="messageModal" class="no-print hidden-modal fixed inset-0 bg-slate-900/60 backdrop-blur-xs items-center justify-center p-4 z-50" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 text-center border border-slate-100">
             <div id="modalIcon" class="mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4"></div>
-            <h3 id="modalTitle" class="text-xl font-bold text-slate-800"></h3>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-800 font-heading"></h3>
             <p id="modalMessage" class="mt-2 text-sm text-slate-600 whitespace-pre-line"></p>
             <button type="button" id="modalCloseBtn"
-                    class="mt-6 w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-xl transition">
+                    class="mt-6 w-full bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-black hover:to-indigo-900 text-white font-semibold py-3 rounded-xl transition duration-150 active:scale-95 shadow-md">
                 ตกลง
             </button>
         </div>
@@ -926,10 +1045,10 @@
                 const btn = document.getElementById(`tabBtn${n}`);
                 if (n === tabNum) {
                     form.classList.remove('hidden');
-                    btn.className = 'tab-active flex flex-col items-start p-3 rounded-xl border text-left transition';
+                    btn.className = 'tab-active flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all duration-200';
                 } else {
                     form.classList.add('hidden');
-                    btn.className = 'tab-inactive flex flex-col items-start p-3 rounded-xl border text-left transition';
+                    btn.className = 'tab-inactive flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all duration-200';
                 }
             });
 
