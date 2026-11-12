@@ -717,14 +717,37 @@
                     </label>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-3">
+                <!-- Real-time Verification Status Banner & Gas Chips (Phase B) -->
+                <div class="space-y-2.5 pt-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-500 font-heading">สถานะก๊าซ 5 ชนิด:</span>
+                        <div id="chip_O2" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> O2: รอกรอก</div>
+                        <div id="chip_CO" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> CO: รอกรอก</div>
+                        <div id="chip_NO" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> NO: รอกรอก</div>
+                        <div id="chip_NO2" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> NO2: รอกรอก</div>
+                        <div id="chip_SO2" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> SO2: รอกรอก</div>
+                    </div>
+                    <div id="f3_liveResultBanner" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5 text-slate-600 text-xs font-semibold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <span>สถานะการคำนวณ: กรอกค่า Standard & Response เพื่อประเมินผลทวนสอบแบบเรียลไทม์</span>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono">เกณฑ์ยอมรับ: ±<span class="current-tol-label">5.0</span>%</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 pt-2">
                     <button type="submit" id="submitBtn3"
                             class="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 active:scale-[0.99]">
                         <span>💾 บันทึกผล Verification ลงฐานข้อมูล Google Sheet</span>
                     </button>
+                    <button type="button" onclick="openForm3PreviewModal()"
+                            class="sm:w-auto flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-semibold px-5 py-3.5 rounded-2xl shadow-xs transition-all duration-150 active:scale-[0.99]">
+                        <span>👁️ ดูตัวอย่างใบรายงาน A4</span>
+                    </button>
                     <button type="button" onclick="printCurrentForm3Input()"
-                            class="sm:w-auto flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold px-6 py-3.5 rounded-2xl shadow-md transition-all duration-200 active:scale-[0.99]">
-                        <span>🖨️ พิมพ์ใบ Verification</span>
+                            class="sm:w-auto flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold px-5 py-3.5 rounded-2xl shadow-md transition-all duration-200 active:scale-[0.99]">
+                        <span>🖨️ พิมพ์เอกสาร</span>
                     </button>
                 </div>
             </form>
@@ -838,11 +861,30 @@
                     </div>
                 </div>
 
-                <!-- พื้นที่แสดงตัวอย่างหน้าตาแบบฟอร์มพร้อมข้อมูลย้อนหลัง (Live Preview) -->
-                <div class="border border-slate-300/80 rounded-2xl bg-white p-4 md:p-6 overflow-x-auto shadow-inner">
-                    <div id="historicalFormPreview" class="min-w-[720px]">
-                        <div class="text-center py-12 text-slate-400 text-sm">
-                            กดปุ่ม <b>"🔍 ดึงข้อมูลจาก Google Sheet"</b> เพื่อแสดงข้อมูลย้อนหลังตามแบบฟอร์ม
+                <!-- พื้นที่แสดงตัวอย่างหน้าตาแบบฟอร์มพร้อมข้อมูลย้อนหลัง (A4 Live Paper Canvas Studio) -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-xs px-1 text-slate-600">
+                        <div class="flex items-center gap-2 font-heading font-semibold text-slate-700">
+                            <span>📄</span> พรีวิวเอกสารแบบฟอร์มทางการ (A4 Sheet Canvas)
+                            <span class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-mono">ISO/IEC 17025 Ready</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400">
+                            สัดส่วนและระยะขอบกระดาษ A4 เสมือนจริง
+                        </div>
+                    </div>
+
+                    <!-- Desk Background with Shadow-casted A4 Paper -->
+                    <div class="bg-slate-200/70 p-4 sm:p-8 rounded-2xl border border-slate-300/90 shadow-inner flex justify-center items-start overflow-x-auto">
+                        <div id="a4CanvasSheet" class="bg-white shadow-2xl rounded-sm p-6 sm:p-10 border border-slate-300 min-w-[720px] max-w-[820px] w-full relative transition-all">
+                            <!-- Subtle Official Seal Watermark -->
+                            <div class="absolute right-8 top-8 opacity-[0.03] pointer-events-none select-none font-bold text-7xl tracking-widest uppercase">
+                                ETC 1992
+                            </div>
+                            <div id="historicalFormPreview">
+                                <div class="text-center py-16 text-slate-400 text-sm">
+                                    กดปุ่ม <b>"🔍 ดึงข้อมูลจาก Google Sheet"</b> เพื่อแสดงข้อมูลย้อนหลังตามแบบฟอร์ม A4
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -855,6 +897,40 @@
     <!-- พื้นที่กลางสำหรับสั่งพิมพ์เอกสาร (รองรับทั้งแบบฟอร์มที่ 1, 2 และ 3)             -->
     <!-- ========================================================================= -->
     <div id="universalPrintArea" class="hidden bg-white text-black max-w-5xl mx-auto p-6 text-sm"></div>
+
+    <!-- Modal พรีวิวเอกสารแบบฟอร์มที่ 3 ก่อนพิมพ์ (Instant A4 Certificate Preview) -->
+    <div id="form3PreviewModal" class="no-print hidden-modal fixed inset-0 bg-slate-900/60 backdrop-blur-xs items-center justify-center p-3 sm:p-6 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-5 sm:p-7 border border-slate-100 max-h-[92vh] flex flex-col">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">🧪</span>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800 font-heading">
+                        ตัวอย่างใบรายงาน Flue Gas Analyzer Verification (A4)
+                    </h3>
+                </div>
+                <button type="button" onclick="closeForm3PreviewModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition">
+                    ✕
+                </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto my-4 bg-slate-100 p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-inner flex justify-center">
+                <div class="bg-white shadow-xl rounded-sm p-6 sm:p-10 border border-slate-300 min-w-[700px] max-w-[760px] w-full">
+                    <div id="form3PreviewModalContent"></div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-end gap-2.5 pt-2 border-t border-slate-200">
+                <button type="button" onclick="closeForm3PreviewModal()"
+                        class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-sm font-semibold transition">
+                    ปิดหน้าต่าง
+                </button>
+                <button type="button" onclick="closeForm3PreviewModal(); printCurrentForm3Input();"
+                        class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-md transition duration-150 active:scale-95 text-sm">
+                    <span>🖨️ สั่งพิมพ์เอกสารนี้</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal แจ้งเตือนผลการบันทึก -->
     <div id="messageModal" class="no-print hidden-modal fixed inset-0 bg-slate-900/60 backdrop-blur-xs items-center justify-center p-4 z-50" role="dialog" aria-modal="true">
@@ -895,7 +971,7 @@
             records: []
         };
 
-        // 1. สร้างตารางกรอกค่าก๊าซ O2, CO, NO, NO2, SO2 ในแท็บที่ 3
+        // 1. สร้างตารางกรอกค่าก๊าซ O2, CO, NO, NO2, SO2 ในแท็บที่ 3 (Phase B: Visual Gauge & Status Cards)
         function renderGasTables() {
             const container = document.getElementById('gasTablesContainer');
             container.innerHTML = GAS_TYPES.map(gas => {
@@ -904,50 +980,70 @@
                 const stdPlaceholder = isO2 ? 'เช่น 20.9% หรือ 0.0' : 'เช่น 100.0 PPM';
                 const resPlaceholder = isO2 ? 'เช่น 20.8% หรือ 0.0' : 'เช่น 99.5 PPM';
                 return `
-                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                    <div class="bg-slate-800 text-white px-4 py-2 text-sm font-bold flex items-center justify-between">
-                        <span class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full ${isO2 ? 'bg-emerald-400' : 'bg-cyan-400'}"></span>
-                            ${gas.label}
-                        </span>
-                        <span class="text-xs font-normal text-slate-300">Difference = Response - Standard | Error (%) = ((Response - Standard) / Standard) × 100</span>
+                <div class="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-xs hover:shadow-sm transition-shadow">
+                    <!-- Card Header with Real-time Status Badge -->
+                    <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-700/60">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center font-bold text-xs text-indigo-300 font-mono">
+                                ${gas.key}
+                            </span>
+                            <div>
+                                <div class="font-bold text-sm font-heading flex items-center gap-2">
+                                    <span>${gas.label}</span>
+                                    <span id="${gas.key}_statusBadge" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 transition-all">
+                                        รอกรอกข้อมูล
+                                    </span>
+                                </div>
+                                <div class="text-[11px] text-slate-400 font-normal">เกณฑ์ยอมรับ: ±<span class="current-tol-label">5.0</span>% | Difference = Response - Standard</div>
+                            </div>
+                        </div>
+                        <div class="text-right text-xs">
+                            <span class="text-slate-400">Max Error:</span>
+                            <span id="${gas.key}_maxError" class="font-mono font-bold text-white ml-1">--</span>
+                        </div>
                     </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left border-collapse">
                             <thead>
-                                <tr class="bg-slate-100 text-slate-700 text-xs border-b border-slate-200">
-                                    <th class="py-2.5 px-3 text-center w-12">#</th>
-                                    <th class="py-2.5 px-3">Standard Gas Value (${unitText})</th>
-                                    <th class="py-2.5 px-3">Flue Gas Analyzer Response (${unitText})</th>
-                                    <th class="py-2.5 px-3 bg-slate-50">Difference (${unitText})</th>
-                                    <th class="py-2.5 px-3 bg-slate-50">Calibration Error (%)</th>
+                                <tr class="bg-slate-50 text-slate-700 text-xs border-b border-slate-200 font-heading">
+                                    <th class="py-2.5 px-3 text-center w-12 font-bold">#</th>
+                                    <th class="py-2.5 px-3 font-bold">Standard Gas Value (${unitText})</th>
+                                    <th class="py-2.5 px-3 font-bold">Flue Gas Analyzer Response (${unitText})</th>
+                                    <th class="py-2.5 px-3 bg-slate-50/80 font-bold">Difference (${unitText})</th>
+                                    <th class="py-2.5 px-3 bg-slate-50/80 font-bold">Calibration Error (%) & Status</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-200">
+                            <tbody class="divide-y divide-slate-100">
                                 ${[1, 2, 3].map(rowIdx => `
-                                    <tr>
-                                        <td class="py-2 px-3 text-center font-semibold text-slate-500">${rowIdx}</td>
+                                    <tr class="hover:bg-slate-50/50 transition-colors">
+                                        <td class="py-2 px-3 text-center font-semibold text-slate-500 font-mono text-xs">${rowIdx}</td>
                                         <td class="py-2 px-3">
                                             <input type="number" step="any" id="${gas.key}_std_${rowIdx}"
                                                    oninput="recalculateGasTables()"
                                                    placeholder="${stdPlaceholder}"
-                                                   class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 font-mono placeholder:text-slate-400 placeholder:italic">
+                                                   class="w-full px-3 py-1.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-800 font-mono text-sm placeholder:text-slate-400 placeholder:italic transition">
                                         </td>
                                         <td class="py-2 px-3">
                                             <input type="number" step="any" id="${gas.key}_res_${rowIdx}"
                                                    oninput="recalculateGasTables()"
                                                    placeholder="${resPlaceholder}"
-                                                   class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 font-mono placeholder:text-slate-400 placeholder:italic">
+                                                   class="w-full px-3 py-1.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-800 font-mono text-sm placeholder:text-slate-400 placeholder:italic transition">
                                         </td>
-                                        <td class="py-2 px-3 bg-slate-50">
+                                        <td class="py-2 px-3 bg-slate-50/50">
                                             <input type="text" id="${gas.key}_diff_${rowIdx}" readonly tabindex="-1"
                                                    placeholder="คำนวณอัตโนมัติ"
-                                                   class="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center outline-none placeholder:text-slate-400 placeholder:italic">
+                                                   class="w-full px-3 py-1.5 bg-slate-100/80 border border-slate-200 rounded-xl text-slate-700 font-mono text-center outline-none text-sm placeholder:text-slate-400 placeholder:italic">
                                         </td>
-                                        <td class="py-2 px-3 bg-slate-50">
-                                            <input type="text" id="${gas.key}_err_${rowIdx}" readonly tabindex="-1"
-                                                   placeholder="คำนวณอัตโนมัติ"
-                                                   class="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center font-semibold outline-none placeholder:text-slate-400 placeholder:italic">
+                                        <td class="py-2 px-3 bg-slate-50/50">
+                                            <div class="flex items-center gap-2">
+                                                <input type="text" id="${gas.key}_err_${rowIdx}" readonly tabindex="-1"
+                                                       placeholder="คำนวณอัตโนมัติ"
+                                                       class="w-28 sm:w-32 px-2.5 py-1.5 bg-slate-100/80 border border-slate-200 rounded-xl text-slate-700 font-mono text-center font-semibold outline-none text-sm placeholder:text-slate-400 placeholder:italic transition-all">
+                                                <div id="${gas.key}_gauge_${rowIdx}" class="text-[11px] font-semibold px-2 py-1 rounded-lg bg-slate-100 text-slate-400 flex-1 text-center whitespace-nowrap transition-all">
+                                                    --
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 `).join('')}
@@ -960,49 +1056,159 @@
         }
 
         function recalculateGasTables() {
-            const tol = parseFloat(document.getElementById('f3_tolerancePct').value) || 5;
+            const tolInput = document.getElementById('f3_tolerancePct');
+            const tol = parseFloat(tolInput ? tolInput.value : 5) || 5;
+
+            // อัปเดตตัวเลข Tolerance ใน Header ทุกการ์ด
+            document.querySelectorAll('.current-tol-label').forEach(el => {
+                el.textContent = tol.toFixed(1);
+            });
+
             let anyExceed = false;
             let hasAnyValue = false;
+            let totalMeasuredPoints = 0;
+            let totalPassPoints = 0;
 
             GAS_TYPES.forEach(gas => {
+                let gasHasValue = false;
+                let gasMaxAbsErr = 0;
+                let gasExceed = false;
+
                 for (let i = 1; i <= 3; i++) {
-                    const stdRaw = document.getElementById(`${gas.key}_std_${i}`).value;
-                    const resRaw = document.getElementById(`${gas.key}_res_${i}`).value;
+                    const stdEl = document.getElementById(`${gas.key}_std_${i}`);
+                    const resEl = document.getElementById(`${gas.key}_res_${i}`);
                     const diffEl = document.getElementById(`${gas.key}_diff_${i}`);
                     const errEl = document.getElementById(`${gas.key}_err_${i}`);
+                    const gaugeEl = document.getElementById(`${gas.key}_gauge_${i}`);
+
+                    if (!stdEl || !resEl || !diffEl || !errEl) continue;
+
+                    const stdRaw = stdEl.value;
+                    const resRaw = resEl.value;
 
                     if (stdRaw !== '' && resRaw !== '') {
                         const std = parseFloat(stdRaw);
                         const res = parseFloat(resRaw);
                         if (!isNaN(std) && !isNaN(res)) {
                             hasAnyValue = true;
+                            gasHasValue = true;
+                            totalMeasuredPoints++;
                             const diff = res - std;
                             diffEl.value = diff.toFixed(2);
 
                             if (std !== 0) {
                                 const err = ((res - std) / std) * 100;
-                                errEl.value = err.toFixed(2) + '%';
-                                if (Math.abs(err) > tol) {
+                                const absErr = Math.abs(err);
+                                errEl.value = (err >= 0 ? '+' : '') + err.toFixed(2) + '%';
+                                if (absErr > gasMaxAbsErr) gasMaxAbsErr = absErr;
+
+                                if (absErr > tol) {
                                     anyExceed = true;
-                                    errEl.className = 'w-full px-2.5 py-1.5 bg-red-100 border border-red-300 rounded-lg text-red-700 font-mono text-center font-bold outline-none';
+                                    gasExceed = true;
+                                    errEl.className = 'w-28 sm:w-32 px-2.5 py-1.5 bg-rose-50 border-2 border-rose-400 rounded-xl text-rose-700 font-mono text-center font-bold outline-none shadow-xs';
+                                    if (gaugeEl) {
+                                        gaugeEl.className = 'text-[11px] font-semibold px-2 py-1 rounded-lg bg-rose-100 border border-rose-300 text-rose-800 flex-1 text-center whitespace-nowrap shadow-xs';
+                                        gaugeEl.innerHTML = '❌ เกินเกณฑ์ (FAIL)';
+                                    }
                                 } else {
-                                    errEl.className = 'w-full px-2.5 py-1.5 bg-emerald-50 border border-emerald-300 rounded-lg text-emerald-700 font-mono text-center font-bold outline-none';
+                                    totalPassPoints++;
+                                    errEl.className = 'w-28 sm:w-32 px-2.5 py-1.5 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-700 font-mono text-center font-bold outline-none shadow-xs';
+                                    if (gaugeEl) {
+                                        gaugeEl.className = 'text-[11px] font-semibold px-2 py-1 rounded-lg bg-emerald-100 border border-emerald-300 text-emerald-800 flex-1 text-center whitespace-nowrap shadow-xs';
+                                        gaugeEl.innerHTML = absErr <= (tol * 0.5) ? '✓ ดีเยี่ยม (PASS)' : '✓ ผ่านเกณฑ์ (PASS)';
+                                    }
                                 }
                             } else {
                                 errEl.value = '0.00%';
-                                errEl.className = 'w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center outline-none';
+                                errEl.className = 'w-28 sm:w-32 px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-xl text-slate-700 font-mono text-center outline-none';
+                                if (gaugeEl) {
+                                    gaugeEl.className = 'text-[11px] font-semibold px-2 py-1 rounded-lg bg-slate-100 text-slate-600 flex-1 text-center whitespace-nowrap';
+                                    gaugeEl.innerHTML = '✓ Zero Point';
+                                }
                             }
                             continue;
                         }
                     }
                     diffEl.value = '';
                     errEl.value = '';
-                    errEl.className = 'w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-center outline-none';
+                    errEl.className = 'w-28 sm:w-32 px-2.5 py-1.5 bg-slate-100/80 border border-slate-200 rounded-xl text-slate-700 font-mono text-center font-semibold outline-none';
+                    if (gaugeEl) {
+                        gaugeEl.className = 'text-[11px] font-semibold px-2 py-1 rounded-lg bg-slate-100 text-slate-400 flex-1 text-center whitespace-nowrap';
+                        gaugeEl.innerHTML = '--';
+                    }
+                }
+
+                // อัปเดตสถานะของแต่ละก๊าซใน Header Card
+                const statusBadge = document.getElementById(`${gas.key}_statusBadge`);
+                const maxErrEl = document.getElementById(`${gas.key}_maxError`);
+                if (statusBadge) {
+                    if (!gasHasValue) {
+                        statusBadge.className = 'text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+                        statusBadge.textContent = 'รอกรอกข้อมูล';
+                    } else if (gasExceed) {
+                        statusBadge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40';
+                        statusBadge.innerHTML = '❌ FAIL (เกินเกณฑ์)';
+                    } else {
+                        statusBadge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+                        statusBadge.innerHTML = '✓ PASS (ผ่านเกณฑ์)';
+                    }
+                }
+                if (maxErrEl) {
+                    maxErrEl.textContent = gasHasValue ? `±${gasMaxAbsErr.toFixed(2)}%` : '--';
+                    maxErrEl.className = `font-mono font-bold ml-1 ${gasExceed ? 'text-rose-400' : (gasHasValue ? 'text-emerald-400' : 'text-white')}`;
+                }
+
+                // อัปเดต Mini Chip บน Summary Bar
+                const chipEl = document.getElementById(`chip_${gas.key}`);
+                if (chipEl) {
+                    if (!gasHasValue) {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400"></span> ${gas.key}: รอกรอก`;
+                    } else if (gasExceed) {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold border border-rose-300 flex items-center gap-1.5 animate-pulse';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> ${gas.key}: FAIL (${gasMaxAbsErr.toFixed(1)}%)`;
+                    } else {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-300 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${gas.key}: PASS (${gasMaxAbsErr.toFixed(1)}%)`;
+                    }
                 }
             });
 
-            if (hasAnyValue) {
-                document.getElementById('f3_overallResult').value = anyExceed ? 'ไม่ผ่าน' : 'ผ่าน';
+            // อัปเดต Overall Result
+            const overallResultEl = document.getElementById('f3_overallResult');
+            const liveResultBanner = document.getElementById('f3_liveResultBanner');
+            if (overallResultEl) {
+                overallResultEl.value = anyExceed ? 'ไม่ผ่าน' : 'ผ่าน';
+            }
+            if (liveResultBanner) {
+                if (!hasAnyValue) {
+                    liveResultBanner.className = 'bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                    liveResultBanner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-slate-600 text-xs font-semibold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <span>สถานะการคำนวณ: กรอกค่า Standard & Response เพื่อประเมินผลทวนสอบแบบเรียลไทม์</span>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono">เกณฑ์ยอมรับ: ±<span class="current-tol-label">${tol.toFixed(1)}</span>%</div>
+                    `;
+                } else if (anyExceed) {
+                    liveResultBanner.className = 'bg-rose-50 border-2 border-rose-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs';
+                    liveResultBanner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-rose-800 text-sm font-bold font-heading">
+                            <span class="w-3.5 h-3.5 rounded-full bg-rose-500 animate-ping"></span>
+                            <span>⚠️ ผลการทวนสอบ: ไม่ผ่านเกณฑ์ (FAILED - มีค่า Error เกินเกณฑ์ ±${tol.toFixed(1)}%)</span>
+                        </div>
+                        <div class="text-xs text-rose-700 font-medium">ตรวจผ่านแล้ว ${totalPassPoints}/${totalMeasuredPoints} จุดวัด</div>
+                    `;
+                } else {
+                    liveResultBanner.className = 'bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs';
+                    liveResultBanner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-emerald-800 text-sm font-bold font-heading">
+                            <span class="w-3.5 h-3.5 rounded-full bg-emerald-500"></span>
+                            <span>✅ ผลการทวนสอบ: ผ่านเกณฑ์ทั้งหมด (ALL PASSED ภายใน ±${tol.toFixed(1)}%)</span>
+                        </div>
+                        <div class="text-xs text-emerald-700 font-medium">ตรวจผ่านครบทั้ง ${totalPassPoints}/${totalMeasuredPoints} จุดวัด</div>
+                    `;
+                }
             }
         }
 
@@ -1386,6 +1592,45 @@
             const printArea = document.getElementById('universalPrintArea');
             printArea.innerHTML = html;
             window.print();
+        }
+
+        // เปิดหน้าต่าง Modal พรีวิวใบรายงาน A4 แบบฟอร์มที่ 3 ก่อนสั่งพิมพ์ (Phase B)
+        function openForm3PreviewModal() {
+            const { gasData } = collectGasVerificationData();
+            const rec = {
+                date: document.getElementById('f3_date').value || '....................',
+                time: document.getElementById('f3_time').value || '....................',
+                eqModel: eqModel.value || '....................',
+                serial: eqSerial.value || '....................',
+                temp: document.getElementById('f3_temp').value || '..........',
+                pressure: document.getElementById('f3_pressure').value || '..........',
+                humidity: document.getElementById('f3_humidity').value || '..........',
+                calibratedBy: document.getElementById('f3_calibratedBy').value || '........................................',
+                approvedBy: document.getElementById('f3_approvedBy').value || '........................................',
+                gasData: gasData
+            };
+            const html = buildOfficialForm3Html(rec, {
+                name: eqName.value,
+                model: eqModel.value,
+                serial: eqSerial.value,
+                code: eqCode.value
+            });
+            const contentEl = document.getElementById('form3PreviewModalContent');
+            if (contentEl) contentEl.innerHTML = html;
+            const modal = document.getElementById('form3PreviewModal');
+            if (modal) {
+                modal.classList.remove('hidden-modal');
+                modal.classList.add('flex');
+            }
+        }
+
+        // ปิดหน้าต่าง Modal พรีวิวใบรายงาน
+        function closeForm3PreviewModal() {
+            const modal = document.getElementById('form3PreviewModal');
+            if (modal) {
+                modal.classList.add('hidden-modal');
+                modal.classList.remove('flex');
+            }
         }
 
         // =========================================================================
