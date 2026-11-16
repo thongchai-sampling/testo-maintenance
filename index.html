@@ -138,7 +138,7 @@
                     <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold bg-indigo-500/20 border border-indigo-400/30 rounded-full text-indigo-200 mb-2.5 backdrop-blur-sm">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span>แผนกปฏิบัติการภาคสนาม | ETC 1992</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30 font-mono">v2.3.1 (Phase C)</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30 font-mono">v2.3.2 (Phase C)</span>
                     </div>
                     <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-heading">
                         ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ
@@ -1993,6 +1993,7 @@
                             ${rowsHtml}
                         </tbody>
                     </table>
+                    <div style="text-align:right; font-size:11px; margin-top:8px; color:#000;">FM-LAB-029 / 4 / 17-10-67</div>
                 </div>`;
         }
 
@@ -2053,6 +2054,7 @@
                             ${rowsHtml}
                         </tbody>
                     </table>
+                    <div style="text-align:right; font-size:11px; margin-top:8px; color:#000;">FM-LAB-026 / 1 / 30-08-56</div>
                 </div>`;
         }
 
@@ -2138,6 +2140,7 @@
                             </td>
                         </tr>
                     </table>
+                    <div style="text-align:right; font-size:11px; margin-top:16px; color:#000;">FM-LAB-265/0/31-10-61</div>
                 </div>`;
         }
 
@@ -2237,6 +2240,7 @@
             const targetForm = currentHistoricalData.targetForm || 'FORM_REPORT';
             const equipment = currentHistoricalData.equipment || { name: 'Flue Gas Analyzer', model: '', serial: '', code: '' };
             const records = currentHistoricalData.records || [];
+            const csvRows = [];
 
             const escCsv = val => `"${String(val ?? '').replace(/"/g, '""')}"`;
 
@@ -2252,6 +2256,7 @@
                     const opSup = [r.operator, r.supervisor].filter(Boolean).join(' / ');
                     csvRows.push([r.seq, r.date, r.nextDate, r.description, r.correction, r.uncertainty, r.tolerance, isPass ? 'ผ่าน' : '', !isPass ? 'ไม่ผ่าน' : '', r.agency, opSup, r.notes]);
                 });
+                csvRows.push(['', '', '', '', '', '', '', '', '', '', '', 'FM-LAB-029 / 4 / 17-10-67']);
             } else if (targetForm === 'FORM_2') {
                 csvRows.push(['บันทึกประวัติเครื่องมือ']);
                 csvRows.push(['แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด']);
@@ -2263,6 +2268,7 @@
                 records.forEach(r => {
                     csvRows.push([r.seq, r.date, r.damageDetail, r.operator, r.supervisor, r.notes]);
                 });
+                csvRows.push(['', '', '', '', '', 'FM-LAB-026 / 1 / 30-08-56']);
             } else {
                 const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
                 const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records[records.length - 1] || {});
@@ -2283,6 +2289,7 @@
                     csvRows.push([]);
                 });
                 csvRows.push(['Calibrated By', chosen.calibratedBy || '', 'Approve By', chosen.approvedBy || '']);
+                csvRows.push(['', '', '', 'FM-LAB-265/0/31-10-61']);
             }
 
             const csvString = csvRows.map(row => row.map(escCsv).join(',')).join('\r\n');

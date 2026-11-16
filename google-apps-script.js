@@ -675,6 +675,14 @@ function populateForm1BySerial(targetSerial, startDateVal, endDateVal) {
   sheet.setColumnWidth(10, 130);
   sheet.setColumnWidth(11, 140);
   sheet.setColumnWidth(12, 160);
+
+  // รหัสเอกสารมุมขวาล่างของแบบฟอร์ม
+  var docCodeRow1 = 8 + rowsToInsert.length;
+  sheet.getRange(docCodeRow1, 10, 1, 3).merge()
+       .setValue("FM-LAB-029 / 4 / 17-10-67")
+       .setFontSize(9)
+       .setHorizontalAlignment("right")
+       .setVerticalAlignment("middle");
 }
 
 /**
@@ -767,6 +775,14 @@ function populateForm2BySerial(targetSerial, startDateVal, endDateVal) {
   sheet.setColumnWidth(4, 140);
   sheet.setColumnWidth(5, 140);
   sheet.setColumnWidth(6, 180);
+
+  // รหัสเอกสารมุมขวาล่างของแบบฟอร์ม
+  var docCodeRow2 = 8 + rowsToInsert.length;
+  sheet.getRange(docCodeRow2, 5, 1, 2).merge()
+       .setValue("FM-LAB-026 / 1 / 30-08-56")
+       .setFontSize(9)
+       .setHorizontalAlignment("right")
+       .setVerticalAlignment("middle");
 }
 
 /**
@@ -914,6 +930,11 @@ function renderForm3Sheet(data, eq, recordOptions, currentLabel) {
        .setHorizontalAlignment("center");
   sheet.getRange("C37:D37").merge().setValue("( " + (data.approvedBy || "........................................") + " )")
        .setHorizontalAlignment("center");
+
+  // รหัสเอกสารมุมขวาล่างของแบบฟอร์ม
+  sheet.getRange("C39:D39").merge().setValue("FM-LAB-265/0/31-10-61")
+       .setFontSize(9)
+       .setHorizontalAlignment("right");
 
   sheet.setColumnWidth(1, 200);
   sheet.setColumnWidth(2, 220);
@@ -1188,8 +1209,7 @@ function sendWeeklyDashboardReport() {
     .getAs(MimeType.PDF);
 
   // หัวข้ออีเมล
-  var emailSubject = (totalIssues > 0 ? "⚠️ [ต้องติดตาม " + totalIssues + " รายการ] " : "✅ [ปกติทุกเครื่อง] ") +
-    "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่อง Testo ประจำสัปดาห์ (" +
+  var emailSubject = "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่อง Flue Gas Analyzer ประจำสัปดาห์ (ระหว่างวันที่ " +
     formatDateDisplay(cutoffDate) + " - " + formatDateDisplay(today) + ")";
 
   // เนื้อหาอีเมล HTML แบบละเอียดและสวยงาม
@@ -1278,9 +1298,11 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
     "</div>" +
 
     "<div style='padding:20px;'>" +
-      "<p style='margin:0 0 16px 0; font-size:14px; color:#374151; line-height:1.6;'>" +
-        "เรียน คุณธงชัย และทีมงานแผนกปฏิบัติการภาคสนาม,<br>" +
-        "ระบบได้รวบรวมและสรุปผลการดำเนินงานเกี่ยวกับเครื่องวัดประสิทธิภาพการเผาไหม้ Flue Gas Analyzer (Testo) ครบทั้ง 3 แบบฟอร์มมาตรฐาน ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ:" +
+      "<p style='margin:0 0 16px 0; font-size:14px; color:#374151; line-height:1.7;'>" +
+        "เรียนทุกท่าน<br>" +
+        "สรุปผลการดำเนินงานเกี่ยวกับการบำรุงรักษาเครื่องวัดประสิทธิภาพการเผาไหม้ Flue Gas Analyzer ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ<br>" +
+        "(รายละเอียดเพิ่มเติมดังเอกสารแนบ)<br>" +
+        "ขอบคุณครับ" +
       "</p>" +
 
       // 4 การ์ดสรุป KPI
@@ -1478,7 +1500,7 @@ function buildWeeklyHtmlReport(s) {
     "</style></head><body>" +
     "<div class='header'>" +
       "<div style='font-size:10px; font-weight:bold; color:#64748b; margin-bottom:2px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
-      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ Testo ประจำสัปดาห์</h1>" +
+      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่อง Flue Gas Analyzer ประจำสัปดาห์</h1>" +
       "<div style='font-size:10px; color:#475569;'>รอบวันที่: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + " &nbsp;|&nbsp; " +
       "กิจกรรมทั้งหมด: " + s.totalActivities + " รายการ &nbsp;|&nbsp; " +
       "<span style='color:" + (s.totalIssues > 0 ? "#b91c1c" : "#15803d") + "; font-weight:bold;'>" +
@@ -1514,7 +1536,7 @@ function buildWeeklyHtmlReport(s) {
       "<tr style='border:none;'>" +
         "<td style='width:50%; text-align:center; border:none; font-size:10px;'>" +
           "<div>ลงชื่อ ........................................................... ผู้รายงาน</div>" +
-          "<div style='margin-top:4px;'>( เจ้าหน้าที่แผนกปฏิบัติการภาคสนาม )</div>" +
+          "<div style='margin-top:4px;'>( หัวหน้าส่วนงานเครื่องมือวัด )</div>" +
         "</td>" +
         "<td style='width:50%; text-align:center; border:none; font-size:10px;'>" +
           "<div>ลงชื่อ ........................................................... ผู้รับทราบ / อนุมัติ</div>" +
