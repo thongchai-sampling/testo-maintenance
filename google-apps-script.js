@@ -15,10 +15,18 @@ const CONFIG = {
   DB_FORM3_SHEET: "DB_Gas_Verification",
   LEGACY_SHEET: "Maintenance_Logs",
 
+  // ชื่อ Sheet ฐานข้อมูลเครื่องวัดระดับเสียง (Sound Level Meter Database Sheets)
+  DB_SOUND_FORM1_SHEET: "DB_Sound_Maintenance_Cal",
+  DB_SOUND_FORM2_SHEET: "DB_Sound_Repair_History",
+  DB_SOUND_FORM3_SHEET: "DB_Sound_Verification",
+
   // ชื่อ Sheet แบบฟอร์มมาตรฐานพร้อมพิมพ์ (Form Template Sheets)
   FORM1_TEMPLATE_SHEET: "Form1_สอบเทียบและบำรุงรักษา",
   FORM2_TEMPLATE_SHEET: "Form2_ประวัติเครื่องมือ",
   FORM3_TEMPLATE_SHEET: "Form3_Gas_Verification",
+  SOUND_FORM1_TEMPLATE_SHEET: "Form1_Sound_สอบเทียบและบำรุงรักษา",
+  SOUND_FORM2_TEMPLATE_SHEET: "Form2_Sound_ประวัติเครื่องมือ",
+  SOUND_FORM3_TEMPLATE_SHEET: "Form3_Sound_Verification",
 
   // อีเมลผู้รับรายงานสรุปประจำสัปดาห์ (คั่นด้วย , หากมีหลายอีเมล)
   EMAIL_RECIPIENTS: "thongchai_b@etc1992.com",
@@ -38,13 +46,140 @@ const EQUIPMENT_MASTER = {
   "63455658": { name: "Flue Gas Analyzer", brand: "Testo", model: "Testo 350New", code: "" }
 };
 
+// ทะเบียนเครื่องวัดระดับเสียง (Sound Level Meter - ข้อมูลจริง 80 เครื่องจากทะเบียน Sampling)
+const SOUND_EQUIPMENT_MASTER = {
+  "090085": {"name": "Sound Level Meter", "brand": "ACO", "model": "ACO 6226", "code": "S52020466", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ไม่ได้ขึ้นทะเบียนกรมสวัสดิฯ **ใช้ตรวจวัดLeq24hrเท่านั้น"},
+  "090086": {"name": "Sound Level Meter", "brand": "ACO", "model": "ACO 6226", "code": "S52020467", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ไม่ได้ขึ้นทะเบียนกรมสวัสดิฯ **ใช้ตรวจวัดLeq24hrเท่านั้น"},
+  "090087": {"name": "Sound Level Meter", "brand": "ACO", "model": "ACO 6226", "code": "S52020468", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-198/2567) รอซื้อทดแทน"},
+  "090088": {"name": "Sound Level Meter", "brand": "ACO", "model": "ACO 6226", "code": "S52020469", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ไม่ได้ขึ้นทะเบียนกรมสวัสดิฯ **ใช้ตรวจวัดLeq24hrเท่านั้น"},
+  "090089": {"name": "Sound Level Meter", "brand": "ACO", "model": "ACO 6226", "code": "S52020470", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-143/2567) ซื้อทดแทนด้วย S/N 00641700"},
+  "090090": {"name": "Sound Level Meter", "brand": "ACO", "model": "ACO 6226", "code": "S52020471", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-198/2567) รอซื้อทดแทน"},
+  "090091": {"name": "Sound Level Meter", "brand": "ACO", "model": "ACO 6226", "code": "S52020471/1", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-143/2567) ซื้อทดแทนด้วย S/N 00641701"},
+  "10185674": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-04", "code": "B4205052", "standard": "IEC 651 (Type 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-319/2567) ซื้อทดแทนด้วย S/N 00641702"},
+  "00310455": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "B40050001", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00310456": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "B40050002", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00310458": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "B40050003", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-181/2568) รอซื้อทดแทน"},
+  "00443357": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "B47050194", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00443358": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "B47050195", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-181/2568) รอซื้อทดแทน"},
+  "00443359": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "B47050196", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00209071": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "S53020567", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-181/2568) รอซื้อทดแทน"},
+  "00209072": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "S53020568", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": "ไม่ได้ขึ้นทะเบียนกรมสวัสดิฯ **ใช้ตรวจวัดLeq24hrเท่านั้น"},
+  "00209079": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "S53020569", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "01209912": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "S54020591", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "01209914": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "S54020592", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "01209915": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "S54020593", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-181/2568) รอซื้อทดแทน"},
+  "01209916": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "S54020594", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "01209917": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-21", "code": "S54020595", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-181/2568) รอซื้อทดแทน"},
+  "00157456": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42", "code": "B58020030", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-143/2567) ซื้อทดแทนด้วย S/N 00641703"},
+  "00646443": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42", "code": "B58020031", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-181/2568) รอซื้อทดแทน"},
+  "01147298": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42", "code": "B58020032", "standard": "IEC 61672 (Class 2)", "status": "รอซ่อม / ส่งซ่อม", "notes": ""},
+  "01147299": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42", "code": "B58020033", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "01147300": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42", "code": "B58020034", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "G300957": {"name": "Sound Level Meter", "brand": "Cirrus", "model": "Cirrus CR:172A", "code": "S62021311", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "G301013": {"name": "Sound Level Meter", "brand": "Cirrus", "model": "Cirrus CR:172A", "code": "S62021312", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "G301039": {"name": "Sound Level Meter", "brand": "Cirrus", "model": "Cirrus CR:172A", "code": "S62021313", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "G301607": {"name": "Sound Level Meter", "brand": "Cirrus", "model": "Cirrus CR:172A", "code": "S63021399", "standard": "IEC 61672 (Class 2)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-181/2568) รอซื้อทดแทน"},
+  "G301635": {"name": "Sound Level Meter", "brand": "Cirrus", "model": "Cirrus CR:172A", "code": "S63021400", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "G301638": {"name": "Sound Level Meter", "brand": "Cirrus", "model": "Cirrus CR:172A", "code": "S63021401", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "G301660": {"name": "Sound Level Meter", "brand": "Cirrus", "model": "Cirrus CR:172A", "code": "S63021402", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "G301661": {"name": "Sound Level Meter", "brand": "Cirrus", "model": "Cirrus CR:172A", "code": "S63021403", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00222592": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021654", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00222593": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021655", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00222594": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021656", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322744": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021657", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322745": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021658", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322746": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021659", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322747": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021660", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322748": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021661", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322749": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021662", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322750": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021663", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322751": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021664", "standard": "IEC 61672 (Class 2)", "status": "รอซ่อม / ส่งซ่อม", "notes": ""},
+  "00322752": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021665", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322753": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021666", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322754": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021667", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322755": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021668", "standard": "IEC 61672 (Class 2)", "status": "รอซ่อม / ส่งซ่อม", "notes": ""},
+  "00322756": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021669", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00322757": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-42A", "code": "S66021670", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "01120943": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021678", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "01120944": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021679", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "01120945": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021680", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "01120946": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021681", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "ไม่ได้ขึ้นทะเบียนกรมสวัสดิฯ **ใช้ตรวจวัดLeq24hrเท่านั้น ** บันทึกเสียงได้"},
+  "01120947": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021682", "standard": "IEC 61672 (Class 1)", "status": "รอซ่อม / ส่งซ่อม", "notes": "** บันทึกเสียงได้"},
+  "01120948": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021683", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "01120949": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021684", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "01120950": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021685", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "01120952": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021686", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "01120953": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021687", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00230985": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021688", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00230986": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021689", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00230987": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021690", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00230988": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021691", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00230989": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021692", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00230991": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021693", "standard": "IEC 61672 (Class 1)", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-181/2568) รอซื้อทดแทน"},
+  "00230992": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021694", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00230993": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021695", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00230994": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021696", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00230995": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-52A", "code": "S66021697", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00641700": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-43", "code": "S67021829", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00641701": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-43", "code": "S67021830", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00641702": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-43", "code": "S67021831", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00641703": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-43", "code": "S67021832", "standard": "IEC 61672 (Class 2)", "status": "พร้อมใช้งาน", "notes": ""},
+  "00741217": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-53", "code": "S67021833", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00741218": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-53", "code": "S67021834", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00741219": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-53", "code": "S67021835", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"},
+  "00741254": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-53", "code": "S67021836", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"}
+};
+
+function resolveCategoryConfig(category) {
+  var isSound = String(category || "").toUpperCase() === "SOUND";
+  return isSound
+    ? {
+        category: "SOUND",
+        db1: CONFIG.DB_SOUND_FORM1_SHEET,
+        db2: CONFIG.DB_SOUND_FORM2_SHEET,
+        db3: CONFIG.DB_SOUND_FORM3_SHEET,
+        tpl1: CONFIG.SOUND_FORM1_TEMPLATE_SHEET,
+        tpl2: CONFIG.SOUND_FORM2_TEMPLATE_SHEET,
+        tpl3: CONFIG.SOUND_FORM3_TEMPLATE_SHEET,
+        defaultName: "Sound Level Meter",
+        defaultSerial: "01120943"
+      }
+    : {
+        category: "FLUE_GAS",
+        db1: CONFIG.DB_FORM1_SHEET,
+        db2: CONFIG.DB_FORM2_SHEET,
+        db3: CONFIG.DB_FORM3_SHEET,
+        tpl1: CONFIG.FORM1_TEMPLATE_SHEET,
+        tpl2: CONFIG.FORM2_TEMPLATE_SHEET,
+        tpl3: CONFIG.FORM3_TEMPLATE_SHEET,
+        defaultName: "Flue Gas Analyzer",
+        defaultSerial: "01563443"
+      };
+}
+
+function getSoundSerialList() {
+  var active = [];
+  var others = [];
+  var keys = Object.keys(SOUND_EQUIPMENT_MASTER);
+  for (var i = 0; i < keys.length; i++) {
+    var sn = keys[i];
+    if (SOUND_EQUIPMENT_MASTER[sn].status === "พร้อมใช้งาน") {
+      active.push(sn);
+    } else {
+      others.push(sn);
+    }
+  }
+  return active.concat(others);
+}
+
 /**
  * สร้างเมนูพิเศษบนแถบเมนูของ Google Sheets เมื่อเปิดไฟล์
  */
 function onOpen() {
   SpreadsheetApp.getUi()
-    .createMenu("📋 ระบบแบบฟอร์ม Testo (ETC 1992)")
-    .addItem("🔄 สร้าง/รีเฟรชหน้าแบบฟอร์มทั้ง 3 ไฟล์", "initializeAllSheetsAndForms")
+    .createMenu("📋 ระบบบำรุงรักษาเครื่องมือภาคสนาม (ETC 1992)")
+    .addItem("🔄 สร้าง/รีเฟรชหน้าแบบฟอร์ม Flue Gas (Testo)", "initializeAllSheetsAndForms")
+    .addItem("🔊 สร้าง/รีเฟรชหน้าแบบฟอร์มเครื่องวัดเสียง (Sound)", "initializeSoundSheetsAndForms")
     .addItem("📄 ดึงข้อมูลตาม S/N และช่วงวันที่ที่ระบุในแบบฟอร์ม", "refreshAllFormViews")
     .addItem("📥 ดาวน์โหลดหน้าแบบฟอร์มปัจจุบัน (PDF / Excel)", "showDownloadDialogForActiveSheet")
     .addSeparator()
@@ -82,6 +217,30 @@ function onEdit(e) {
     var selectedRec = a1 === "F4" ? String(sheet.getRange("F4").getValue()).trim() : "";
     populateForm3BySerialAndRecord(sn3, selectedRec);
   }
+  // Sound Form 1
+  else if (sheetName === CONFIG.SOUND_FORM1_TEMPLATE_SHEET && (a1 === "I4" || a1 === "I5" || a1 === "K5")) {
+    populateForm1BySerial(
+      String(sheet.getRange("I4").getValue()).trim(),
+      sheet.getRange("I5").getValue(),
+      sheet.getRange("K5").getValue(),
+      "SOUND"
+    );
+  }
+  // Sound Form 2
+  else if (sheetName === CONFIG.SOUND_FORM2_TEMPLATE_SHEET && (a1 === "E5" || a1 === "B6" || a1 === "E6")) {
+    populateForm2BySerial(
+      String(sheet.getRange("E5").getValue()).trim(),
+      sheet.getRange("B6").getValue(),
+      sheet.getRange("E6").getValue(),
+      "SOUND"
+    );
+  }
+  // Sound Form 3
+  else if (sheetName === CONFIG.SOUND_FORM3_TEMPLATE_SHEET && (a1 === "F3" || a1 === "F4")) {
+    var sSn3 = String(sheet.getRange("F3").getValue()).trim();
+    var sSelectedRec = a1 === "F4" ? String(sheet.getRange("F4").getValue()).trim() : "";
+    populateSoundForm3BySerialAndRecord(sSn3, sSelectedRec);
+  }
 }
 
 /**
@@ -91,6 +250,7 @@ function doGet(e) {
   try {
     if (e && e.parameter && e.parameter.action === "query") {
       var res = queryHistoricalData({
+        category: e.parameter.category || "FLUE_GAS",
         targetForm: e.parameter.targetForm || "FORM_1",
         serial: e.parameter.serial || "",
         startDate: e.parameter.startDate || "",
@@ -133,8 +293,9 @@ function doPost(e) {
       return createJsonResponse(queryResult);
     }
 
+    var catCfg = resolveCategoryConfig(data.category);
     var eq = data.equipment || {
-      name: data.eqName || "Flue Gas Analyzer",
+      name: data.eqName || catCfg.defaultName,
       model: data.model || "",
       serial: data.serial || "",
       code: data.eqCode || ""
@@ -146,9 +307,9 @@ function doPost(e) {
     // กรณีที่ 1: บันทึกจากแท็บที่ 1 (แบบฟอร์มที่ 1: สอบเทียบและบำรุงรักษา)
     // =========================================================================
     if (data.formType === "FORM_1_MAINTENANCE_CAL" || !data.formType) {
-      recordForm1Data(data, eq);
-      recordLegacyChecklist(data, eq);
-      populateForm1BySerial(eq.serial, "", "");
+      recordForm1Data(data, eq, catCfg.db1);
+      recordLegacyChecklist(data, eq, catCfg.category);
+      populateForm1BySerial(eq.serial, "", "", catCfg.category);
       summaryMessages.push("✓ บันทึกลงฐานข้อมูลและแบบฟอร์มที่ 1 (สอบเทียบและบำรุงรักษา) เรียบร้อย");
 
       if (data.syncToForm2) {
@@ -158,8 +319,8 @@ function doPost(e) {
           operator: data.operator || data.technician || "",
           supervisor: data.supervisor || "",
           notes: "เชื่อมโยงอัตโนมัติจากแบบฟอร์มที่ 1 (" + (data.result || "ไม่ผ่าน") + ")"
-        }, eq);
-        populateForm2BySerial(eq.serial, "", "");
+        }, eq, catCfg.db2);
+        populateForm2BySerial(eq.serial, "", "", catCfg.category);
         summaryMessages.push("✓ เชื่อมโยงข้อมูลเข้าแบบฟอร์มที่ 2 (ประวัติความเสียหาย/ซ่อมแซม) อัตโนมัติ");
       }
     }
@@ -168,13 +329,13 @@ function doPost(e) {
     // กรณีที่ 2: บันทึกจากแท็บที่ 2 (แบบฟอร์มที่ 2: ประวัติความเสียหาย/ซ่อมแซม)
     // =========================================================================
     else if (data.formType === "FORM_2_REPAIR_HISTORY") {
-      recordForm2Data(data, eq);
-      populateForm2BySerial(eq.serial, "", "");
+      recordForm2Data(data, eq, catCfg.db2);
+      populateForm2BySerial(eq.serial, "", "", catCfg.category);
       summaryMessages.push("✓ บันทึกลงฐานข้อมูลและแบบฟอร์มที่ 2 (ประวัติเครื่องมือ/การซ่อมแซม) เรียบร้อย");
     }
 
     // =========================================================================
-    // กรณีที่ 3: บันทึกจากแท็บที่ 3 (แบบฟอร์มที่ 3: Flue Gas Analyzer Verification)
+    // กรณีที่ 3A: บันทึก Flue Gas Analyzer Verification
     // =========================================================================
     else if (data.formType === "FORM_3_GAS_VERIFICATION") {
       recordForm3Data(data, eq);
@@ -195,9 +356,37 @@ function doPost(e) {
           operator: data.calibratedBy || "",
           supervisor: data.approvedBy || "",
           notes: "Temp: " + (data.temp || "-") + "°C, P: " + (data.pressure || "-") + " Mbar, RH: " + (data.humidity || "-") + "%"
-        }, eq);
-        populateForm1BySerial(eq.serial, "", "");
+        }, eq, CONFIG.DB_FORM1_SHEET);
+        populateForm1BySerial(eq.serial, "", "", "FLUE_GAS");
         summaryMessages.push("✓ ส่งผลสรุปเข้าแบบฟอร์มที่ 1 (บันทึกการสอบเทียบและบำรุงรักษา) อัตโนมัติ");
+      }
+    }
+
+    // =========================================================================
+    // กรณีที่ 3B: บันทึก Sound Level Meter Pre/Post Calibration Check
+    // =========================================================================
+    else if (data.formType === "FORM_3_SOUND_VERIFICATION") {
+      recordSoundForm3Data(data, eq);
+      populateSoundForm3BySerialAndRecord(eq.serial, "");
+      summaryMessages.push("✓ บันทึกลงฐานข้อมูลและแบบฟอร์มทวนสอบเครื่องวัดเสียง (Pre/Post Calibration Check) เรียบร้อย");
+
+      if (data.syncToForm1) {
+        recordForm1Data({
+          subType: "verification",
+          date: data.date,
+          nextDate: data.nextDate || "",
+          description: "ทวนสอบเครื่องวัดเสียง Pre/Post Calibration (" + (data.calPointsSummary || "94/114 dB") + ", " + (data.freq || "1 kHz") + ", " + (data.freqWeighting || "A") + "/" + (data.timeWeighting || "Fast") + ")",
+          correction: "Max Dev: " + (data.maxDevDb || "-"),
+          uncertainty: "Drift: " + (data.maxDriftDb || "-"),
+          tolerance: data.toleranceDb || "±0.5 dB",
+          result: data.result || "ผ่าน",
+          agency: "ภายในแผนกปฏิบัติการภาคสนาม (ETC)",
+          operator: data.calibratedBy || "",
+          supervisor: data.approvedBy || "",
+          notes: "Calibrator: " + (data.calibrator || "-") + (data.notes ? " | " + data.notes : "")
+        }, eq, CONFIG.DB_SOUND_FORM1_SHEET);
+        populateForm1BySerial(eq.serial, "", "", "SOUND");
+        summaryMessages.push("✓ ส่งผลสรุปเข้าแบบฟอร์มที่ 1 (เครื่องวัดเสียง) อัตโนมัติ");
       }
     }
 
@@ -228,6 +417,7 @@ function createJsonResponse(obj) {
 // =============================================================================
 
 function queryHistoricalData(params) {
+  var catCfg = resolveCategoryConfig(params.category);
   var targetForm = params.targetForm || "FORM_1";
   var cleanSerial = String(params.serial || "").replace(/^'/, "").trim();
   var startDt = parseDateValue(params.startDate);
@@ -238,16 +428,17 @@ function queryHistoricalData(params) {
 
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var records = [];
-  var dbSheetName = CONFIG.DB_FORM1_SHEET;
-  if (targetForm === "FORM_2") dbSheetName = CONFIG.DB_FORM2_SHEET;
-  if (targetForm === "FORM_3") dbSheetName = CONFIG.DB_FORM3_SHEET;
+  var dbSheetName = catCfg.db1;
+  if (targetForm === "FORM_2") dbSheetName = catCfg.db2;
+  if (targetForm === "FORM_3") dbSheetName = catCfg.db3;
 
-  var eqInfo = getEquipmentInfoBySerial(cleanSerial || "01563443", dbSheetName);
+  var eqInfo = getEquipmentInfoBySerial(cleanSerial || catCfg.defaultSerial, dbSheetName, catCfg.category);
   var sheet = ss.getSheetByName(dbSheetName);
 
   if (!sheet || sheet.getLastRow() <= 1) {
     return {
       status: "success",
+      category: catCfg.category,
       targetForm: targetForm,
       equipment: eqInfo,
       records: []
@@ -320,7 +511,51 @@ function queryHistoricalData(params) {
     }
   }
 
-  // ดึงข้อมูลแบบฟอร์มที่ 3
+  // ดึงข้อมูลแบบฟอร์มที่ 3 (แยก Flue Gas vs Sound Level Meter)
+  else if (targetForm === "FORM_3" && catCfg.category === "SOUND") {
+    var seqS = 1;
+    for (var sIdx = 1; sIdx < allData.length; sIdx++) {
+      var rs = allData[sIdx];
+      var rowSnS = String(rs[4] || "").replace(/^'/, "").trim();
+      if (cleanSerial && cleanSerial !== "ALL" && rowSnS !== cleanSerial) continue;
+
+      var recDateS = parseDateValue(rs[1]);
+      if (startDt && recDateS && recDateS < startDt) continue;
+      if (endDt && recDateS && recDateS > endDt) continue;
+
+      var parsedSound = [];
+      try {
+        parsedSound = JSON.parse(rs[16] || "[]");
+      } catch (errS) {
+        parsedSound = [];
+      }
+
+      records.push({
+        seq: seqS++,
+        rowIndex: sIdx + 1,
+        date: formatCellDate(rs[1]),
+        rawDate: formatIsoDate(rs[1]),
+        preTime: formatCellTime(rs[2]),
+        postTime: formatCellTime(rs[3]),
+        serial: rowSnS,
+        eqModel: rs[5] || eqInfo.model,
+        eqCode: rs[6] || eqInfo.code,
+        standard: rs[7] || eqInfo.standard || "",
+        calibrator: rs[8] || "-",
+        freq: rs[9] || "1 kHz",
+        freqWeighting: rs[10] || "A-Weighting (dBA)",
+        timeWeighting: rs[11] || "Fast (F)",
+        toleranceDb: rs[12] || "±0.5 dB",
+        calibratedBy: rs[13] || "",
+        approvedBy: rs[14] || "",
+        result: rs[15] || "ผ่าน",
+        maxDevDb: rs[17] || "-",
+        maxDriftDb: rs[18] || "-",
+        notes: rs[19] || "",
+        soundData: parsedSound
+      });
+    }
+  }
   else if (targetForm === "FORM_3") {
     var seq3 = 1;
     for (var k = 1; k < allData.length; k++) {
@@ -362,6 +597,7 @@ function queryHistoricalData(params) {
 
   return {
     status: "success",
+    category: catCfg.category,
     targetForm: targetForm,
     equipment: eqInfo,
     records: records
@@ -372,10 +608,11 @@ function queryHistoricalData(params) {
 // ส่วนจัดการฐานข้อมูล (Database Sheets)
 // =============================================================================
 
-function recordForm1Data(data, eq) {
+function recordForm1Data(data, eq, targetSheetName) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(CONFIG.DB_FORM1_SHEET);
-  if (!sheet) sheet = ss.insertSheet(CONFIG.DB_FORM1_SHEET);
+  var sName = targetSheetName || CONFIG.DB_FORM1_SHEET;
+  var sheet = ss.getSheetByName(sName);
+  if (!sheet) sheet = ss.insertSheet(sName);
 
   if (sheet.getLastRow() === 0) {
     var headers = [
@@ -408,10 +645,11 @@ function recordForm1Data(data, eq) {
   ]);
 }
 
-function recordForm2Data(data, eq) {
+function recordForm2Data(data, eq, targetSheetName) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(CONFIG.DB_FORM2_SHEET);
-  if (!sheet) sheet = ss.insertSheet(CONFIG.DB_FORM2_SHEET);
+  var sName = targetSheetName || CONFIG.DB_FORM2_SHEET;
+  var sheet = ss.getSheetByName(sName);
+  if (!sheet) sheet = ss.insertSheet(sName);
 
   if (sheet.getLastRow() === 0) {
     var headers = [
@@ -469,7 +707,49 @@ function recordForm3Data(data, eq) {
   ]);
 }
 
-function recordLegacyChecklist(data, eq) {
+function recordSoundForm3Data(data, eq) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(CONFIG.DB_SOUND_FORM3_SHEET);
+  if (!sheet) sheet = ss.insertSheet(CONFIG.DB_SOUND_FORM3_SHEET);
+
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "Timestamp", "Calibrated Date", "Pre-Cal Time", "Post-Cal Time", "Serial No.",
+      "Model", "Equipment Code", "Standard / Class", "Acoustic Calibrator (Model/SN)",
+      "Frequency", "Frequency Weighting", "Time Weighting", "Tolerance (±dB)",
+      "Calibrated By", "Approve By", "Result", "SoundData_JSON", "Max Deviation (dB)", "Max Drift (dB)", "Notes"
+    ];
+    sheet.appendRow(headers);
+    styleDbHeader(sheet, headers.length, "#0f766e");
+  }
+
+  var snClean = String(eq.serial || "").trim();
+  var masterMeta = SOUND_EQUIPMENT_MASTER[snClean] || {};
+  sheet.appendRow([
+    new Date(),
+    data.date || "",
+    data.preTime || "-",
+    data.postTime || "-",
+    "'" + snClean,
+    eq.model || masterMeta.model || "",
+    eq.code || masterMeta.code || "",
+    data.standard || masterMeta.standard || "",
+    data.calibrator || "-",
+    data.freq || "1 kHz",
+    data.freqWeighting || "A-Weighting (dBA)",
+    data.timeWeighting || "Fast (F)",
+    data.toleranceDb || "±0.5 dB",
+    data.calibratedBy || "",
+    data.approvedBy || "",
+    data.result || "ผ่าน",
+    JSON.stringify(data.soundData || []),
+    data.maxDevDb || "-",
+    data.maxDriftDb || "-",
+    data.notes || ""
+  ]);
+}
+
+function recordLegacyChecklist(data, eq, category) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(CONFIG.LEGACY_SHEET);
   if (!sheet) sheet = ss.insertSheet(CONFIG.LEGACY_SHEET);
@@ -477,7 +757,7 @@ function recordLegacyChecklist(data, eq) {
   if (sheet.getLastRow() === 0) {
     var headers = [
       "วันเวลาที่บันทึก (Timestamp)", "วันที่ซ่อมบำรุง", "ชื่อช่าง", "รุ่นเครื่อง", "Serial No.",
-      "กรองฝุ่น", "ปั๊มอากาศ", "แบตเตอรี่", "ความสะอาด", "เซ็นเซอร์", "หมายเหตุ / รายละเอียด"
+      "กรองฝุ่น", "ปั๊มอากาศ", "แบตเตอรี่", "ความสะอาด", "เซ็นเซอร์", "หมายเหตุ / รายละเอียด", "หมวดหมู่เครื่องมือ"
     ];
     sheet.appendRow(headers);
     styleDbHeader(sheet, headers.length, "#1e40af");
@@ -494,7 +774,8 @@ function recordLegacyChecklist(data, eq) {
     data.chk_battery || "ปกติ",
     data.chk_clean || "สะอาด/ปกติ",
     data.chk_sensor || "ปกติ",
-    data.notes || data.description || ""
+    data.notes || data.description || "",
+    category || "FLUE_GAS"
   ]);
 }
 
@@ -512,9 +793,15 @@ function styleDbHeader(sheet, colCount, bgColor) {
 // =============================================================================
 
 function initializeAllSheetsAndForms() {
-  populateForm1BySerial("01563443", "", "");
-  populateForm2BySerial("01563443", "", "");
+  populateForm1BySerial("01563443", "", "", "FLUE_GAS");
+  populateForm2BySerial("01563443", "", "", "FLUE_GAS");
   populateForm3BySerialAndRecord("01563443", "");
+}
+
+function initializeSoundSheetsAndForms() {
+  populateForm1BySerial("01120943", "", "", "SOUND");
+  populateForm2BySerial("01120943", "", "", "SOUND");
+  populateSoundForm3BySerialAndRecord("01120943", "");
 }
 
 function refreshAllFormViews() {
@@ -522,47 +809,51 @@ function refreshAllFormViews() {
 
   var s1 = ss.getSheetByName(CONFIG.FORM1_TEMPLATE_SHEET);
   if (s1) {
-    populateForm1BySerial(
-      String(s1.getRange("I4").getValue()).trim() || "01563443",
-      s1.getRange("I5").getValue(),
-      s1.getRange("K5").getValue()
-    );
+    populateForm1BySerial(String(s1.getRange("I4").getValue()).trim() || "01563443", s1.getRange("I5").getValue(), s1.getRange("K5").getValue(), "FLUE_GAS");
   } else {
-    populateForm1BySerial("01563443", "", "");
+    populateForm1BySerial("01563443", "", "", "FLUE_GAS");
   }
 
   var s2 = ss.getSheetByName(CONFIG.FORM2_TEMPLATE_SHEET);
   if (s2) {
-    populateForm2BySerial(
-      String(s2.getRange("E5").getValue()).trim() || "01563443",
-      s2.getRange("B6").getValue(),
-      s2.getRange("E6").getValue()
-    );
+    populateForm2BySerial(String(s2.getRange("E5").getValue()).trim() || "01563443", s2.getRange("B6").getValue(), s2.getRange("E6").getValue(), "FLUE_GAS");
   } else {
-    populateForm2BySerial("01563443", "", "");
+    populateForm2BySerial("01563443", "", "", "FLUE_GAS");
   }
 
   var s3 = ss.getSheetByName(CONFIG.FORM3_TEMPLATE_SHEET);
   if (s3) {
-    populateForm3BySerialAndRecord(
-      String(s3.getRange("F3").getValue()).trim() || "01563443",
-      String(s3.getRange("F4").getValue()).trim()
-    );
+    populateForm3BySerialAndRecord(String(s3.getRange("F3").getValue()).trim() || "01563443", String(s3.getRange("F4").getValue()).trim());
   } else {
     populateForm3BySerialAndRecord("01563443", "");
+  }
+
+  var ss1 = ss.getSheetByName(CONFIG.SOUND_FORM1_TEMPLATE_SHEET);
+  if (ss1) {
+    populateForm1BySerial(String(ss1.getRange("I4").getValue()).trim() || "01120943", ss1.getRange("I5").getValue(), ss1.getRange("K5").getValue(), "SOUND");
+  }
+  var ss2 = ss.getSheetByName(CONFIG.SOUND_FORM2_TEMPLATE_SHEET);
+  if (ss2) {
+    populateForm2BySerial(String(ss2.getRange("E5").getValue()).trim() || "01120943", ss2.getRange("B6").getValue(), ss2.getRange("E6").getValue(), "SOUND");
+  }
+  var ss3 = ss.getSheetByName(CONFIG.SOUND_FORM3_TEMPLATE_SHEET);
+  if (ss3) {
+    populateSoundForm3BySerialAndRecord(String(ss3.getRange("F3").getValue()).trim() || "01120943", String(ss3.getRange("F4").getValue()).trim());
   }
 }
 
 /**
  * 1. แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ (รองรับกรอง S/N และช่วงวันที่)
  */
-function populateForm1BySerial(targetSerial, startDateVal, endDateVal) {
+function populateForm1BySerial(targetSerial, startDateVal, endDateVal, category) {
+  var catCfg = resolveCategoryConfig(category);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(CONFIG.FORM1_TEMPLATE_SHEET);
-  if (!sheet) sheet = ss.insertSheet(CONFIG.FORM1_TEMPLATE_SHEET);
+  var sheet = ss.getSheetByName(catCfg.tpl1);
+  if (!sheet) sheet = ss.insertSheet(catCfg.tpl1);
 
-  var cleanSerial = String(targetSerial || "01563443").replace(/^'/, "").trim();
+  var cleanSerial = String(targetSerial || catCfg.defaultSerial).replace(/^'/, "").trim();
   var query = queryHistoricalData({
+    category: catCfg.category,
     targetForm: "FORM_1",
     serial: cleanSerial,
     startDate: startDateVal,
@@ -588,8 +879,11 @@ function populateForm1BySerial(targetSerial, startDateVal, endDateVal) {
   sheet.getRange("G4:H4").merge().setValue("หมายเลขเครื่อง (S/N)").setFontWeight("bold");
   sheet.getRange("I4").setValue("'" + cleanSerial).setBackground("#fef9c3").setFontWeight("bold");
 
+  var snList1 = catCfg.category === "SOUND"
+    ? getSoundSerialList()
+    : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"];
   var snRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"], true)
+    .requireValueInList(snList1, true)
     .setAllowInvalid(true)
     .build();
   sheet.getRange("I4").setDataValidation(snRule);
@@ -688,13 +982,15 @@ function populateForm1BySerial(targetSerial, startDateVal, endDateVal) {
 /**
  * 2. แบบฟอร์มที่ 2: บันทึกประวัติเครื่องมือ (รองรับกรอง S/N และช่วงวันที่)
  */
-function populateForm2BySerial(targetSerial, startDateVal, endDateVal) {
+function populateForm2BySerial(targetSerial, startDateVal, endDateVal, category) {
+  var catCfg = resolveCategoryConfig(category);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(CONFIG.FORM2_TEMPLATE_SHEET);
-  if (!sheet) sheet = ss.insertSheet(CONFIG.FORM2_TEMPLATE_SHEET);
+  var sheet = ss.getSheetByName(catCfg.tpl2);
+  if (!sheet) sheet = ss.insertSheet(catCfg.tpl2);
 
-  var cleanSerial = String(targetSerial || "01563443").replace(/^'/, "").trim();
+  var cleanSerial = String(targetSerial || catCfg.defaultSerial).replace(/^'/, "").trim();
   var query = queryHistoricalData({
+    category: catCfg.category,
     targetForm: "FORM_2",
     serial: cleanSerial,
     startDate: startDateVal,
@@ -721,8 +1017,11 @@ function populateForm2BySerial(targetSerial, startDateVal, endDateVal) {
   sheet.getRange("D5").setValue("Serial No.(S/N)").setFontWeight("bold");
   sheet.getRange("E5").setValue("'" + cleanSerial).setBackground("#fef9c3").setFontWeight("bold");
 
+  var snList2 = catCfg.category === "SOUND"
+    ? getSoundSerialList()
+    : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"];
   var snRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"], true)
+    .requireValueInList(snList2, true)
     .setAllowInvalid(true)
     .build();
   sheet.getRange("E5").setDataValidation(snRule);
@@ -945,6 +1244,158 @@ function renderForm3Sheet(data, eq, recordOptions, currentLabel) {
 }
 
 /**
+ * 3B. แบบฟอร์มที่ 3 (Sound Level Meter): Pre/Post Calibration Check
+ * (ตามข้อกำหนด: ยังไม่ต้องใส่รหัส FM-LAB)
+ */
+function populateSoundForm3BySerialAndRecord(targetSerial, selectedRecordLabel) {
+  var cleanSerial = String(targetSerial || "01120943").replace(/^'/, "").trim();
+  var query = queryHistoricalData({
+    category: "SOUND",
+    targetForm: "FORM_3",
+    serial: cleanSerial
+  });
+  var eqInfo = query.equipment;
+  var records = query.records;
+
+  var recordOptions = [];
+  var chosenRecord = null;
+
+  for (var i = records.length - 1; i >= 0; i--) {
+    var r = records[i];
+    var label = "#" + r.seq + " | " + r.date + " " + (r.preTime || "-") + " (" + r.result + ")";
+    recordOptions.push(label);
+    if (selectedRecordLabel && label === selectedRecordLabel) {
+      chosenRecord = r;
+    }
+  }
+
+  if (!chosenRecord && records.length > 0) {
+    chosenRecord = records[records.length - 1];
+    selectedRecordLabel = recordOptions[0];
+  }
+
+  var payload = chosenRecord || {
+    date: "-",
+    preTime: "-",
+    postTime: "-",
+    calibrator: "-",
+    freq: "1 kHz",
+    freqWeighting: "A-Weighting (dBA)",
+    timeWeighting: "Fast (F)",
+    toleranceDb: "±0.5 dB",
+    calibratedBy: "........................................",
+    approvedBy: "........................................",
+    notes: "-",
+    soundData: [
+      { std: "94.0", pre: "", post: "", preErr: "", postErr: "", drift: "" },
+      { std: "114.0", pre: "", post: "", preErr: "", postErr: "", drift: "" }
+    ]
+  };
+
+  renderSoundForm3Sheet(payload, eqInfo, recordOptions, selectedRecordLabel || "ล่าสุด");
+}
+
+function renderSoundForm3Sheet(data, eq, recordOptions, currentLabel) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(CONFIG.SOUND_FORM3_TEMPLATE_SHEET);
+  if (!sheet) sheet = ss.insertSheet(CONFIG.SOUND_FORM3_TEMPLATE_SHEET);
+
+  var cleanSerial = String(eq.serial || "01120943").replace(/^'/, "").trim();
+  sheet.clear();
+
+  sheet.getRange("A1:F1").merge().setValue("Sound Level Meter Verification (Pre / Post Calibration Check)")
+       .setFontSize(13).setFontWeight("bold").setHorizontalAlignment("center");
+  sheet.getRange("A2:F2").merge().setValue("แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด")
+       .setFontSize(10).setFontWeight("bold").setHorizontalAlignment("center");
+
+  sheet.getRange("A3").setValue("Calibrated Date :").setFontWeight("bold");
+  sheet.getRange("B3").setValue(data.date || "-");
+  sheet.getRange("C3").setValue("Pre-Cal / Post-Cal Time :").setFontWeight("bold");
+  sheet.getRange("D3").setValue((data.preTime || "-") + " / " + (data.postTime || "-"));
+
+  sheet.getRange("A4").setValue("Sound Level Meter Model :").setFontWeight("bold");
+  sheet.getRange("B4").setValue((eq.model || "") + (eq.standard ? " [" + eq.standard + "]" : ""));
+  sheet.getRange("C4").setValue("Serial No. / Code :").setFontWeight("bold");
+  sheet.getRange("D4").setValue("'" + cleanSerial + (eq.code ? " (" + eq.code + ")" : ""));
+
+  sheet.getRange("A5").setValue("Acoustic Calibrator :").setFontWeight("bold");
+  sheet.getRange("B5").setValue(data.calibrator || "-");
+  sheet.getRange("C5").setValue("Frequency / Tolerance :").setFontWeight("bold");
+  sheet.getRange("D5").setValue((data.freq || "1 kHz") + " | " + (data.toleranceDb || "±0.5 dB"));
+
+  sheet.getRange("A6").setValue("Frequency Weighting :").setFontWeight("bold");
+  sheet.getRange("B6").setValue(data.freqWeighting || "A-Weighting (dBA)");
+  sheet.getRange("C6").setValue("Time Weighting :").setFontWeight("bold");
+  sheet.getRange("D6").setValue(data.timeWeighting || "Fast (F)");
+
+  // กล่องเลือก S/N และเลือกรายการย้อนหลังด้านข้าง (G-H หรือ E-F)
+  var snRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(getSoundSerialList(), true)
+    .setAllowInvalid(true)
+    .build();
+  sheet.getRange("E2:F2").merge().setValue("🔍 ค้นหาใบ Verification เครื่องเสียง").setFontWeight("bold").setBackground("#ccfbf1").setHorizontalAlignment("center");
+  sheet.getRange("E3").setValue("1. เลือก S/N:").setFontWeight("bold").setFontSize(9);
+  sheet.getRange("F3").setValue("'" + cleanSerial).setDataValidation(snRule).setBackground("#fef9c3").setFontWeight("bold");
+  sheet.getRange("E4").setValue("2. เลือกครั้งที่ทวนสอบ:").setFontWeight("bold").setFontSize(9);
+  sheet.getRange("F4").setValue(currentLabel).setBackground("#fef9c3").setFontSize(9);
+  if (recordOptions && recordOptions.length > 0) {
+    var recRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(recordOptions, true)
+      .setAllowInvalid(true)
+      .build();
+    sheet.getRange("F4").setDataValidation(recRule);
+  } else {
+    sheet.getRange("F4").clearDataValidations();
+  }
+
+  // ตารางตรวจวัด Pre/Post
+  var headers = [
+    "Standard Sound Level (dB)",
+    "Pre-Measurement (dB)",
+    "Post-Measurement (dB)",
+    "Pre Error (dB)",
+    "Post Error (dB)",
+    "Drift |Post-Pre| (dB)"
+  ];
+  sheet.getRange(8, 1, 1, 6).setValues([headers])
+       .setBackground("#e2e8f0").setFontWeight("bold").setHorizontalAlignment("center")
+       .setBorder(true, true, true, true, true, true);
+
+  var rows = Array.isArray(data.soundData) ? data.soundData : [];
+  var tableRows = [];
+  for (var i = 0; i < 2; i++) {
+    var pt = rows[i] || {};
+    tableRows.push([
+      pt.std || (i === 0 ? "94.0" : "114.0"),
+      pt.pre || "",
+      pt.post || "",
+      pt.preErr || "",
+      pt.postErr || "",
+      pt.drift || ""
+    ]);
+  }
+  sheet.getRange(9, 1, 2, 6).setValues(tableRows).setHorizontalAlignment("center")
+       .setBorder(true, true, true, true, true, true);
+
+  sheet.getRange("A12").setValue("Result :").setFontWeight("bold");
+  sheet.getRange("B12:C12").merge().setValue((data.result || "ผ่าน") + " (Max Dev: " + (data.maxDevDb || "-") + ", Drift: " + (data.maxDriftDb || "-") + ")");
+  sheet.getRange("D12").setValue("Notes :").setFontWeight("bold");
+  sheet.getRange("E12:F12").merge().setValue(data.notes || "-");
+
+  sheet.getRange("A14:C14").merge().setValue("Calibrated By .......................................................").setHorizontalAlignment("center");
+  sheet.getRange("D14:F14").merge().setValue("Approve By .......................................................").setHorizontalAlignment("center");
+  sheet.getRange("A15:C15").merge().setValue("( " + (data.calibratedBy || "........................................") + " )").setHorizontalAlignment("center");
+  sheet.getRange("D15:F15").merge().setValue("( " + (data.approvedBy || "........................................") + " )").setHorizontalAlignment("center");
+
+  sheet.setColumnWidth(1, 180);
+  sheet.setColumnWidth(2, 175);
+  sheet.setColumnWidth(3, 175);
+  sheet.setColumnWidth(4, 140);
+  sheet.setColumnWidth(5, 130);
+  sheet.setColumnWidth(6, 175);
+}
+
+/**
  * แสดงหน้าต่างป๊อปอัปใน Google Sheets เพื่อกดดาวน์โหลดแบบฟอร์มปัจจุบันเป็น PDF หรือ Excel (.xlsx)
  */
 function showDownloadDialogForActiveSheet() {
@@ -954,9 +1405,9 @@ function showDownloadDialogForActiveSheet() {
   var sheetId = sheet.getSheetId();
   var sheetName = sheet.getName();
 
-  var isLandscape = (sheetName === CONFIG.FORM1_TEMPLATE_SHEET);
+  var isLandscape = (sheetName === CONFIG.FORM1_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM1_TEMPLATE_SHEET);
   var exportRange = "";
-  if (sheetName === CONFIG.FORM3_TEMPLATE_SHEET) {
+  if (sheetName === CONFIG.FORM3_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM3_TEMPLATE_SHEET) {
     exportRange = "&r1=0&c1=0&r2=26&c2=4"; // พิมพ์เฉพาะคอลัมน์ A-D ของใบ Verification
   }
 
@@ -984,21 +1435,36 @@ function showDownloadDialogForActiveSheet() {
   SpreadsheetApp.getUi().showModalDialog(html, "📥 ดาวน์โหลดแบบฟอร์ม");
 }
 
-function getEquipmentInfoBySerial(serial, dbSheetName) {
+function getEquipmentInfoBySerial(serial, dbSheetName, category) {
   var clean = String(serial || "").replace(/^'/, "").trim();
-  var info = EQUIPMENT_MASTER[clean]
-    ? {
-        name: EQUIPMENT_MASTER[clean].name,
-        model: EQUIPMENT_MASTER[clean].model,
-        code: EQUIPMENT_MASTER[clean].code,
-        serial: clean
-      }
-    : {
-        name: "Flue Gas Analyzer",
-        model: "Testo",
-        code: "",
-        serial: clean
-      };
+  var isSound = String(category || "").toUpperCase() === "SOUND" || Boolean(SOUND_EQUIPMENT_MASTER[clean]);
+  var info;
+
+  if (isSound && SOUND_EQUIPMENT_MASTER[clean]) {
+    var sm = SOUND_EQUIPMENT_MASTER[clean];
+    info = {
+      name: sm.name,
+      model: sm.model,
+      code: sm.code,
+      serial: clean,
+      standard: sm.standard,
+      status: sm.status
+    };
+  } else if (EQUIPMENT_MASTER[clean]) {
+    info = {
+      name: EQUIPMENT_MASTER[clean].name,
+      model: EQUIPMENT_MASTER[clean].model,
+      code: EQUIPMENT_MASTER[clean].code,
+      serial: clean
+    };
+  } else {
+    info = {
+      name: isSound ? "Sound Level Meter" : "Flue Gas Analyzer",
+      model: isSound ? "" : "Testo",
+      code: "",
+      serial: clean
+    };
+  }
 
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var dbSheet = ss.getSheetByName(dbSheetName);
@@ -1010,6 +1476,9 @@ function getEquipmentInfoBySerial(serial, dbSheetName) {
         if (dbSheetName === CONFIG.DB_FORM3_SHEET) {
           if (data[i][3]) info.model = data[i][3];
           if (data[i][5]) info.code = data[i][5];
+        } else if (dbSheetName === CONFIG.DB_SOUND_FORM3_SHEET) {
+          if (data[i][5]) info.model = data[i][5];
+          if (data[i][6]) info.code = data[i][6];
         } else {
           if (data[i][1]) info.name = data[i][1];
           if (data[i][2]) info.model = data[i][2];
@@ -1056,65 +1525,76 @@ function formatCellTime(val) {
 // สรุปครบทั้ง 3 แบบฟอร์ม (สอบเทียบ, ประวัติซ่อม, Gas Verification) + Checklist
 // =============================================================================
 
+// Helper อ่านข้อมูล Form 1 ประจำสัปดาห์ตามชื่อชีท
+function readWeeklyForm1Records(ss, sheetName, cutoffDate, defaultModel) {
+  var records = [];
+  var failCount = 0;
+  var sheet = ss.getSheetByName(sheetName);
+  if (sheet && sheet.getLastRow() > 1) {
+    var data = sheet.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      var r = data[i];
+      var d = parseDateValue(r[5]);
+      if (!d || d < cutoffDate) continue;
+      var isFail = String(r[11] || "").indexOf("ไม่ผ่าน") !== -1;
+      if (isFail) failCount++;
+      records.push({
+        date: formatDateDisplay(d),
+        model: r[2] || defaultModel,
+        serial: String(r[4] || "").replace(/^'/, ""),
+        code: r[3] || "-",
+        description: r[7] || "-",
+        correction: r[8] || "-",
+        uncertainty: r[9] || "-",
+        tolerance: r[10] || "-",
+        result: r[11] || "ผ่าน",
+        isFail: isFail,
+        agency: r[12] || "-",
+        operator: r[13] || "-",
+        supervisor: r[14] || "-",
+        notes: r[15] || "-"
+      });
+    }
+  }
+  return { records: records, fails: failCount };
+}
+
+// Helper อ่านข้อมูล Form 2 ประจำสัปดาห์ตามชื่อชีท
+function readWeeklyForm2Records(ss, sheetName, cutoffDate, defaultModel) {
+  var records = [];
+  var sheet = ss.getSheetByName(sheetName);
+  if (sheet && sheet.getLastRow() > 1) {
+    var data = sheet.getDataRange().getValues();
+    for (var j = 1; j < data.length; j++) {
+      var r = data[j];
+      var d = parseDateValue(r[5]);
+      if (!d || d < cutoffDate) continue;
+      records.push({
+        date: formatDateDisplay(d),
+        model: r[2] || defaultModel,
+        serial: String(r[4] || "").replace(/^'/, ""),
+        code: r[3] || "-",
+        damageDetail: r[6] || "-",
+        operator: r[7] || "-",
+        supervisor: r[8] || "-",
+        notes: r[9] || "-"
+      });
+    }
+  }
+  return { records: records };
+}
+
 function sendWeeklyDashboardReport() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var today = new Date();
   var cutoffDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - CONFIG.REPORT_LOOKBACK_DAYS, 0, 0, 0);
 
-  // 1. ดึงข้อมูลแบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษา (DB_Maintenance_Cal)
-  var form1Records = [];
-  var form1FailCount = 0;
-  var sheet1 = ss.getSheetByName(CONFIG.DB_FORM1_SHEET);
-  if (sheet1 && sheet1.getLastRow() > 1) {
-    var data1 = sheet1.getDataRange().getValues();
-    for (var i = 1; i < data1.length; i++) {
-      var r1 = data1[i];
-      var d1 = parseDateValue(r1[5]);
-      if (!d1 || d1 < cutoffDate) continue;
-      var isFail1 = String(r1[11] || "").indexOf("ไม่ผ่าน") !== -1;
-      if (isFail1) form1FailCount++;
-      form1Records.push({
-        date: formatDateDisplay(d1),
-        model: r1[2] || "Testo",
-        serial: String(r1[4] || "").replace(/^'/, ""),
-        code: r1[3] || "-",
-        description: r1[7] || "-",
-        correction: r1[8] || "-",
-        uncertainty: r1[9] || "-",
-        tolerance: r1[10] || "-",
-        result: r1[11] || "ผ่าน",
-        isFail: isFail1,
-        agency: r1[12] || "-",
-        operator: r1[13] || "-",
-        supervisor: r1[14] || "-",
-        notes: r1[15] || "-"
-      });
-    }
-  }
+  // =========================================================================
+  // หมวด 1: Flue Gas Analyzer (Testo)
+  // =========================================================================
+  var gasForm1 = readWeeklyForm1Records(ss, CONFIG.DB_FORM1_SHEET, cutoffDate, "Testo");
+  var gasForm2 = readWeeklyForm2Records(ss, CONFIG.DB_FORM2_SHEET, cutoffDate, "Testo");
 
-  // 2. ดึงข้อมูลแบบฟอร์มที่ 2: ประวัติความเสียหาย / การซ่อมแซม (DB_Repair_History)
-  var form2Records = [];
-  var sheet2 = ss.getSheetByName(CONFIG.DB_FORM2_SHEET);
-  if (sheet2 && sheet2.getLastRow() > 1) {
-    var data2 = sheet2.getDataRange().getValues();
-    for (var j = 1; j < data2.length; j++) {
-      var r2 = data2[j];
-      var d2 = parseDateValue(r2[5]);
-      if (!d2 || d2 < cutoffDate) continue;
-      form2Records.push({
-        date: formatDateDisplay(d2),
-        model: r2[2] || "Testo",
-        serial: String(r2[4] || "").replace(/^'/, ""),
-        code: r2[3] || "-",
-        damageDetail: r2[6] || "-",
-        operator: r2[7] || "-",
-        supervisor: r2[8] || "-",
-        notes: r2[9] || "-"
-      });
-    }
-  }
-
-  // 3. ดึงข้อมูลแบบฟอร์มที่ 3: Flue Gas Analyzer Verification (DB_Gas_Verification)
   var form3Records = [];
   var form3FailCount = 0;
   var maxErrorAll = 0;
@@ -1132,11 +1612,7 @@ function sendWeeklyDashboardReport() {
         maxErrorAll = Math.abs(errNum);
       }
       var parsedGas = {};
-      try {
-        parsedGas = JSON.parse(r3[13] || "{}");
-      } catch (e) {
-        parsedGas = {};
-      }
+      try { parsedGas = JSON.parse(r3[13] || "{}"); } catch (e) { parsedGas = {}; }
       form3Records.push({
         date: formatDateDisplay(d3),
         time: formatCellTime(r3[2]),
@@ -1156,9 +1632,59 @@ function sendWeeklyDashboardReport() {
     }
   }
 
-  // 4. ดึงข้อมูลการตรวจสภาพ 5 รายการ (Checklist ใน Maintenance_Logs)
-  var checklistRecords = [];
-  var checklistIssueCount = 0;
+  // =========================================================================
+  // หมวด 2: Sound Level Meter (เครื่องวัดระดับเสียง)
+  // =========================================================================
+  var soundForm1 = readWeeklyForm1Records(ss, CONFIG.DB_SOUND_FORM1_SHEET, cutoffDate, "Sound Level Meter");
+  var soundForm2 = readWeeklyForm2Records(ss, CONFIG.DB_SOUND_FORM2_SHEET, cutoffDate, "Sound Level Meter");
+
+  var soundForm3Records = [];
+  var soundForm3FailCount = 0;
+  var maxSoundDevAll = 0;
+  var sheetSound3 = ss.getSheetByName(CONFIG.DB_SOUND_FORM3_SHEET);
+  if (sheetSound3 && sheetSound3.getLastRow() > 1) {
+    var dataS3 = sheetSound3.getDataRange().getValues();
+    for (var ks = 1; ks < dataS3.length; ks++) {
+      var rs3 = dataS3[ks];
+      var ds3 = parseDateValue(rs3[1]);
+      if (!ds3 || ds3 < cutoffDate) continue;
+      var isFailS3 = String(rs3[15] || "").indexOf("ไม่ผ่าน") !== -1;
+      if (isFailS3) soundForm3FailCount++;
+      var devNum = parseFloat(String(rs3[17] || "").replace(/[^0-9.\-]/g, ""));
+      if (!isNaN(devNum) && Math.abs(devNum) > maxSoundDevAll) {
+        maxSoundDevAll = Math.abs(devNum);
+      }
+      soundForm3Records.push({
+        date: formatDateDisplay(ds3),
+        preTime: formatCellTime(rs3[2]),
+        postTime: formatCellTime(rs3[3]),
+        serial: String(rs3[4] || "").replace(/^'/, ""),
+        model: rs3[5] || "Sound Level Meter",
+        code: rs3[6] || "-",
+        standard: rs3[7] || "",
+        calibrator: rs3[8] || "-",
+        freq: rs3[9] || "1 kHz",
+        freqWeighting: rs3[10] || "A",
+        timeWeighting: rs3[11] || "Fast",
+        toleranceDb: rs3[12] || "±0.5 dB",
+        calibratedBy: rs3[13] || "-",
+        approvedBy: rs3[14] || "-",
+        result: rs3[15] || "ผ่าน",
+        isFail: isFailS3,
+        maxDevDb: rs3[17] || "-",
+        maxDriftDb: rs3[18] || "-",
+        notes: rs3[19] || "-"
+      });
+    }
+  }
+
+  // =========================================================================
+  // Checklist 5 รายการ (แยก Flue Gas vs Sound)
+  // =========================================================================
+  var checklistGas = [];
+  var checklistSound = [];
+  var checklistIssueGas = 0;
+  var checklistIssueSound = 0;
   var sheetLegacy = ss.getSheetByName(CONFIG.LEGACY_SHEET);
   if (sheetLegacy && sheetLegacy.getLastRow() > 1) {
     var dataLegacy = sheetLegacy.getDataRange().getValues();
@@ -1170,12 +1696,14 @@ function sendWeeklyDashboardReport() {
         var str = String(val);
         return str.indexOf("ต้องแก้ไข") !== -1 || str.indexOf("เสื่อม") !== -1 || str.indexOf("ผิดปกติ") !== -1;
       });
-      if (hasIssueL) checklistIssueCount++;
-      checklistRecords.push({
+      var snL = String(rL[4] || "-").replace(/^'/, "").trim();
+      var catL = String(rL[11] || "").toUpperCase();
+      var isSoundChk = catL === "SOUND" || Boolean(SOUND_EQUIPMENT_MASTER[snL]);
+      var chkItem = {
         date: formatDateDisplay(dL),
         technician: rL[2] || "-",
         model: rL[3] || "-",
-        serial: String(rL[4] || "-").replace(/^'/, ""),
+        serial: snL,
         filter: rL[5] || "-",
         pump: rL[6] || "-",
         battery: rL[7] || "-",
@@ -1183,36 +1711,54 @@ function sendWeeklyDashboardReport() {
         sensor: rL[9] || "-",
         notes: rL[10] || "-",
         hasIssue: hasIssueL
-      });
+      };
+      if (isSoundChk) {
+        if (hasIssueL) checklistIssueSound++;
+        checklistSound.push(chkItem);
+      } else {
+        if (hasIssueL) checklistIssueGas++;
+        checklistGas.push(chkItem);
+      }
     }
   }
 
-  // คำนวณสรุปปัญหาทั้งหมด
-  var totalIssues = form1FailCount + form2Records.length + form3FailCount + checklistIssueCount;
-  var totalActivities = form1Records.length + form2Records.length + form3Records.length + checklistRecords.length;
+  // รวมสถิติทั้ง 2 หมวดเครื่องมือ
+  var totalGasIssues = gasForm1.fails + gasForm2.records.length + form3FailCount + checklistIssueGas;
+  var totalSoundIssues = soundForm1.fails + soundForm2.records.length + soundForm3FailCount + checklistIssueSound;
+  var totalIssues = totalGasIssues + totalSoundIssues;
+
+  var totalGasActivities = gasForm1.records.length + gasForm2.records.length + form3Records.length + checklistGas.length;
+  var totalSoundActivities = soundForm1.records.length + soundForm2.records.length + soundForm3Records.length + checklistSound.length;
+  var totalActivities = totalGasActivities + totalSoundActivities;
 
   var summaryData = {
     cutoffDate: cutoffDate,
     today: today,
     totalIssues: totalIssues,
     totalActivities: totalActivities,
-    form1: { records: form1Records, fails: form1FailCount },
-    form2: { records: form2Records },
+    // หมวด Flue Gas (Testo)
+    form1: gasForm1,
+    form2: gasForm2,
     form3: { records: form3Records, fails: form3FailCount, maxError: maxErrorAll },
-    checklist: { records: checklistRecords, issues: checklistIssueCount }
+    checklist: { records: checklistGas, issues: checklistIssueGas },
+    // หมวด Sound Level Meter
+    soundForm1: soundForm1,
+    soundForm2: soundForm2,
+    soundForm3: { records: soundForm3Records, fails: soundForm3FailCount, maxDevDb: maxSoundDevAll },
+    soundChecklist: { records: checklistSound, issues: checklistIssueSound }
   };
 
   // สร้างเนื้อหา PDF และแปลงเป็น Blob
   var htmlPdfContent = buildWeeklyHtmlReport(summaryData);
   var pdfBlob = Utilities.newBlob(htmlPdfContent, MimeType.HTML)
-    .setName("Testo_Weekly_Executive_Report_" + Utilities.formatDate(today, Session.getScriptTimeZone(), "yyyyMMdd") + ".pdf")
+    .setName("Field_Equipment_Weekly_Report_" + Utilities.formatDate(today, Session.getScriptTimeZone(), "yyyyMMdd") + ".pdf")
     .getAs(MimeType.PDF);
 
   // หัวข้ออีเมล
-  var emailSubject = "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่อง Flue Gas Analyzer ประจำสัปดาห์ (ระหว่างวันที่ " +
+  var emailSubject = "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่อง Flue Gas Analyzer และเครื่องวัดเสียง ประจำสัปดาห์ (ระหว่างวันที่ " +
     formatDateDisplay(cutoffDate) + " - " + formatDateDisplay(today) + ")";
 
-  // เนื้อหาอีเมล HTML แบบละเอียดและสวยงาม
+  // เนื้อหาอีเมล HTML
   var emailBody = buildWeeklyEmailHtmlBody(summaryData, ss.getUrl());
 
   // ส่งอีเมล
@@ -1224,12 +1770,12 @@ function sendWeeklyDashboardReport() {
   });
 
   try {
-    ss.toast("ส่งอีเมลรายงานสรุปไปยัง " + CONFIG.EMAIL_RECIPIENTS + " เรียบร้อยแล้ว", "ส่งอีเมลสำเร็จ", 5);
+    ss.toast("ส่งอีเมลรายงานสรุป (Flue Gas + เครื่องวัดเสียง) ไปยัง " + CONFIG.EMAIL_RECIPIENTS + " เรียบร้อยแล้ว", "ส่งอีเมลสำเร็จ", 5);
   } catch (err) {}
 }
 
 /**
- * สร้างเนื้อหา HTML สำหรับแสดงในกล่องข้อความอีเมล (Email Body)
+ * สร้างเนื้อหา HTML สำหรับแสดงในกล่องข้อความอีเมล (รวม Flue Gas Analyzer + Sound Level Meter)
  */
 function buildWeeklyEmailHtmlBody(s, sheetUrl) {
   var isOk = s.totalIssues === 0;
@@ -1237,41 +1783,46 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
     ? "<span style='background:#dcfce7; color:#15803d; padding:6px 12px; border-radius:999px; font-weight:bold; font-size:13px;'>✓ อุปกรณ์ทุกเครื่องพร้อมใช้งานปกติ</span>"
     : "<span style='background:#fee2e2; color:#b91c1c; padding:6px 12px; border-radius:999px; font-weight:bold; font-size:13px;'>⚠️ พบรายการที่ต้องติดตาม " + s.totalIssues + " รายการ</span>";
 
-  // ตารางย่อแบบฟอร์ม 1
-  var f1Rows = "";
-  if (s.form1.records.length === 0) {
-    f1Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการสอบเทียบ/บำรุงรักษาในรอบสัปดาห์นี้</td></tr>";
-  } else {
-    for (var i = 0; i < s.form1.records.length; i++) {
-      var r1 = s.form1.records[i];
-      var resColor = r1.isFail ? "#dc2626" : "#16a34a";
-      f1Rows += "<tr style='border-bottom:1px solid #e5e7eb; font-size:12px;'>" +
-        "<td style='padding:8px 6px; text-align:center;'>" + r1.date + "</td>" +
-        "<td style='padding:8px 6px;'><b>" + escapeXml(r1.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(r1.serial) + "</small></td>" +
-        "<td style='padding:8px 6px;'>" + escapeXml(r1.description) + "</td>" +
-        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:" + resColor + ";'>" + escapeXml(r1.result) + "</td>" +
-        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(r1.operator) + "</td>" +
+  function buildForm1EmailRows(records, emptyMsg) {
+    if (!records || records.length === 0) {
+      return "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>" + emptyMsg + "</td></tr>";
+    }
+    var out = "";
+    for (var i = 0; i < records.length; i++) {
+      var r = records[i];
+      var resColor = r.isFail ? "#dc2626" : "#16a34a";
+      out += "<tr style='border-bottom:1px solid #e5e7eb; font-size:12px;'>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + r.date + "</td>" +
+        "<td style='padding:8px 6px;'><b>" + escapeXml(r.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(r.serial) + "</small></td>" +
+        "<td style='padding:8px 6px;'>" + escapeXml(r.description) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:" + resColor + ";'>" + escapeXml(r.result) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(r.operator) + "</td>" +
       "</tr>";
     }
+    return out;
   }
 
-  // ตารางย่อแบบฟอร์ม 2
-  var f2Rows = "";
-  if (s.form2.records.length === 0) {
-    f2Rows = "<tr><td colspan='4' style='text-align:center; padding:10px; color:#15803d; font-size:12px;'>✓ ไม่พบประวัติความเสียหายหรือส่งซ่อมในรอบสัปดาห์นี้ (ปกติ)</td></tr>";
-  } else {
-    for (var j = 0; j < s.form2.records.length; j++) {
-      var r2 = s.form2.records[j];
-      f2Rows += "<tr style='border-bottom:1px solid #fed7aa; background-color:#fff7ed; font-size:12px;'>" +
-        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:#9a3412;'>" + r2.date + "</td>" +
-        "<td style='padding:8px 6px;'><b>" + escapeXml(r2.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(r2.serial) + "</small></td>" +
-        "<td style='padding:8px 6px; color:#c2410c;'><b>" + escapeXml(r2.damageDetail) + "</b></td>" +
-        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(r2.operator) + "</td>" +
+  function buildForm2EmailRows(records, emptyMsg) {
+    if (!records || records.length === 0) {
+      return "<tr><td colspan='4' style='text-align:center; padding:10px; color:#15803d; font-size:12px;'>" + emptyMsg + "</td></tr>";
+    }
+    var out = "";
+    for (var j = 0; j < records.length; j++) {
+      var r = records[j];
+      out += "<tr style='border-bottom:1px solid #fed7aa; background-color:#fff7ed; font-size:12px;'>" +
+        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:#9a3412;'>" + r.date + "</td>" +
+        "<td style='padding:8px 6px;'><b>" + escapeXml(r.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(r.serial) + "</small></td>" +
+        "<td style='padding:8px 6px; color:#c2410c;'><b>" + escapeXml(r.damageDetail) + "</b></td>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(r.operator) + "</td>" +
       "</tr>";
     }
+    return out;
   }
 
-  // ตารางย่อแบบฟอร์ม 3
+  // ตารางย่อ Flue Gas Analyzer
+  var f1Rows = buildForm1EmailRows(s.form1.records, "ไม่มีรายการสอบเทียบ/บำรุงรักษา Flue Gas ในรอบสัปดาห์นี้");
+  var f2Rows = buildForm2EmailRows(s.form2.records, "✓ ไม่พบประวัติความเสียหายหรือส่งซ่อม Flue Gas ในรอบสัปดาห์นี้");
+
   var f3Rows = "";
   if (s.form3.records.length === 0) {
     f3Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการทวนสอบก๊าซในรอบสัปดาห์นี้</td></tr>";
@@ -1289,97 +1840,104 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
     }
   }
 
-  var html = "<div style='font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; max-width:680px; margin:0 auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden;'>" +
-    "<div style='background:linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%); color:#ffffff; padding:24px 20px; text-align:center;'>" +
+  // ตารางย่อ Sound Level Meter
+  var sf1Rows = buildForm1EmailRows(s.soundForm1.records, "ไม่มีรายการสอบเทียบ/บำรุงรักษาเครื่องวัดเสียงในรอบสัปดาห์นี้");
+  var sf2Rows = buildForm2EmailRows(s.soundForm2.records, "✓ ไม่พบประวัติความเสียหายหรือส่งซ่อมเครื่องวัดเสียงในรอบสัปดาห์นี้");
+
+  var sf3Rows = "";
+  if (s.soundForm3.records.length === 0) {
+    sf3Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการทวนสอบ Pre/Post เครื่องวัดเสียงในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var ks = 0; ks < s.soundForm3.records.length; ks++) {
+      var rs3 = s.soundForm3.records[ks];
+      var resS3Color = rs3.isFail ? "#dc2626" : "#16a34a";
+      sf3Rows += "<tr style='border-bottom:1px solid #e5e7eb; font-size:12px;'>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + rs3.date + "<br><small style='color:#6b7280;'>" + rs3.preTime + " / " + rs3.postTime + "</small></td>" +
+        "<td style='padding:8px 6px;'><b>" + escapeXml(rs3.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(rs3.serial) + "</small></td>" +
+        "<td style='padding:8px 6px; text-align:center; font-family:monospace;'>" + escapeXml(rs3.maxDevDb) + "<br><small style='color:#6b7280;'>Drift: " + escapeXml(rs3.maxDriftDb) + "</small></td>" +
+        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:" + resS3Color + ";'>" + escapeXml(rs3.result) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(rs3.calibratedBy) + "</td>" +
+      "</tr>";
+    }
+  }
+
+  var html = "<div style='font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif; max-width:680px; margin:0 auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden;'>" +
+    "<div style='background:linear-gradient(135deg, #0f172a 0%, #1e40af 100%); color:#ffffff; padding:24px 20px; text-align:center;'>" +
       "<div style='font-size:12px; letter-spacing:1px; text-transform:uppercase; opacity:0.9; margin-bottom:4px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
-      "<h2 style='margin:0 0 8px 0; font-size:20px; font-weight:bold;'>รายงานสรุปการบำรุงรักษาและทวนสอบเครื่อง Testo</h2>" +
-      "<div style='font-size:13px; opacity:0.95;'>รอบสัปดาห์: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + "</div>" +
+      "<h2 style='margin:0 0 8px 0; font-size:19px; font-weight:bold;'>รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่องมือภาคสนาม</h2>" +
+      "<div style='font-size:13px; opacity:0.95;'>Flue Gas Analyzer &amp; Sound Level Meter | รอบสัปดาห์: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + "</div>" +
       "<div style='margin-top:14px;'>" + statusBadge + "</div>" +
     "</div>" +
 
     "<div style='padding:20px;'>" +
       "<p style='margin:0 0 16px 0; font-size:14px; color:#374151; line-height:1.7;'>" +
         "เรียนทุกท่าน<br>" +
-        "สรุปผลการดำเนินงานเกี่ยวกับการบำรุงรักษาเครื่องวัดประสิทธิภาพการเผาไหม้ Flue Gas Analyzer ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ<br>" +
+        "สรุปผลการดำเนินงานเกี่ยวกับการบำรุงรักษาเครื่องวัดประสิทธิภาพการเผาไหม้ Flue Gas Analyzer และเครื่องวัดระดับเสียง Sound Level Meter ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ<br>" +
         "(รายละเอียดเพิ่มเติมดังเอกสารแนบ)<br>" +
         "ขอบคุณครับ" +
       "</p>" +
 
-      // 4 การ์ดสรุป KPI
+      // การ์ดสรุป 2 หมวด (KPI Summary)
       "<table style='width:100%; border-collapse:separate; border-spacing:8px; margin-bottom:16px;'>" +
         "<tr>" +
-          "<td style='width:50%; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:12px;'>" +
-            "<div style='font-size:11px; font-weight:bold; color:#166534;'>📋 แบบฟอร์มที่ 1 (สอบเทียบ/ตรวจสภาพ)</div>" +
-            "<div style='font-size:18px; font-weight:bold; color:#15803d; margin-top:4px;'>" + s.form1.records.length + " <span style='font-size:12px; font-weight:normal;'>รายการ</span></div>" +
-            "<div style='font-size:11px; color:#166534; margin-top:2px;'>ผ่าน: " + (s.form1.records.length - s.form1.fails) + " | ไม่ผ่าน: " + s.form1.fails + "</div>" +
+          "<td style='width:50%; background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:12px; font-weight:bold; color:#1e40af;'>🔥 หมวดที่ 1: Flue Gas Analyzer (Testo)</div>" +
+            "<div style='font-size:12px; color:#1e293b; margin-top:6px; line-height:1.6;'>" +
+              "• สอบเทียบ/ตรวจสภาพ (F1): <b>" + s.form1.records.length + "</b> (ไม่ผ่าน " + s.form1.fails + ")<br>" +
+              "• แจ้งซ่อม/เสียหาย (F2): <b>" + s.form2.records.length + "</b><br>" +
+              "• ทวนสอบก๊าซ (F3): <b>" + s.form3.records.length + "</b> (Max Err: " + (s.form3.maxError > 0 ? s.form3.maxError.toFixed(2) + "%" : "-") + ")<br>" +
+              "• Checklist 5 ระบบ: <b>" + s.checklist.records.length + "</b> (ต้องแก้ไข " + s.checklist.issues + ")" +
+            "</div>" +
           "</td>" +
-          "<td style='width:50%; background:" + (s.form2.records.length > 0 ? "#fff7ed" : "#f8fafc") + "; border:1px solid " + (s.form2.records.length > 0 ? "#fed7aa" : "#e2e8f0") + "; border-radius:12px; padding:12px;'>" +
-            "<div style='font-size:11px; font-weight:bold; color:" + (s.form2.records.length > 0 ? "#9a3412" : "#475569") + ";'>🛠️ แบบฟอร์มที่ 2 (ประวัติซ่อมแซม)</div>" +
-            "<div style='font-size:18px; font-weight:bold; color:" + (s.form2.records.length > 0 ? "#c2410c" : "#334155") + "; margin-top:4px;'>" + s.form2.records.length + " <span style='font-size:12px; font-weight:normal;'>รายการ</span></div>" +
-            "<div style='font-size:11px; color:#64748b; margin-top:2px;'>" + (s.form2.records.length > 0 ? "พบรายการแจ้งซ่อม" : "ไม่มีแจ้งซ่อม (ปกติ)") + "</div>" +
-          "</td>" +
-        "</tr>" +
-        "<tr>" +
-          "<td style='width:50%; background:#eef2ff; border:1px solid #c7d2fe; border-radius:12px; padding:12px;'>" +
-            "<div style='font-size:11px; font-weight:bold; color:#3730a3;'>🧪 แบบฟอร์มที่ 3 (Gas Verification)</div>" +
-            "<div style='font-size:18px; font-weight:bold; color:#4338ca; margin-top:4px;'>" + s.form3.records.length + " <span style='font-size:12px; font-weight:normal;'>ชุด</span></div>" +
-            "<div style='font-size:11px; color:#3730a3; margin-top:2px;'>Max Error: " + (s.form3.maxError > 0 ? s.form3.maxError.toFixed(2) + "%" : "-") + " (O2,CO,NO,NO2,SO2)</div>" +
-          "</td>" +
-          "<td style='width:50%; background:" + (s.checklist.issues > 0 ? "#fef2f2" : "#f8fafc") + "; border:1px solid " + (s.checklist.issues > 0 ? "#fecaca" : "#e2e8f0") + "; border-radius:12px; padding:12px;'>" +
-            "<div style='font-size:11px; font-weight:bold; color:" + (s.checklist.issues > 0 ? "#991b1b" : "#475569") + ";'>🔍 Checklist (ตรวจสภาพ 5 ระบบ)</div>" +
-            "<div style='font-size:18px; font-weight:bold; color:" + (s.checklist.issues > 0 ? "#dc2626" : "#334155") + "; margin-top:4px;'>" + s.checklist.records.length + " <span style='font-size:12px; font-weight:normal;'>ครั้ง</span></div>" +
-            "<div style='font-size:11px; color:" + (s.checklist.issues > 0 ? "#b91c1c" : "#64748b") + "; margin-top:2px;'>พบต้องแก้ไข: " + s.checklist.issues + " รายการ</div>" +
+          "<td style='width:50%; background:#f0fdfa; border:1px solid #99f6e4; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:12px; font-weight:bold; color:#0f766e;'>🔊 หมวดที่ 2: Sound Level Meter (เครื่องวัดเสียง)</div>" +
+            "<div style='font-size:12px; color:#1e293b; margin-top:6px; line-height:1.6;'>" +
+              "• สอบเทียบ/ตรวจสภาพ (F1): <b>" + s.soundForm1.records.length + "</b> (ไม่ผ่าน " + s.soundForm1.fails + ")<br>" +
+              "• แจ้งซ่อม/เสียหาย (F2): <b>" + s.soundForm2.records.length + "</b><br>" +
+              "• Pre/Post Check (F3): <b>" + s.soundForm3.records.length + "</b> (Max Dev: " + (s.soundForm3.maxDevDb > 0 ? s.soundForm3.maxDevDb.toFixed(2) + " dB" : "-") + ")<br>" +
+              "• Checklist 5 ระบบ: <b>" + s.soundChecklist.records.length + "</b> (ต้องแก้ไข " + s.soundChecklist.issues + ")" +
+            "</div>" +
           "</td>" +
         "</tr>" +
       "</table>" +
 
-      // ส่วนที่ 1: แบบฟอร์มที่ 1
-      "<div style='margin-top:20px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
-        "<div style='background:#f8fafc; padding:10px 14px; font-weight:bold; font-size:13px; color:#1e293b; border-bottom:1px solid #e5e7eb;'>" +
-          "📋 สรุปแบบฟอร์มที่ 1: การสอบเทียบและบำรุงรักษาเครื่องมือ" +
-        "</div>" +
-        "<table style='width:100%; border-collapse:collapse;'>" +
-          "<thead><tr style='background:#f1f5f9; font-size:11px; color:#475569; text-align:left;'>" +
-            "<th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายการ</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ตรวจ</th>" +
-          "</tr></thead>" +
-          "<tbody>" + f1Rows + "</tbody>" +
-        "</table>" +
+      // --- ส่วนที่ 1: Flue Gas Analyzer ---
+      "<div style='font-size:14px; font-weight:bold; color:#1e3a8a; margin:18px 0 8px 0; border-bottom:2px solid #dbeafe; padding-bottom:4px;'>🔥 หมวด Flue Gas Analyzer (Testo)</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#f8fafc; padding:8px 12px; font-weight:bold; font-size:12px; color:#1e293b; border-bottom:1px solid #e5e7eb;'>📋 แบบฟอร์มที่ 1: การสอบเทียบและบำรุงรักษา</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายการ</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ตรวจ</th></tr></thead><tbody>" + f1Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid " + (s.form2.records.length > 0 ? "#fed7aa" : "#e5e7eb") + "; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:" + (s.form2.records.length > 0 ? "#ffedd5" : "#f8fafc") + "; padding:8px 12px; font-weight:bold; font-size:12px; color:" + (s.form2.records.length > 0 ? "#9a3412" : "#1e293b") + "; border-bottom:1px solid #e5e7eb;'>🛠️ แบบฟอร์มที่ 2: ประวัติความเสียหาย / ซ่อมแซม</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายละเอียด</th><th style='padding:6px; text-align:center;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + f2Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#f8fafc; padding:8px 12px; font-weight:bold; font-size:12px; color:#1e293b; border-bottom:1px solid #e5e7eb;'>🧪 แบบฟอร์มที่ 3: Gas Verification (O2, CO, NO, NO2, SO2)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Error</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th></tr></thead><tbody>" + f3Rows + "</tbody></table>" +
       "</div>" +
 
-      // ส่วนที่ 2: แบบฟอร์มที่ 2
-      "<div style='margin-top:16px; border:1px solid " + (s.form2.records.length > 0 ? "#fed7aa" : "#e5e7eb") + "; border-radius:10px; overflow:hidden;'>" +
-        "<div style='background:" + (s.form2.records.length > 0 ? "#ffedd5" : "#f8fafc") + "; padding:10px 14px; font-weight:bold; font-size:13px; color:" + (s.form2.records.length > 0 ? "#9a3412" : "#1e293b") + "; border-bottom:1px solid " + (s.form2.records.length > 0 ? "#fed7aa" : "#e5e7eb") + ";'>" +
-          "🛠️ สรุปแบบฟอร์มที่ 2: ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซม" +
-        "</div>" +
-        "<table style='width:100%; border-collapse:collapse;'>" +
-          "<thead><tr style='background:#f1f5f9; font-size:11px; color:#475569; text-align:left;'>" +
-            "<th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายละเอียดความเสียหาย / ซ่อมแซม</th><th style='padding:6px; text-align:center;'>ผู้ดำเนินการ</th>" +
-          "</tr></thead>" +
-          "<tbody>" + f2Rows + "</tbody>" +
-        "</table>" +
+      // --- ส่วนที่ 2: Sound Level Meter ---
+      "<div style='font-size:14px; font-weight:bold; color:#0f766e; margin:22px 0 8px 0; border-bottom:2px solid #ccfbf1; padding-bottom:4px;'>🔊 หมวด Sound Level Meter (เครื่องวัดระดับเสียง)</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#f0fdfa; padding:8px 12px; font-weight:bold; font-size:12px; color:#115e59; border-bottom:1px solid #e5e7eb;'>📋 แบบฟอร์มที่ 1: การสอบเทียบและบำรุงรักษา (เครื่องวัดเสียง)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายการ</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ตรวจ</th></tr></thead><tbody>" + sf1Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid " + (s.soundForm2.records.length > 0 ? "#fed7aa" : "#e5e7eb") + "; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:" + (s.soundForm2.records.length > 0 ? "#ffedd5" : "#f0fdfa") + "; padding:8px 12px; font-weight:bold; font-size:12px; color:" + (s.soundForm2.records.length > 0 ? "#9a3412" : "#115e59") + "; border-bottom:1px solid #e5e7eb;'>🛠️ แบบฟอร์มที่ 2: ประวัติความเสียหาย / ซ่อมแซม (เครื่องวัดเสียง)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายละเอียด</th><th style='padding:6px; text-align:center;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + sf2Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#f0fdfa; padding:8px 12px; font-weight:bold; font-size:12px; color:#115e59; border-bottom:1px solid #e5e7eb;'>🎙️ แบบฟอร์มที่ 3: Pre/Post Calibration Check (94 dB / 114 dB)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Dev / Drift</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th></tr></thead><tbody>" + sf3Rows + "</tbody></table>" +
       "</div>" +
 
-      // ส่วนที่ 3: แบบฟอร์มที่ 3
-      "<div style='margin-top:16px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
-        "<div style='background:#f8fafc; padding:10px 14px; font-weight:bold; font-size:13px; color:#1e293b; border-bottom:1px solid #e5e7eb;'>" +
-          "🧪 สรุปแบบฟอร์มที่ 3: ผลการทวนสอบก๊าซ (Flue Gas Verification: O2, CO, NO, NO2, SO2)" +
-        "</div>" +
-        "<table style='width:100%; border-collapse:collapse;'>" +
-          "<thead><tr style='background:#f1f5f9; font-size:11px; color:#475569; text-align:left;'>" +
-            "<th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Error</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th>" +
-          "</tr></thead>" +
-          "<tbody>" + f3Rows + "</tbody>" +
-        "</table>" +
-      "</div>" +
-
-      // ปุ่มดำเนินการ
       "<div style='margin-top:24px; text-align:center;'>" +
         "<a href='" + sheetUrl + "' style='display:inline-block; background:#1e40af; color:#ffffff; text-decoration:none; padding:10px 20px; border-radius:8px; font-size:13px; font-weight:bold; margin-right:8px;'>📊 เปิดดู Google Sheets ฐานข้อมูล</a>" +
         "<a href='" + CONFIG.WEBAPP_URL + "' style='display:inline-block; background:#0f172a; color:#ffffff; text-decoration:none; padding:10px 20px; border-radius:8px; font-size:13px; font-weight:bold;'>🌐 เปิดหน้าเว็บแอปบันทึกข้อมูล</a>" +
       "</div>" +
 
       "<div style='margin-top:20px; padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; font-size:12px; color:#64748b; text-align:center;'>" +
-        "📎 เอกสารรายงานสรุปฉบับเต็มทั้ง 4 ตารางพร้อมรายละเอียดครบถ้วนถูกแนบมาเป็นไฟล์ PDF (<code>Testo_Weekly_Executive_Report</code>) ท้ายอีเมลฉบับนี้ครับ" +
+        "📎 เอกสารรายงานสรุปฉบับเต็มครอบคลุมทั้ง <b>Flue Gas Analyzer</b> และ <b>Sound Level Meter</b> ถูกแนบมาเป็นไฟล์ PDF ท้ายอีเมลฉบับนี้ครับ" +
       "</div>" +
     "</div>" +
 
@@ -1393,7 +1951,7 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
 }
 
 /**
- * สร้างเอกสาร PDF สรุปประจำสัปดาห์ (ครอบคลุมทั้ง 3 แบบฟอร์ม + Checklist)
+ * สร้างเอกสาร PDF สรุปประจำสัปดาห์ (รวมทั้ง Flue Gas Analyzer และ Sound Level Meter)
  */
 function buildWeeklyHtmlReport(s) {
   function renderBadgePdf(val) {
@@ -1405,47 +1963,69 @@ function buildWeeklyHtmlReport(s) {
     return "<span style='background:#dcfce7; color:#15803d; padding:2px 5px; border-radius:3px; font-size:9px;'>ปกติ</span>";
   }
 
-  // แถวตารางแบบฟอร์ม 1 (PDF)
-  var f1RowsPdf = "";
-  if (s.form1.records.length === 0) {
-    f1RowsPdf = "<tr><td colspan='7' style='text-align:center; padding:10px; color:#6b7280;'>ไม่มีรายการในรอบสัปดาห์นี้</td></tr>";
-  } else {
-    for (var i = 0; i < s.form1.records.length; i++) {
-      var r1 = s.form1.records[i];
-      var bg1 = r1.isFail ? "#fee2e2" : (i % 2 === 0 ? "#ffffff" : "#f9fafb");
-      f1RowsPdf += "<tr style='background-color:" + bg1 + ";'>" +
-        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + r1.date + "</td>" +
-        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'><b>" + escapeXml(r1.model) + "</b> (" + escapeXml(r1.serial) + ")</td>" +
-        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'>" + escapeXml(r1.description) + "</td>" +
-        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + escapeXml(r1.correction) + "</td>" +
-        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + escapeXml(r1.tolerance) + "</td>" +
-        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-weight:bold; font-size:9px; color:" + (r1.isFail ? "#b91c1c" : "#15803d") + ";'>" + escapeXml(r1.result) + "</td>" +
-        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(r1.operator) + "</td>" +
+  function buildForm1PdfRows(records) {
+    if (!records || records.length === 0) return "<tr><td colspan='7' style='text-align:center; padding:8px; color:#6b7280;'>ไม่มีรายการในรอบสัปดาห์นี้</td></tr>";
+    var out = "";
+    for (var i = 0; i < records.length; i++) {
+      var r = records[i];
+      var bg = r.isFail ? "#fee2e2" : (i % 2 === 0 ? "#ffffff" : "#f9fafb");
+      out += "<tr style='background-color:" + bg + ";'>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + r.date + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'><b>" + escapeXml(r.model) + "</b> (" + escapeXml(r.serial) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'>" + escapeXml(r.description) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + escapeXml(r.correction) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + escapeXml(r.tolerance) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-weight:bold; font-size:9px; color:" + (r.isFail ? "#b91c1c" : "#15803d") + ";'>" + escapeXml(r.result) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(r.operator) + "</td>" +
       "</tr>";
     }
+    return out;
   }
 
-  // แถวตารางแบบฟอร์ม 2 (PDF)
-  var f2RowsPdf = "";
-  if (s.form2.records.length === 0) {
-    f2RowsPdf = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#15803d;'>✓ ไม่พบประวัติความเสียหายหรือส่งซ่อมในรอบสัปดาห์นี้ (ปกติ)</td></tr>";
-  } else {
-    for (var j = 0; j < s.form2.records.length; j++) {
-      var r2 = s.form2.records[j];
-      f2RowsPdf += "<tr style='background-color:#fff7ed;'>" +
-        "<td style='padding:5px; border:1px solid #fed7aa; text-align:center; font-size:9px; font-weight:bold; color:#9a3412;'>" + r2.date + "</td>" +
-        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px;'><b>" + escapeXml(r2.model) + "</b> (" + escapeXml(r2.serial) + ")</td>" +
-        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px; color:#9a3412; font-weight:bold;'>" + escapeXml(r2.damageDetail) + "</td>" +
-        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px; text-align:center;'>" + escapeXml(r2.operator) + "</td>" +
-        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px;'>" + escapeXml(r2.notes) + "</td>" +
+  function buildForm2PdfRows(records) {
+    if (!records || records.length === 0) return "<tr><td colspan='5' style='text-align:center; padding:8px; color:#15803d;'>✓ ไม่พบประวัติความเสียหายหรือส่งซ่อมในรอบสัปดาห์นี้ (ปกติ)</td></tr>";
+    var out = "";
+    for (var j = 0; j < records.length; j++) {
+      var r = records[j];
+      out += "<tr style='background-color:#fff7ed;'>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; text-align:center; font-size:9px; font-weight:bold; color:#9a3412;'>" + r.date + "</td>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px;'><b>" + escapeXml(r.model) + "</b> (" + escapeXml(r.serial) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px; color:#9a3412; font-weight:bold;'>" + escapeXml(r.damageDetail) + "</td>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px; text-align:center;'>" + escapeXml(r.operator) + "</td>" +
+        "<td style='padding:5px; border:1px solid #fed7aa; font-size:9px;'>" + escapeXml(r.notes) + "</td>" +
       "</tr>";
     }
+    return out;
   }
 
-  // แถวตารางแบบฟอร์ม 3 (PDF)
+  function buildChecklistPdfRows(records) {
+    if (!records || records.length === 0) return "<tr><td colspan='9' style='text-align:center; padding:8px; color:#6b7280;'>ไม่มีรายการตรวจสภาพในรอบสัปดาห์นี้</td></tr>";
+    var out = "";
+    for (var m = 0; m < records.length; m++) {
+      var rL = records[m];
+      var bgL = rL.hasIssue ? "#fff7ed" : (m % 2 === 0 ? "#ffffff" : "#f9fafb");
+      out += "<tr style='background-color:" + bgL + ";'>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + rL.date + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; font-size:9px;'>" + escapeXml(rL.technician) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; font-size:9px;'>" + escapeXml(rL.model) + " (" + escapeXml(rL.serial) + ")</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.filter) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.pump) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.battery) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.clean) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.sensor) + "</td>" +
+        "<td style='padding:4px; border:1px solid #cbd5e1; font-size:8px;'>" + escapeXml(rL.notes) + "</td>" +
+      "</tr>";
+    }
+    return out;
+  }
+
+  var f1RowsPdf = buildForm1PdfRows(s.form1.records);
+  var f2RowsPdf = buildForm2PdfRows(s.form2.records);
+  var chkRowsPdf = buildChecklistPdfRows(s.checklist.records);
+
   var f3RowsPdf = "";
   if (s.form3.records.length === 0) {
-    f3RowsPdf = "<tr><td colspan='7' style='text-align:center; padding:10px; color:#6b7280;'>ไม่มีรายการทวนสอบก๊าซในรอบสัปดาห์นี้</td></tr>";
+    f3RowsPdf = "<tr><td colspan='7' style='text-align:center; padding:8px; color:#6b7280;'>ไม่มีรายการทวนสอบก๊าซในรอบสัปดาห์นี้</td></tr>";
   } else {
     for (var k = 0; k < s.form3.records.length; k++) {
       var r3 = s.form3.records[k];
@@ -1463,24 +2043,27 @@ function buildWeeklyHtmlReport(s) {
     }
   }
 
-  // แถวตาราง Checklist (PDF)
-  var chkRowsPdf = "";
-  if (s.checklist.records.length === 0) {
-    chkRowsPdf = "<tr><td colspan='9' style='text-align:center; padding:10px; color:#6b7280;'>ไม่มีรายการตรวจสภาพในรอบสัปดาห์นี้</td></tr>";
+  // หมวด 2: Sound Level Meter (PDF)
+  var sf1RowsPdf = buildForm1PdfRows(s.soundForm1.records);
+  var sf2RowsPdf = buildForm2PdfRows(s.soundForm2.records);
+  var schkRowsPdf = buildChecklistPdfRows(s.soundChecklist.records);
+
+  var sf3RowsPdf = "";
+  if (s.soundForm3.records.length === 0) {
+    sf3RowsPdf = "<tr><td colspan='7' style='text-align:center; padding:8px; color:#6b7280;'>ไม่มีรายการทวนสอบ Pre/Post เครื่องวัดเสียงในรอบสัปดาห์นี้</td></tr>";
   } else {
-    for (var m = 0; m < s.checklist.records.length; m++) {
-      var rL = s.checklist.records[m];
-      var bgL = rL.hasIssue ? "#fff7ed" : (m % 2 === 0 ? "#ffffff" : "#f9fafb");
-      chkRowsPdf += "<tr style='background-color:" + bgL + ";'>" +
-        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + rL.date + "</td>" +
-        "<td style='padding:4px; border:1px solid #cbd5e1; font-size:9px;'>" + escapeXml(rL.technician) + "</td>" +
-        "<td style='padding:4px; border:1px solid #cbd5e1; font-size:9px;'>" + escapeXml(rL.model) + " (" + escapeXml(rL.serial) + ")</td>" +
-        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.filter) + "</td>" +
-        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.pump) + "</td>" +
-        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.battery) + "</td>" +
-        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.clean) + "</td>" +
-        "<td style='padding:4px; border:1px solid #cbd5e1; text-align:center;'>" + renderBadgePdf(rL.sensor) + "</td>" +
-        "<td style='padding:4px; border:1px solid #cbd5e1; font-size:8px;'>" + escapeXml(rL.notes) + "</td>" +
+    for (var ks = 0; ks < s.soundForm3.records.length; ks++) {
+      var rs3 = s.soundForm3.records[ks];
+      var bgs3 = rs3.isFail ? "#fee2e2" : (ks % 2 === 0 ? "#ffffff" : "#f9fafb");
+      var setupInfo = (rs3.calibrator || "-") + " | " + (rs3.freq || "1 kHz") + " | " + (rs3.freqWeighting || "A") + "/" + (rs3.timeWeighting || "F");
+      sf3RowsPdf += "<tr style='background-color:" + bgs3 + ";'>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + rs3.date + "<br>" + rs3.preTime + " - " + rs3.postTime + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'><b>" + escapeXml(rs3.model) + "</b> (" + escapeXml(rs3.serial) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:8px; text-align:center;'>" + escapeXml(setupInfo) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px; font-weight:bold;'>" + escapeXml(rs3.maxDevDb) + " (Drift: " + escapeXml(rs3.maxDriftDb) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-weight:bold; font-size:9px; color:" + (rs3.isFail ? "#b91c1c" : "#15803d") + ";'>" + escapeXml(rs3.result) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(rs3.calibratedBy) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(rs3.approvedBy) + "</td>" +
       "</tr>";
     }
   }
@@ -1490,17 +2073,19 @@ function buildWeeklyHtmlReport(s) {
       "@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');" +
       "body { font-family: 'Sarabun', Tahoma, sans-serif; color:#1e293b; margin:0; padding:15px; font-size:10px; }" +
       ".header { text-align:center; border-bottom:2px solid #1e40af; padding-bottom:8px; margin-bottom:12px; }" +
-      ".header h1 { font-size:16px; margin:0 0 4px 0; color:#1e40af; font-weight:bold; }" +
-      ".section-title { font-size:11px; font-weight:bold; color:#1e3a8a; margin:14px 0 6px 0; border-left:3px solid #2563eb; padding-left:6px; }" +
-      "table { width:100%; border-collapse:collapse; margin-bottom:10px; }" +
+      ".header h1 { font-size:15px; margin:0 0 4px 0; color:#1e40af; font-weight:bold; }" +
+      ".cat-banner { font-size:12px; font-weight:bold; color:#ffffff; background:#1e3a8a; padding:5px 10px; border-radius:4px; margin:14px 0 8px 0; }" +
+      ".cat-banner.sound { background:#0f766e; }" +
+      ".section-title { font-size:10.5px; font-weight:bold; color:#1e3a8a; margin:10px 0 5px 0; border-left:3px solid #2563eb; padding-left:6px; }" +
+      ".section-title.sound { color:#0f766e; border-left-color:#0d9488; }" +
+      "table { width:100%; border-collapse:collapse; margin-bottom:8px; }" +
       "th { background-color:#1e40af; color:#ffffff; padding:5px 4px; font-size:9px; border:1px solid #1e3a8a; text-align:center; }" +
+      "table.sound th { background-color:#0f766e; border-color:#115e59; }" +
       "td { padding:4px; font-size:9px; }" +
-      ".badge-pass { color:#15803d; font-weight:bold; }" +
-      ".badge-fail { color:#b91c1c; font-weight:bold; }" +
     "</style></head><body>" +
     "<div class='header'>" +
       "<div style='font-size:10px; font-weight:bold; color:#64748b; margin-bottom:2px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
-      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่อง Flue Gas Analyzer ประจำสัปดาห์</h1>" +
+      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่อง Flue Gas Analyzer และเครื่องวัดเสียง ประจำสัปดาห์</h1>" +
       "<div style='font-size:10px; color:#475569;'>รอบวันที่: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + " &nbsp;|&nbsp; " +
       "กิจกรรมทั้งหมด: " + s.totalActivities + " รายการ &nbsp;|&nbsp; " +
       "<span style='color:" + (s.totalIssues > 0 ? "#b91c1c" : "#15803d") + "; font-weight:bold;'>" +
@@ -1508,29 +2093,33 @@ function buildWeeklyHtmlReport(s) {
       "</span></div>" +
     "</div>" +
 
-    // ตาราง 1 (PDF)
-    "<div class='section-title'>1. แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ (" + s.form1.records.length + " รายการ)</div>" +
-    "<table><thead><tr>" +
-      "<th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการตรวจสภาพ / สอบเทียบ</th><th style='width:60px;'>Correction</th><th style='width:75px;'>Tolerance</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ดำเนินการ</th>" +
-    "</tr></thead><tbody>" + f1RowsPdf + "</tbody></table>" +
+    // PART I: FLUE GAS ANALYZER
+    "<div class='cat-banner'>หมวดที่ 1: เครื่องวัดประสิทธิภาพการเผาไหม้ (Flue Gas Analyzer - Testo)</div>" +
+    "<div class='section-title'>1.1 แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ (" + s.form1.records.length + " รายการ)</div>" +
+    "<table><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการตรวจสภาพ / สอบเทียบ</th><th style='width:60px;'>Correction</th><th style='width:75px;'>Tolerance</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + f1RowsPdf + "</tbody></table>" +
 
-    // ตาราง 2 (PDF)
-    "<div class='section-title'>2. แบบฟอร์มที่ 2: ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซม (" + s.form2.records.length + " รายการ)</div>" +
-    "<table><thead><tr>" +
-      "<th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการเสียหาย / ความผิดปกติ / ซ่อมแซม</th><th style='width:90px;'>ผู้ดำเนินการ</th><th style='width:110px;'>หมายเหตุ</th>" +
-    "</tr></thead><tbody>" + f2RowsPdf + "</tbody></table>" +
+    "<div class='section-title'>1.2 แบบฟอร์มที่ 2: ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซม (" + s.form2.records.length + " รายการ)</div>" +
+    "<table><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการเสียหาย / ความผิดปกติ / ซ่อมแซม</th><th style='width:90px;'>ผู้ดำเนินการ</th><th style='width:110px;'>หมายเหตุ</th></tr></thead><tbody>" + f2RowsPdf + "</tbody></table>" +
 
-    // ตาราง 3 (PDF)
-    "<div class='section-title'>3. แบบฟอร์มที่ 3: Flue Gas Analyzer Verification (O2, CO, NO, NO2, SO2) (" + s.form3.records.length + " รายการ)</div>" +
-    "<table><thead><tr>" +
-      "<th style='width:80px;'>วัน/เวลา</th><th style='width:130px;'>รุ่น / S/N</th><th style='width:110px;'>สภาวะแวดล้อม</th><th style='width:65px;'>Max Error</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ทวนสอบ</th><th style='width:80px;'>ผู้อนุมัติ</th>" +
-    "</tr></thead><tbody>" + f3RowsPdf + "</tbody></table>" +
+    "<div class='section-title'>1.3 แบบฟอร์มที่ 3: Flue Gas Analyzer Verification (O2, CO, NO, NO2, SO2) (" + s.form3.records.length + " รายการ)</div>" +
+    "<table><thead><tr><th style='width:80px;'>วัน/เวลา</th><th style='width:130px;'>รุ่น / S/N</th><th style='width:110px;'>สภาวะแวดล้อม</th><th style='width:65px;'>Max Error</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ทวนสอบ</th><th style='width:80px;'>ผู้อนุมัติ</th></tr></thead><tbody>" + f3RowsPdf + "</tbody></table>" +
 
-    // ตาราง 4 (PDF)
-    "<div class='section-title'>4. ตรวจสอบสภาพเครื่องมือประจำสัปดาห์ (Checklist 5 รายการ) (" + s.checklist.records.length + " รายการ)</div>" +
-    "<table><thead><tr>" +
-      "<th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:50px;'>กรอง</th><th style='width:50px;'>ปั๊ม</th><th style='width:50px;'>แบต</th><th style='width:50px;'>สะอาด</th><th style='width:55px;'>เซ็นเซอร์</th><th>หมายเหตุ</th>" +
-    "</tr></thead><tbody>" + chkRowsPdf + "</tbody></table>" +
+    "<div class='section-title'>1.4 ตรวจสอบสภาพเครื่องมือประจำสัปดาห์ (Checklist 5 รายการ) (" + s.checklist.records.length + " รายการ)</div>" +
+    "<table><thead><tr><th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:50px;'>กรอง</th><th style='width:50px;'>ปั๊ม</th><th style='width:50px;'>แบต</th><th style='width:50px;'>สะอาด</th><th style='width:55px;'>เซ็นเซอร์</th><th>หมายเหตุ</th></tr></thead><tbody>" + chkRowsPdf + "</tbody></table>" +
+
+    // PART II: SOUND LEVEL METER
+    "<div class='cat-banner sound'>หมวดที่ 2: เครื่องวัดระดับเสียง (Sound Level Meter)</div>" +
+    "<div class='section-title sound'>2.1 แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ (" + s.soundForm1.records.length + " รายการ)</div>" +
+    "<table class='sound'><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการตรวจสภาพ / สอบเทียบ</th><th style='width:60px;'>Correction</th><th style='width:75px;'>Tolerance</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + sf1RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title sound'>2.2 แบบฟอร์มที่ 2: ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซม (" + s.soundForm2.records.length + " รายการ)</div>" +
+    "<table class='sound'><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการเสียหาย / ความผิดปกติ / ซ่อมแซม</th><th style='width:90px;'>ผู้ดำเนินการ</th><th style='width:110px;'>หมายเหตุ</th></tr></thead><tbody>" + sf2RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title sound'>2.3 แบบฟอร์มที่ 3: Sound Level Meter Pre/Post Calibration Check (94 dB / 114 dB) (" + s.soundForm3.records.length + " รายการ)</div>" +
+    "<table class='sound'><thead><tr><th style='width:80px;'>วัน/เวลา</th><th style='width:130px;'>รุ่น / S/N</th><th style='width:130px;'>Calibrator / Setup</th><th style='width:85px;'>Max Dev / Drift</th><th style='width:45px;'>ผล</th><th style='width:75px;'>ผู้ทวนสอบ</th><th style='width:75px;'>ผู้อนุมัติ</th></tr></thead><tbody>" + sf3RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title sound'>2.4 ตรวจสอบสภาพเครื่องวัดเสียงประจำสัปดาห์ (Checklist 5 รายการ) (" + s.soundChecklist.records.length + " รายการ)</div>" +
+    "<table class='sound'><thead><tr><th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:55px;'>ตัวเครื่อง</th><th style='width:55px;'>ไมค์/โฟม</th><th style='width:50px;'>แบต</th><th style='width:55px;'>สาย/SD</th><th style='width:55px;'>การตอบสนอง</th><th>หมายเหตุ</th></tr></thead><tbody>" + schkRowsPdf + "</tbody></table>" +
 
     "<table style='width:100%; margin-top:25px; border:none;'>" +
       "<tr style='border:none;'>" +
