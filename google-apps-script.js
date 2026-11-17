@@ -20,6 +20,11 @@ const CONFIG = {
   DB_SOUND_FORM2_SHEET: "DB_Sound_Repair_History",
   DB_SOUND_FORM3_SHEET: "DB_Sound_Verification",
 
+  // ชื่อ Sheet ฐานข้อมูลเครื่องวัดความร้อน (Heat Stress / WBGT Database Sheets)
+  DB_HEAT_FORM1_SHEET: "DB_Heat_Maintenance_Cal",
+  DB_HEAT_FORM2_SHEET: "DB_Heat_Repair_History",
+  DB_HEAT_FORM3_SHEET: "DB_Heat_Verification",
+
   // ชื่อ Sheet แบบฟอร์มมาตรฐานพร้อมพิมพ์ (Form Template Sheets)
   FORM1_TEMPLATE_SHEET: "Form1_สอบเทียบและบำรุงรักษา",
   FORM2_TEMPLATE_SHEET: "Form2_ประวัติเครื่องมือ",
@@ -27,6 +32,9 @@ const CONFIG = {
   SOUND_FORM1_TEMPLATE_SHEET: "Form1_Sound_สอบเทียบและบำรุงรักษา",
   SOUND_FORM2_TEMPLATE_SHEET: "Form2_Sound_ประวัติเครื่องมือ",
   SOUND_FORM3_TEMPLATE_SHEET: "Form3_Sound_Verification",
+  HEAT_FORM1_TEMPLATE_SHEET: "Form1_Heat_สอบเทียบและบำรุงรักษา",
+  HEAT_FORM2_TEMPLATE_SHEET: "Form2_Heat_ประวัติเครื่องมือ",
+  HEAT_FORM3_TEMPLATE_SHEET: "Form3_Heat_Verification",
 
   // อีเมลผู้รับรายงานสรุปประจำสัปดาห์ (คั่นด้วย , หากมีหลายอีเมล)
   EMAIL_RECIPIENTS: "thongchai_b@etc1992.com",
@@ -130,31 +138,71 @@ const SOUND_EQUIPMENT_MASTER = {
   "00741254": {"name": "Sound Level Meter", "brand": "RION", "model": "RION NL-53", "code": "S67021836", "standard": "IEC 61672 (Class 1)", "status": "พร้อมใช้งาน", "notes": "** บันทึกเสียงได้"}
 };
 
+// ทะเบียนเครื่องวัดความร้อน (Heat Stress / WBGT Meter - ข้อมูลจริง 18 เครื่องจากทะเบียน Sampling)
+const HEAT_EQUIPMENT_MASTER = {
+  "TPH 060001": {"name": "Heat Stress Monitor", "brand": "TSI", "model": "TSI QUESTemp 32", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TPI 050069": {"name": "Heat Stress Monitor", "brand": "Quest technologies", "model": "Quest technologies QUESTemp 32", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TPI 050070": {"name": "Heat Stress Monitor", "brand": "Quest technologies", "model": "Quest technologies QUESTemp 32", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TPL 060039": {"name": "Heat Stress Monitor", "brand": "3 M", "model": "3 M QUESTemp 32", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TPL 060040": {"name": "Heat Stress Monitor", "brand": "3 M", "model": "3 M QUESTemp 32", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TPL 090016": {"name": "Heat Stress Monitor", "brand": "3 M", "model": "3 M QUESTemp 32", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TPL 090017": {"name": "Heat Stress Monitor", "brand": "3 M", "model": "3 M QUESTemp 32", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TPQ 030023": {"name": "Heat Stress Monitor", "brand": "3 M", "model": "3 M QUESTemp 32", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TPQ 030024": {"name": "Heat Stress Monitor", "brand": "3 M", "model": "3 M QUESTemp 32", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TEU 080011": {"name": "Heat Stress Monitor", "brand": "TSI", "model": "TSI QUESTemp 34", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TEU 080012": {"name": "Heat Stress Monitor", "brand": "TSI", "model": "TSI QUESTemp 34", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TEU 080013": {"name": "Heat Stress Monitor", "brand": "TSI", "model": "TSI QUESTemp 34", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TEU 080014": {"name": "Heat Stress Monitor", "brand": "TSI", "model": "TSI QUESTemp 34", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "TEU 080015": {"name": "Heat Stress Monitor", "brand": "TSI", "model": "TSI QUESTemp 34", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "22004316": {"name": "Heat Stress Monitor", "brand": "DeltaOHM", "model": "DeltaOHM HD32.2", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "22004318": {"name": "Heat Stress Monitor", "brand": "DeltaOHM", "model": "DeltaOHM HD32.2", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "22004319": {"name": "Heat Stress Monitor", "brand": "DeltaOHM", "model": "DeltaOHM HD32.2", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""},
+  "22004320": {"name": "Heat Stress Monitor", "brand": "DeltaOHM", "model": "DeltaOHM HD32.2", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""}
+};
+
+function getHeatSerialList() {
+  return Object.keys(HEAT_EQUIPMENT_MASTER);
+}
+
 function resolveCategoryConfig(category) {
-  var isSound = String(category || "").toUpperCase() === "SOUND";
-  return isSound
-    ? {
-        category: "SOUND",
-        db1: CONFIG.DB_SOUND_FORM1_SHEET,
-        db2: CONFIG.DB_SOUND_FORM2_SHEET,
-        db3: CONFIG.DB_SOUND_FORM3_SHEET,
-        tpl1: CONFIG.SOUND_FORM1_TEMPLATE_SHEET,
-        tpl2: CONFIG.SOUND_FORM2_TEMPLATE_SHEET,
-        tpl3: CONFIG.SOUND_FORM3_TEMPLATE_SHEET,
-        defaultName: "Sound Level Meter",
-        defaultSerial: "01120943"
-      }
-    : {
-        category: "FLUE_GAS",
-        db1: CONFIG.DB_FORM1_SHEET,
-        db2: CONFIG.DB_FORM2_SHEET,
-        db3: CONFIG.DB_FORM3_SHEET,
-        tpl1: CONFIG.FORM1_TEMPLATE_SHEET,
-        tpl2: CONFIG.FORM2_TEMPLATE_SHEET,
-        tpl3: CONFIG.FORM3_TEMPLATE_SHEET,
-        defaultName: "Flue Gas Analyzer",
-        defaultSerial: "01563443"
-      };
+  var cat = String(category || "").toUpperCase();
+  if (cat === "SOUND") {
+    return {
+      category: "SOUND",
+      db1: CONFIG.DB_SOUND_FORM1_SHEET,
+      db2: CONFIG.DB_SOUND_FORM2_SHEET,
+      db3: CONFIG.DB_SOUND_FORM3_SHEET,
+      tpl1: CONFIG.SOUND_FORM1_TEMPLATE_SHEET,
+      tpl2: CONFIG.SOUND_FORM2_TEMPLATE_SHEET,
+      tpl3: CONFIG.SOUND_FORM3_TEMPLATE_SHEET,
+      defaultName: "Sound Level Meter",
+      defaultSerial: "01120943"
+    };
+  }
+  if (cat === "HEAT") {
+    return {
+      category: "HEAT",
+      db1: CONFIG.DB_HEAT_FORM1_SHEET,
+      db2: CONFIG.DB_HEAT_FORM2_SHEET,
+      db3: CONFIG.DB_HEAT_FORM3_SHEET,
+      tpl1: CONFIG.HEAT_FORM1_TEMPLATE_SHEET,
+      tpl2: CONFIG.HEAT_FORM2_TEMPLATE_SHEET,
+      tpl3: CONFIG.HEAT_FORM3_TEMPLATE_SHEET,
+      defaultName: "Heat Stress Monitor",
+      defaultSerial: "TPH 060001"
+    };
+  }
+  return {
+    category: "FLUE_GAS",
+    db1: CONFIG.DB_FORM1_SHEET,
+    db2: CONFIG.DB_FORM2_SHEET,
+    db3: CONFIG.DB_FORM3_SHEET,
+    tpl1: CONFIG.FORM1_TEMPLATE_SHEET,
+    tpl2: CONFIG.FORM2_TEMPLATE_SHEET,
+    tpl3: CONFIG.FORM3_TEMPLATE_SHEET,
+    defaultName: "Flue Gas Analyzer",
+    defaultSerial: "01563443"
+  };
 }
 
 function getSoundSerialList() {
@@ -180,6 +228,7 @@ function onOpen() {
     .createMenu("📋 ระบบบำรุงรักษาเครื่องมือภาคสนาม (ETC 1992)")
     .addItem("🔄 สร้าง/รีเฟรชหน้าแบบฟอร์ม Flue Gas (Testo)", "initializeAllSheetsAndForms")
     .addItem("🔊 สร้าง/รีเฟรชหน้าแบบฟอร์มเครื่องวัดเสียง (Sound)", "initializeSoundSheetsAndForms")
+    .addItem("🌡️ สร้าง/รีเฟรชหน้าแบบฟอร์มเครื่องวัดความร้อน (Heat Stress)", "initializeHeatSheetsAndForms")
     .addItem("📄 ดึงข้อมูลตาม S/N และช่วงวันที่ที่ระบุในแบบฟอร์ม", "refreshAllFormViews")
     .addItem("📥 ดาวน์โหลดหน้าแบบฟอร์มปัจจุบัน (PDF / Excel)", "showDownloadDialogForActiveSheet")
     .addSeparator()
@@ -240,6 +289,20 @@ function onEdit(e) {
     var sSn3 = String(sheet.getRange("F3").getValue()).trim();
     var sSelectedRec = a1 === "F4" ? String(sheet.getRange("F4").getValue()).trim() : "";
     populateSoundForm3BySerialAndRecord(sSn3, sSelectedRec);
+  }
+  // Heat Form 1
+  else if (sheetName === CONFIG.HEAT_FORM1_TEMPLATE_SHEET && (a1 === "I4" || a1 === "I5" || a1 === "K5")) {
+    populateForm1BySerial(String(sheet.getRange("I4").getValue()).trim(), sheet.getRange("I5").getValue(), sheet.getRange("K5").getValue(), "HEAT");
+  }
+  // Heat Form 2
+  else if (sheetName === CONFIG.HEAT_FORM2_TEMPLATE_SHEET && (a1 === "E5" || a1 === "B6" || a1 === "E6")) {
+    populateForm2BySerial(String(sheet.getRange("E5").getValue()).trim(), sheet.getRange("B6").getValue(), sheet.getRange("E6").getValue(), "HEAT");
+  }
+  // Heat Form 3
+  else if (sheetName === CONFIG.HEAT_FORM3_TEMPLATE_SHEET && (a1 === "F3" || a1 === "F4")) {
+    var hSn3 = String(sheet.getRange("F3").getValue()).trim();
+    var hSelectedRec = a1 === "F4" ? String(sheet.getRange("F4").getValue()).trim() : "";
+    populateHeatForm3BySerialAndRecord(hSn3, hSelectedRec);
   }
 }
 
@@ -390,6 +453,34 @@ function doPost(e) {
       }
     }
 
+    // =========================================================================
+    // กรณีที่ 3C: บันทึก Heat Stress Verification (Ta, Tw, Tg)
+    // =========================================================================
+    else if (data.formType === "FORM_3_HEAT_VERIFICATION") {
+      recordHeatForm3Data(data, eq);
+      populateHeatForm3BySerialAndRecord(eq.serial, "");
+      summaryMessages.push("✓ บันทึกลงฐานข้อมูลและแบบฟอร์มทวนสอบเครื่องวัดความร้อน (Heat Stress Verification) เรียบร้อย");
+
+      if (data.syncToForm1) {
+        recordForm1Data({
+          subType: "verification",
+          date: data.date,
+          nextDate: data.nextDate || "",
+          description: "ทวนสอบเครื่องวัดความร้อน (" + (data.method || "Verification Module / Ref Thermometer") + ": Ta, Tw, Tg)",
+          correction: "Max Err: " + (data.maxErrorC || "-"),
+          uncertainty: "-",
+          tolerance: data.toleranceC || "±0.5 °C",
+          result: data.result || "ผ่าน",
+          agency: "ภายในแผนกปฏิบัติการภาคสนาม (ETC)",
+          operator: data.calibratedBy || "",
+          supervisor: data.approvedBy || "",
+          notes: "Ref: " + (data.refDevice || "-") + (data.notes ? " | " + data.notes : "")
+        }, eq, CONFIG.DB_HEAT_FORM1_SHEET);
+        populateForm1BySerial(eq.serial, "", "", "HEAT");
+        summaryMessages.push("✓ ส่งผลสรุปเข้าแบบฟอร์มที่ 1 (เครื่องวัดความร้อน) อัตโนมัติ");
+      }
+    }
+
     return createJsonResponse({
       status: "success",
       message: "Data recorded successfully",
@@ -511,7 +602,48 @@ function queryHistoricalData(params) {
     }
   }
 
-  // ดึงข้อมูลแบบฟอร์มที่ 3 (แยก Flue Gas vs Sound Level Meter)
+  // ดึงข้อมูลแบบฟอร์มที่ 3 (แยก Flue Gas vs Sound vs Heat Stress)
+  else if (targetForm === "FORM_3" && catCfg.category === "HEAT") {
+    var seqH = 1;
+    for (var hIdx = 1; hIdx < allData.length; hIdx++) {
+      var rh = allData[hIdx];
+      var rowSnH = String(rh[3] || "").replace(/^'/, "").trim();
+      if (cleanSerial && cleanSerial !== "ALL" && rowSnH !== cleanSerial) continue;
+
+      var recDateH = parseDateValue(rh[1]);
+      if (startDt && recDateH && recDateH < startDt) continue;
+      if (endDt && recDateH && recDateH > endDt) continue;
+
+      var parsedHeat = [];
+      try {
+        parsedHeat = JSON.parse(rh[13] || "[]");
+      } catch (errH) {
+        parsedHeat = [];
+      }
+
+      records.push({
+        seq: seqH++,
+        rowIndex: hIdx + 1,
+        date: formatCellDate(rh[1]),
+        rawDate: formatIsoDate(rh[1]),
+        time: formatCellTime(rh[2]),
+        serial: rowSnH,
+        eqModel: rh[4] || eqInfo.model,
+        eqCode: rh[5] || eqInfo.code,
+        standard: rh[6] || eqInfo.standard || "ISO 7243",
+        refDevice: rh[7] || "-",
+        method: rh[8] || "-",
+        toleranceC: rh[9] || "±0.5 °C",
+        calibratedBy: rh[10] || "",
+        approvedBy: rh[11] || "",
+        result: rh[12] || "ผ่าน",
+        heatData: parsedHeat,
+        maxErrorC: rh[14] || "-",
+        wbgtCheck: rh[15] || "-",
+        notes: rh[16] || ""
+      });
+    }
+  }
   else if (targetForm === "FORM_3" && catCfg.category === "SOUND") {
     var seqS = 1;
     for (var sIdx = 1; sIdx < allData.length; sIdx++) {
@@ -749,6 +881,45 @@ function recordSoundForm3Data(data, eq) {
   ]);
 }
 
+function recordHeatForm3Data(data, eq) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(CONFIG.DB_HEAT_FORM3_SHEET);
+  if (!sheet) sheet = ss.insertSheet(CONFIG.DB_HEAT_FORM3_SHEET);
+
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "Timestamp", "Calibrated Date", "Calibrated Time", "Serial No.", "Model",
+      "Equipment Code", "Standard", "Ref Device / Module", "Method",
+      "Tolerance (±°C)", "Calibrated By", "Approve By", "Result",
+      "HeatData_JSON", "Max Error (°C)", "WBGT Check", "Notes"
+    ];
+    sheet.appendRow(headers);
+    styleDbHeader(sheet, headers.length, "#c2410c");
+  }
+
+  var snClean = String(eq.serial || "").trim();
+  var masterMeta = HEAT_EQUIPMENT_MASTER[snClean] || {};
+  sheet.appendRow([
+    new Date(),
+    data.date || "",
+    data.time || "-",
+    "'" + snClean,
+    eq.model || masterMeta.model || "",
+    eq.code || masterMeta.code || "",
+    data.standard || masterMeta.standard || "ISO 7243",
+    data.refDevice || "-",
+    data.method || "-",
+    data.toleranceC || "±0.5 °C",
+    data.calibratedBy || "",
+    data.approvedBy || "",
+    data.result || "ผ่าน",
+    JSON.stringify(data.heatData || []),
+    data.maxErrorC || "-",
+    data.wbgtCheck || "-",
+    data.notes || ""
+  ]);
+}
+
 function recordLegacyChecklist(data, eq, category) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(CONFIG.LEGACY_SHEET);
@@ -804,6 +975,12 @@ function initializeSoundSheetsAndForms() {
   populateSoundForm3BySerialAndRecord("01120943", "");
 }
 
+function initializeHeatSheetsAndForms() {
+  populateForm1BySerial("TPH 060001", "", "", "HEAT");
+  populateForm2BySerial("TPH 060001", "", "", "HEAT");
+  populateHeatForm3BySerialAndRecord("TPH 060001", "");
+}
+
 function refreshAllFormViews() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -839,6 +1016,19 @@ function refreshAllFormViews() {
   var ss3 = ss.getSheetByName(CONFIG.SOUND_FORM3_TEMPLATE_SHEET);
   if (ss3) {
     populateSoundForm3BySerialAndRecord(String(ss3.getRange("F3").getValue()).trim() || "01120943", String(ss3.getRange("F4").getValue()).trim());
+  }
+
+  var hs1 = ss.getSheetByName(CONFIG.HEAT_FORM1_TEMPLATE_SHEET);
+  if (hs1) {
+    populateForm1BySerial(String(hs1.getRange("I4").getValue()).trim() || "TPH 060001", hs1.getRange("I5").getValue(), hs1.getRange("K5").getValue(), "HEAT");
+  }
+  var hs2 = ss.getSheetByName(CONFIG.HEAT_FORM2_TEMPLATE_SHEET);
+  if (hs2) {
+    populateForm2BySerial(String(hs2.getRange("E5").getValue()).trim() || "TPH 060001", hs2.getRange("B6").getValue(), hs2.getRange("E6").getValue(), "HEAT");
+  }
+  var hs3 = ss.getSheetByName(CONFIG.HEAT_FORM3_TEMPLATE_SHEET);
+  if (hs3) {
+    populateHeatForm3BySerialAndRecord(String(hs3.getRange("F3").getValue()).trim() || "TPH 060001", String(hs3.getRange("F4").getValue()).trim());
   }
 }
 
@@ -881,7 +1071,7 @@ function populateForm1BySerial(targetSerial, startDateVal, endDateVal, category)
 
   var snList1 = catCfg.category === "SOUND"
     ? getSoundSerialList()
-    : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"];
+    : (catCfg.category === "HEAT" ? getHeatSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"]);
   var snRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(snList1, true)
     .setAllowInvalid(true)
@@ -1019,7 +1209,7 @@ function populateForm2BySerial(targetSerial, startDateVal, endDateVal, category)
 
   var snList2 = catCfg.category === "SOUND"
     ? getSoundSerialList()
-    : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"];
+    : (catCfg.category === "HEAT" ? getHeatSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"]);
   var snRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(snList2, true)
     .setAllowInvalid(true)
@@ -1398,6 +1588,133 @@ function renderSoundForm3Sheet(data, eq, recordOptions, currentLabel) {
 /**
  * แสดงหน้าต่างป๊อปอัปใน Google Sheets เพื่อกดดาวน์โหลดแบบฟอร์มปัจจุบันเป็น PDF หรือ Excel (.xlsx)
  */
+/**
+ * 3C. แบบฟอร์มที่ 3 (Heat Stress): Verification Module / Reference Thermometer Check (Ta, Tw, Tg)
+ * (ตามข้อกำหนด: ยังไม่ต้องใส่รหัส FM-LAB)
+ */
+function populateHeatForm3BySerialAndRecord(targetSerial, selectedRecordLabel) {
+  var cleanSerial = String(targetSerial || "TPH 060001").replace(/^'/, "").trim();
+  var query = queryHistoricalData({
+    category: "HEAT",
+    targetForm: "FORM_3",
+    serial: cleanSerial
+  });
+  var eqInfo = query.equipment;
+  var records = query.records;
+
+  var recordOptions = [];
+  var chosenRecord = null;
+  for (var i = records.length - 1; i >= 0; i--) {
+    var r = records[i];
+    var label = "#" + r.seq + " | " + r.date + " " + (r.time || "-") + " (" + r.result + ")";
+    recordOptions.push(label);
+    if (selectedRecordLabel && label === selectedRecordLabel) {
+      chosenRecord = r;
+    }
+  }
+  if (!chosenRecord && records.length > 0) {
+    chosenRecord = records[records.length - 1];
+    selectedRecordLabel = recordOptions[0];
+  }
+
+  var payload = chosenRecord || {
+    date: "-",
+    time: "-",
+    refDevice: "-",
+    method: "Verification Module / Reference Thermometer",
+    toleranceC: "±0.5 °C",
+    maxErrorC: "-",
+    wbgtCheck: "-",
+    calibratedBy: "........................................",
+    approvedBy: "........................................",
+    notes: "-",
+    heatData: [
+      { sensor: "Dry Bulb (Ta)", ref: "", reading: "", err: "", status: "" },
+      { sensor: "Wet Bulb (Tw)", ref: "", reading: "", err: "", status: "" },
+      { sensor: "Globe Temp (Tg)", ref: "", reading: "", err: "", status: "" }
+    ]
+  };
+  renderHeatForm3Sheet(payload, eqInfo, recordOptions, selectedRecordLabel || "ล่าสุด");
+}
+
+function renderHeatForm3Sheet(data, eq, recordOptions, currentLabel) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(CONFIG.HEAT_FORM3_TEMPLATE_SHEET);
+  if (!sheet) sheet = ss.insertSheet(CONFIG.HEAT_FORM3_TEMPLATE_SHEET);
+
+  var cleanSerial = String(eq.serial || "TPH 060001").replace(/^'/, "").trim();
+  sheet.clear();
+
+  sheet.getRange("A1:E1").merge().setValue("Heat Stress (WBGT) Verification Form")
+       .setFontSize(13).setFontWeight("bold").setHorizontalAlignment("center");
+  sheet.getRange("A2:E2").merge().setValue("แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด")
+       .setFontSize(10).setFontWeight("bold").setHorizontalAlignment("center");
+
+  sheet.getRange("A3").setValue("Calibrated Date :").setFontWeight("bold");
+  sheet.getRange("B3").setValue(data.date || "-");
+  sheet.getRange("C3").setValue("Calibrated Time :").setFontWeight("bold");
+  sheet.getRange("D3").setValue(data.time || "-");
+
+  sheet.getRange("A4").setValue("Heat Stress Model :").setFontWeight("bold");
+  sheet.getRange("B4").setValue((eq.model || "") + " [" + (eq.standard || "ISO 7243") + "]");
+  sheet.getRange("C4").setValue("Serial No. :").setFontWeight("bold");
+  sheet.getRange("D4").setValue("'" + cleanSerial);
+
+  sheet.getRange("A5").setValue("Ref / Verification Module :").setFontWeight("bold");
+  sheet.getRange("B5").setValue(data.refDevice || "-");
+  sheet.getRange("C5").setValue("Tolerance :").setFontWeight("bold");
+  sheet.getRange("D5").setValue(data.toleranceC || "±0.5 °C");
+
+  sheet.getRange("A6").setValue("Verification Method :").setFontWeight("bold");
+  sheet.getRange("B6:D6").merge().setValue(data.method || "-");
+
+  sheet.getRange("E2:F2").merge().setValue("🔍 ค้นหาใบ Verification เครื่องวัดความร้อน")
+       .setFontWeight("bold").setBackground("#ffedd5").setHorizontalAlignment("center");
+  sheet.getRange("E3").setValue("1. เลือก S/N:").setFontWeight("bold").setFontSize(9);
+  var snRule = SpreadsheetApp.newDataValidation().requireValueInList(getHeatSerialList(), true).setAllowInvalid(true).build();
+  sheet.getRange("F3").setValue("'" + cleanSerial).setDataValidation(snRule).setBackground("#fef9c3").setFontWeight("bold");
+  sheet.getRange("E4").setValue("2. เลือกครั้งที่ทวนสอบ:").setFontWeight("bold").setFontSize(9);
+  sheet.getRange("F4").setValue(currentLabel).setBackground("#fef9c3").setFontSize(9);
+  if (recordOptions && recordOptions.length > 0) {
+    sheet.getRange("F4").setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(recordOptions, true).setAllowInvalid(true).build());
+  } else {
+    sheet.getRange("F4").clearDataValidations();
+  }
+
+  var headers = ["Sensor Parameter", "Reference / Module (°C)", "Meter Reading (°C)", "Difference / Error (°C)", "Status"];
+  sheet.getRange(8, 1, 1, 5).setValues([headers])
+       .setBackground("#e2e8f0").setFontWeight("bold").setHorizontalAlignment("center")
+       .setBorder(true, true, true, true, true, true);
+
+  var rows = Array.isArray(data.heatData) ? data.heatData : [];
+  var tableRows = [];
+  for (var i = 0; i < Math.max(rows.length, 3); i++) {
+    var pt = rows[i] || {};
+    tableRows.push([pt.sensor || "-", pt.ref || "", pt.reading || "", pt.err || "", pt.status || "-"]);
+  }
+  sheet.getRange(9, 1, tableRows.length, 5).setValues(tableRows).setHorizontalAlignment("center")
+       .setBorder(true, true, true, true, true, true);
+
+  var rSummary = 9 + tableRows.length + 1;
+  sheet.getRange(rSummary, 1).setValue("Summary / Result :").setFontWeight("bold");
+  sheet.getRange(rSummary, 2, 1, 4).merge().setValue((data.result || "ผ่าน") + " | Max Error: " + (data.maxErrorC || "-") + " | WBGT Check: " + (data.wbgtCheck || "-"));
+  sheet.getRange(rSummary + 1, 1).setValue("Notes :").setFontWeight("bold");
+  sheet.getRange(rSummary + 1, 2, 1, 4).merge().setValue(data.notes || "-");
+
+  var rSig = rSummary + 3;
+  sheet.getRange(rSig, 1, 1, 2).merge().setValue("Calibrated By .......................................................").setHorizontalAlignment("center");
+  sheet.getRange(rSig, 3, 1, 3).merge().setValue("Approve By .......................................................").setHorizontalAlignment("center");
+  sheet.getRange(rSig + 1, 1, 1, 2).merge().setValue("( " + (data.calibratedBy || "........................................") + " )").setHorizontalAlignment("center");
+  sheet.getRange(rSig + 1, 3, 1, 3).merge().setValue("( " + (data.approvedBy || "........................................") + " )").setHorizontalAlignment("center");
+
+  sheet.setColumnWidth(1, 195);
+  sheet.setColumnWidth(2, 180);
+  sheet.setColumnWidth(3, 165);
+  sheet.setColumnWidth(4, 165);
+  sheet.setColumnWidth(5, 130);
+  sheet.setColumnWidth(6, 200);
+}
+
 function showDownloadDialogForActiveSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getActiveSheet();
@@ -1405,9 +1722,9 @@ function showDownloadDialogForActiveSheet() {
   var sheetId = sheet.getSheetId();
   var sheetName = sheet.getName();
 
-  var isLandscape = (sheetName === CONFIG.FORM1_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM1_TEMPLATE_SHEET);
+  var isLandscape = (sheetName === CONFIG.FORM1_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM1_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM1_TEMPLATE_SHEET);
   var exportRange = "";
-  if (sheetName === CONFIG.FORM3_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM3_TEMPLATE_SHEET) {
+  if (sheetName === CONFIG.FORM3_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM3_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM3_TEMPLATE_SHEET) {
     exportRange = "&r1=0&c1=0&r2=26&c2=4"; // พิมพ์เฉพาะคอลัมน์ A-D ของใบ Verification
   }
 
@@ -1437,10 +1754,22 @@ function showDownloadDialogForActiveSheet() {
 
 function getEquipmentInfoBySerial(serial, dbSheetName, category) {
   var clean = String(serial || "").replace(/^'/, "").trim();
-  var isSound = String(category || "").toUpperCase() === "SOUND" || Boolean(SOUND_EQUIPMENT_MASTER[clean]);
+  var catUpper = String(category || "").toUpperCase();
+  var isHeat = catUpper === "HEAT" || Boolean(HEAT_EQUIPMENT_MASTER[clean]);
+  var isSound = catUpper === "SOUND" || (!isHeat && Boolean(SOUND_EQUIPMENT_MASTER[clean]));
   var info;
 
-  if (isSound && SOUND_EQUIPMENT_MASTER[clean]) {
+  if (isHeat && HEAT_EQUIPMENT_MASTER[clean]) {
+    var hm = HEAT_EQUIPMENT_MASTER[clean];
+    info = {
+      name: hm.name,
+      model: hm.model,
+      code: hm.code,
+      serial: clean,
+      standard: hm.standard,
+      status: hm.status
+    };
+  } else if (isSound && SOUND_EQUIPMENT_MASTER[clean]) {
     var sm = SOUND_EQUIPMENT_MASTER[clean];
     info = {
       name: sm.name,
@@ -1459,8 +1788,8 @@ function getEquipmentInfoBySerial(serial, dbSheetName, category) {
     };
   } else {
     info = {
-      name: isSound ? "Sound Level Meter" : "Flue Gas Analyzer",
-      model: isSound ? "" : "Testo",
+      name: isHeat ? "Heat Stress Monitor" : (isSound ? "Sound Level Meter" : "Flue Gas Analyzer"),
+      model: (isHeat || isSound) ? "" : "Testo",
       code: "",
       serial: clean
     };
@@ -1471,7 +1800,8 @@ function getEquipmentInfoBySerial(serial, dbSheetName, category) {
   if (dbSheet && dbSheet.getLastRow() > 1) {
     var data = dbSheet.getDataRange().getValues();
     for (var i = data.length - 1; i >= 1; i--) {
-      var rowSn = String(data[i][4] || "").replace(/^'/, "").trim();
+      var snColIdx = (dbSheetName === CONFIG.DB_HEAT_FORM3_SHEET) ? 3 : 4;
+      var rowSn = String(data[i][snColIdx] || "").replace(/^'/, "").trim();
       if (rowSn === clean) {
         if (dbSheetName === CONFIG.DB_FORM3_SHEET) {
           if (data[i][3]) info.model = data[i][3];
@@ -1479,6 +1809,9 @@ function getEquipmentInfoBySerial(serial, dbSheetName, category) {
         } else if (dbSheetName === CONFIG.DB_SOUND_FORM3_SHEET) {
           if (data[i][5]) info.model = data[i][5];
           if (data[i][6]) info.code = data[i][6];
+        } else if (dbSheetName === CONFIG.DB_HEAT_FORM3_SHEET) {
+          if (data[i][4]) info.model = data[i][4];
+          if (data[i][5]) info.code = data[i][5];
         } else {
           if (data[i][1]) info.name = data[i][1];
           if (data[i][2]) info.model = data[i][2];
@@ -1679,12 +2012,57 @@ function sendWeeklyDashboardReport() {
   }
 
   // =========================================================================
+  // หมวด 3: Heat Stress Monitor (เครื่องวัดความร้อน WBGT)
+  // =========================================================================
+  var heatForm1 = readWeeklyForm1Records(ss, CONFIG.DB_HEAT_FORM1_SHEET, cutoffDate, "Heat Stress Monitor");
+  var heatForm2 = readWeeklyForm2Records(ss, CONFIG.DB_HEAT_FORM2_SHEET, cutoffDate, "Heat Stress Monitor");
+
+  var heatForm3Records = [];
+  var heatForm3FailCount = 0;
+  var maxHeatErrorAll = 0;
+  var sheetHeat3 = ss.getSheetByName(CONFIG.DB_HEAT_FORM3_SHEET);
+  if (sheetHeat3 && sheetHeat3.getLastRow() > 1) {
+    var dataH3 = sheetHeat3.getDataRange().getValues();
+    for (var kh = 1; kh < dataH3.length; kh++) {
+      var rh3 = dataH3[kh];
+      var dh3 = parseDateValue(rh3[1]);
+      if (!dh3 || dh3 < cutoffDate) continue;
+      var isFailH3 = String(rh3[12] || "").indexOf("ไม่ผ่าน") !== -1;
+      if (isFailH3) heatForm3FailCount++;
+      var errHNum = parseFloat(String(rh3[14] || "").replace(/[^0-9.\-]/g, ""));
+      if (!isNaN(errHNum) && Math.abs(errHNum) > maxHeatErrorAll) {
+        maxHeatErrorAll = Math.abs(errHNum);
+      }
+      heatForm3Records.push({
+        date: formatDateDisplay(dh3),
+        time: formatCellTime(rh3[2]),
+        serial: String(rh3[3] || "").replace(/^'/, ""),
+        model: rh3[4] || "Heat Stress Monitor",
+        code: rh3[5] || "-",
+        standard: rh3[6] || "ISO 7243",
+        refDevice: rh3[7] || "-",
+        method: rh3[8] || "-",
+        toleranceC: rh3[9] || "±0.5 °C",
+        calibratedBy: rh3[10] || "-",
+        approvedBy: rh3[11] || "-",
+        result: rh3[12] || "ผ่าน",
+        isFail: isFailH3,
+        maxErrorC: rh3[14] || "-",
+        wbgtCheck: rh3[15] || "-",
+        notes: rh3[16] || "-"
+      });
+    }
+  }
+
+  // =========================================================================
   // Checklist 5 รายการ (แยก Flue Gas vs Sound)
   // =========================================================================
   var checklistGas = [];
   var checklistSound = [];
+  var checklistHeat = [];
   var checklistIssueGas = 0;
   var checklistIssueSound = 0;
+  var checklistIssueHeat = 0;
   var sheetLegacy = ss.getSheetByName(CONFIG.LEGACY_SHEET);
   if (sheetLegacy && sheetLegacy.getLastRow() > 1) {
     var dataLegacy = sheetLegacy.getDataRange().getValues();
@@ -1698,7 +2076,8 @@ function sendWeeklyDashboardReport() {
       });
       var snL = String(rL[4] || "-").replace(/^'/, "").trim();
       var catL = String(rL[11] || "").toUpperCase();
-      var isSoundChk = catL === "SOUND" || Boolean(SOUND_EQUIPMENT_MASTER[snL]);
+      var isHeatChk = catL === "HEAT" || Boolean(HEAT_EQUIPMENT_MASTER[snL]);
+      var isSoundChk = !isHeatChk && (catL === "SOUND" || Boolean(SOUND_EQUIPMENT_MASTER[snL]));
       var chkItem = {
         date: formatDateDisplay(dL),
         technician: rL[2] || "-",
@@ -1712,7 +2091,10 @@ function sendWeeklyDashboardReport() {
         notes: rL[10] || "-",
         hasIssue: hasIssueL
       };
-      if (isSoundChk) {
+      if (isHeatChk) {
+        if (hasIssueL) checklistIssueHeat++;
+        checklistHeat.push(chkItem);
+      } else if (isSoundChk) {
         if (hasIssueL) checklistIssueSound++;
         checklistSound.push(chkItem);
       } else {
@@ -1722,30 +2104,34 @@ function sendWeeklyDashboardReport() {
     }
   }
 
-  // รวมสถิติทั้ง 2 หมวดเครื่องมือ
+  // รวมสถิติทั้ง 3 หมวดเครื่องมือ
   var totalGasIssues = gasForm1.fails + gasForm2.records.length + form3FailCount + checklistIssueGas;
   var totalSoundIssues = soundForm1.fails + soundForm2.records.length + soundForm3FailCount + checklistIssueSound;
-  var totalIssues = totalGasIssues + totalSoundIssues;
+  var totalHeatIssues = heatForm1.fails + heatForm2.records.length + heatForm3FailCount + checklistIssueHeat;
+  var totalIssues = totalGasIssues + totalSoundIssues + totalHeatIssues;
 
   var totalGasActivities = gasForm1.records.length + gasForm2.records.length + form3Records.length + checklistGas.length;
   var totalSoundActivities = soundForm1.records.length + soundForm2.records.length + soundForm3Records.length + checklistSound.length;
-  var totalActivities = totalGasActivities + totalSoundActivities;
+  var totalHeatActivities = heatForm1.records.length + heatForm2.records.length + heatForm3Records.length + checklistHeat.length;
+  var totalActivities = totalGasActivities + totalSoundActivities + totalHeatActivities;
 
   var summaryData = {
     cutoffDate: cutoffDate,
     today: today,
     totalIssues: totalIssues,
     totalActivities: totalActivities,
-    // หมวด Flue Gas (Testo)
     form1: gasForm1,
     form2: gasForm2,
     form3: { records: form3Records, fails: form3FailCount, maxError: maxErrorAll },
     checklist: { records: checklistGas, issues: checklistIssueGas },
-    // หมวด Sound Level Meter
     soundForm1: soundForm1,
     soundForm2: soundForm2,
     soundForm3: { records: soundForm3Records, fails: soundForm3FailCount, maxDevDb: maxSoundDevAll },
-    soundChecklist: { records: checklistSound, issues: checklistIssueSound }
+    soundChecklist: { records: checklistSound, issues: checklistIssueSound },
+    heatForm1: heatForm1,
+    heatForm2: heatForm2,
+    heatForm3: { records: heatForm3Records, fails: heatForm3FailCount, maxErrorC: maxHeatErrorAll },
+    heatChecklist: { records: checklistHeat, issues: checklistIssueHeat }
   };
 
   // สร้างเนื้อหา PDF และแปลงเป็น Blob
@@ -1755,7 +2141,7 @@ function sendWeeklyDashboardReport() {
     .getAs(MimeType.PDF);
 
   // หัวข้ออีเมล
-  var emailSubject = "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่อง Flue Gas Analyzer และเครื่องวัดเสียง ประจำสัปดาห์ (ระหว่างวันที่ " +
+  var emailSubject = "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่อง Flue Gas Analyzer, เครื่องวัดเสียง และเครื่องวัดความร้อน ประจำสัปดาห์ (ระหว่างวันที่ " +
     formatDateDisplay(cutoffDate) + " - " + formatDateDisplay(today) + ")";
 
   // เนื้อหาอีเมล HTML
@@ -1844,6 +2230,26 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
   var sf1Rows = buildForm1EmailRows(s.soundForm1.records, "ไม่มีรายการสอบเทียบ/บำรุงรักษาเครื่องวัดเสียงในรอบสัปดาห์นี้");
   var sf2Rows = buildForm2EmailRows(s.soundForm2.records, "✓ ไม่พบประวัติความเสียหายหรือส่งซ่อมเครื่องวัดเสียงในรอบสัปดาห์นี้");
 
+  var hf1Rows = buildForm1EmailRows(s.heatForm1.records, "ไม่มีรายการสอบเทียบ/บำรุงรักษาเครื่องวัดความร้อนในรอบสัปดาห์นี้");
+  var hf2Rows = buildForm2EmailRows(s.heatForm2.records, "✓ ไม่พบประวัติความเสียหายหรือส่งซ่อมเครื่องวัดความร้อนในรอบสัปดาห์นี้");
+
+  var hf3Rows = "";
+  if (s.heatForm3.records.length === 0) {
+    hf3Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการทวนสอบเครื่องวัดความร้อนในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var kh = 0; kh < s.heatForm3.records.length; kh++) {
+      var rh3 = s.heatForm3.records[kh];
+      var resH3Color = rh3.isFail ? "#dc2626" : "#16a34a";
+      hf3Rows += "<tr style='border-bottom:1px solid #e5e7eb; font-size:12px;'>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + rh3.date + "<br><small style='color:#6b7280;'>" + rh3.time + "</small></td>" +
+        "<td style='padding:8px 6px;'><b>" + escapeXml(rh3.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(rh3.serial) + "</small></td>" +
+        "<td style='padding:8px 6px; text-align:center; font-family:monospace;'>" + escapeXml(rh3.maxErrorC) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:" + resH3Color + ";'>" + escapeXml(rh3.result) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(rh3.calibratedBy) + "</td>" +
+      "</tr>";
+    }
+  }
+
   var sf3Rows = "";
   if (s.soundForm3.records.length === 0) {
     sf3Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการทวนสอบ Pre/Post เครื่องวัดเสียงในรอบสัปดาห์นี้</td></tr>";
@@ -1865,14 +2271,14 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
     "<div style='background:linear-gradient(135deg, #0f172a 0%, #1e40af 100%); color:#ffffff; padding:24px 20px; text-align:center;'>" +
       "<div style='font-size:12px; letter-spacing:1px; text-transform:uppercase; opacity:0.9; margin-bottom:4px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
       "<h2 style='margin:0 0 8px 0; font-size:19px; font-weight:bold;'>รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่องมือภาคสนาม</h2>" +
-      "<div style='font-size:13px; opacity:0.95;'>Flue Gas Analyzer &amp; Sound Level Meter | รอบสัปดาห์: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + "</div>" +
+      "<div style='font-size:13px; opacity:0.95;'>Flue Gas • Sound Level • Heat Stress | รอบสัปดาห์: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + "</div>" +
       "<div style='margin-top:14px;'>" + statusBadge + "</div>" +
     "</div>" +
 
     "<div style='padding:20px;'>" +
       "<p style='margin:0 0 16px 0; font-size:14px; color:#374151; line-height:1.7;'>" +
         "เรียนทุกท่าน<br>" +
-        "สรุปผลการดำเนินงานเกี่ยวกับการบำรุงรักษาเครื่องวัดประสิทธิภาพการเผาไหม้ Flue Gas Analyzer และเครื่องวัดระดับเสียง Sound Level Meter ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ<br>" +
+        "สรุปผลการดำเนินงานเกี่ยวกับการบำรุงรักษาเครื่อง Flue Gas Analyzer, เครื่องวัดระดับเสียง (Sound Level Meter) และเครื่องวัดความร้อน (Heat Stress Monitor) ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ<br>" +
         "(รายละเอียดเพิ่มเติมดังเอกสารแนบ)<br>" +
         "ขอบคุณครับ" +
       "</p>" +
@@ -1896,6 +2302,17 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
               "• แจ้งซ่อม/เสียหาย (F2): <b>" + s.soundForm2.records.length + "</b><br>" +
               "• Pre/Post Check (F3): <b>" + s.soundForm3.records.length + "</b> (Max Dev: " + (s.soundForm3.maxDevDb > 0 ? s.soundForm3.maxDevDb.toFixed(2) + " dB" : "-") + ")<br>" +
               "• Checklist 5 ระบบ: <b>" + s.soundChecklist.records.length + "</b> (ต้องแก้ไข " + s.soundChecklist.issues + ")" +
+            "</div>" +
+          "</td>" +
+        "</tr>" +
+        "<tr>" +
+          "<td colspan='2' style='background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:12px; font-weight:bold; color:#c2410c;'>🌡️ หมวดที่ 3: Heat Stress Monitor (เครื่องวัดความร้อน WBGT - ISO 7243)</div>" +
+            "<div style='font-size:12px; color:#1e293b; margin-top:4px;'>" +
+              "สอบเทียบ/ตรวจสภาพ (F1): <b>" + s.heatForm1.records.length + "</b> (ไม่ผ่าน " + s.heatForm1.fails + ") &nbsp;|&nbsp; " +
+              "แจ้งซ่อม (F2): <b>" + s.heatForm2.records.length + "</b> &nbsp;|&nbsp; " +
+              "ทวนสอบ Ta/Tw/Tg (F3): <b>" + s.heatForm3.records.length + "</b> (Max Err: " + (s.heatForm3.maxErrorC > 0 ? s.heatForm3.maxErrorC.toFixed(2) + " °C" : "-") + ") &nbsp;|&nbsp; " +
+              "Checklist: <b>" + s.heatChecklist.records.length + "</b> (แก้ไข " + s.heatChecklist.issues + ")" +
             "</div>" +
           "</td>" +
         "</tr>" +
@@ -1929,6 +2346,21 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
       "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
         "<div style='background:#f0fdfa; padding:8px 12px; font-weight:bold; font-size:12px; color:#115e59; border-bottom:1px solid #e5e7eb;'>🎙️ แบบฟอร์มที่ 3: Pre/Post Calibration Check (94 dB / 114 dB)</div>" +
         "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Dev / Drift</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th></tr></thead><tbody>" + sf3Rows + "</tbody></table>" +
+      "</div>" +
+
+      // --- ส่วนที่ 3: Heat Stress Monitor ---
+      "<div style='font-size:14px; font-weight:bold; color:#c2410c; margin:22px 0 8px 0; border-bottom:2px solid #fed7aa; padding-bottom:4px;'>🌡️ หมวด Heat Stress Monitor (เครื่องวัดความร้อน WBGT)</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#fff7ed; padding:8px 12px; font-weight:bold; font-size:12px; color:#9a3412; border-bottom:1px solid #e5e7eb;'>📋 แบบฟอร์มที่ 1: การสอบเทียบและบำรุงรักษา (เครื่องวัดความร้อน)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายการ</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ตรวจ</th></tr></thead><tbody>" + hf1Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid " + (s.heatForm2.records.length > 0 ? "#fed7aa" : "#e5e7eb") + "; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:" + (s.heatForm2.records.length > 0 ? "#ffedd5" : "#fff7ed") + "; padding:8px 12px; font-weight:bold; font-size:12px; color:#9a3412; border-bottom:1px solid #e5e7eb;'>🛠️ แบบฟอร์มที่ 2: ประวัติความเสียหาย / ซ่อมแซม (เครื่องวัดความร้อน)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายละเอียด</th><th style='padding:6px; text-align:center;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + hf2Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#fff7ed; padding:8px 12px; font-weight:bold; font-size:12px; color:#9a3412; border-bottom:1px solid #e5e7eb;'>🌡️ แบบฟอร์มที่ 3: Heat Stress Verification (Ta, Tw, Tg ±0.5 °C)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Error</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th></tr></thead><tbody>" + hf3Rows + "</tbody></table>" +
       "</div>" +
 
       "<div style='margin-top:24px; text-align:center;'>" +
@@ -2068,6 +2500,30 @@ function buildWeeklyHtmlReport(s) {
     }
   }
 
+  // หมวด 3: Heat Stress (PDF)
+  var hf1RowsPdf = buildForm1PdfRows(s.heatForm1.records);
+  var hf2RowsPdf = buildForm2PdfRows(s.heatForm2.records);
+  var hchkRowsPdf = buildChecklistPdfRows(s.heatChecklist.records);
+
+  var hf3RowsPdf = "";
+  if (s.heatForm3.records.length === 0) {
+    hf3RowsPdf = "<tr><td colspan='7' style='text-align:center; padding:8px; color:#6b7280;'>ไม่มีรายการทวนสอบเครื่องวัดความร้อนในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var kh = 0; kh < s.heatForm3.records.length; kh++) {
+      var rh3 = s.heatForm3.records[kh];
+      var bgh3 = rh3.isFail ? "#fee2e2" : (kh % 2 === 0 ? "#ffffff" : "#f9fafb");
+      hf3RowsPdf += "<tr style='background-color:" + bgh3 + ";'>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + rh3.date + " " + rh3.time + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'><b>" + escapeXml(rh3.model) + "</b> (" + escapeXml(rh3.serial) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:8px; text-align:center;'>" + escapeXml(rh3.refDevice) + "<br>" + escapeXml(rh3.method) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px; font-weight:bold;'>" + escapeXml(rh3.maxErrorC) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-weight:bold; font-size:9px; color:" + (rh3.isFail ? "#b91c1c" : "#15803d") + ";'>" + escapeXml(rh3.result) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(rh3.calibratedBy) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(rh3.approvedBy) + "</td>" +
+      "</tr>";
+    }
+  }
+
   return "<!DOCTYPE html><html><head><meta charset='UTF-8'>" +
     "<style>" +
       "@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');" +
@@ -2075,17 +2531,17 @@ function buildWeeklyHtmlReport(s) {
       ".header { text-align:center; border-bottom:2px solid #1e40af; padding-bottom:8px; margin-bottom:12px; }" +
       ".header h1 { font-size:15px; margin:0 0 4px 0; color:#1e40af; font-weight:bold; }" +
       ".cat-banner { font-size:12px; font-weight:bold; color:#ffffff; background:#1e3a8a; padding:5px 10px; border-radius:4px; margin:14px 0 8px 0; }" +
-      ".cat-banner.sound { background:#0f766e; }" +
+      ".cat-banner.sound { background:#0f766e; } .cat-banner.heat { background:#c2410c; }" +
       ".section-title { font-size:10.5px; font-weight:bold; color:#1e3a8a; margin:10px 0 5px 0; border-left:3px solid #2563eb; padding-left:6px; }" +
-      ".section-title.sound { color:#0f766e; border-left-color:#0d9488; }" +
+      ".section-title.sound { color:#0f766e; border-left-color:#0d9488; } .section-title.heat { color:#c2410c; border-left-color:#ea580c; }" +
       "table { width:100%; border-collapse:collapse; margin-bottom:8px; }" +
       "th { background-color:#1e40af; color:#ffffff; padding:5px 4px; font-size:9px; border:1px solid #1e3a8a; text-align:center; }" +
-      "table.sound th { background-color:#0f766e; border-color:#115e59; }" +
+      "table.sound th { background-color:#0f766e; border-color:#115e59; } table.heat th { background-color:#c2410c; border-color:#9a3412; }" +
       "td { padding:4px; font-size:9px; }" +
     "</style></head><body>" +
     "<div class='header'>" +
       "<div style='font-size:10px; font-weight:bold; color:#64748b; margin-bottom:2px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
-      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่อง Flue Gas Analyzer และเครื่องวัดเสียง ประจำสัปดาห์</h1>" +
+      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่อง Flue Gas Analyzer, เครื่องวัดเสียง และเครื่องวัดความร้อน ประจำสัปดาห์</h1>" +
       "<div style='font-size:10px; color:#475569;'>รอบวันที่: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + " &nbsp;|&nbsp; " +
       "กิจกรรมทั้งหมด: " + s.totalActivities + " รายการ &nbsp;|&nbsp; " +
       "<span style='color:" + (s.totalIssues > 0 ? "#b91c1c" : "#15803d") + "; font-weight:bold;'>" +
@@ -2120,6 +2576,20 @@ function buildWeeklyHtmlReport(s) {
 
     "<div class='section-title sound'>2.4 ตรวจสอบสภาพเครื่องวัดเสียงประจำสัปดาห์ (Checklist 5 รายการ) (" + s.soundChecklist.records.length + " รายการ)</div>" +
     "<table class='sound'><thead><tr><th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:55px;'>ตัวเครื่อง</th><th style='width:55px;'>ไมค์/โฟม</th><th style='width:50px;'>แบต</th><th style='width:55px;'>สาย/SD</th><th style='width:55px;'>การตอบสนอง</th><th>หมายเหตุ</th></tr></thead><tbody>" + schkRowsPdf + "</tbody></table>" +
+
+    // PART III: HEAT STRESS MONITOR
+    "<div class='cat-banner heat'>หมวดที่ 3: เครื่องวัดความร้อน (Heat Stress Monitor - WBGT / ISO 7243)</div>" +
+    "<div class='section-title heat'>3.1 แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ (" + s.heatForm1.records.length + " รายการ)</div>" +
+    "<table class='heat'><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการตรวจสภาพ / สอบเทียบ</th><th style='width:60px;'>Correction</th><th style='width:75px;'>Tolerance</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + hf1RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title heat'>3.2 แบบฟอร์มที่ 2: ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซม (" + s.heatForm2.records.length + " รายการ)</div>" +
+    "<table class='heat'><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการเสียหาย / ความผิดปกติ / ซ่อมแซม</th><th style='width:90px;'>ผู้ดำเนินการ</th><th style='width:110px;'>หมายเหตุ</th></tr></thead><tbody>" + hf2RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title heat'>3.3 แบบฟอร์มที่ 3: Heat Stress Verification (Dry Bulb, Wet Bulb, Globe ±0.5 °C) (" + s.heatForm3.records.length + " รายการ)</div>" +
+    "<table class='heat'><thead><tr><th style='width:80px;'>วัน/เวลา</th><th style='width:130px;'>รุ่น / S/N</th><th style='width:130px;'>Ref / Method</th><th style='width:75px;'>Max Error</th><th style='width:45px;'>ผล</th><th style='width:75px;'>ผู้ทวนสอบ</th><th style='width:75px;'>ผู้อนุมัติ</th></tr></thead><tbody>" + hf3RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title heat'>3.4 ตรวจสอบสภาพเครื่องวัดความร้อนประจำสัปดาห์ (Checklist 5 รายการ) (" + s.heatChecklist.records.length + " รายการ)</div>" +
+    "<table class='heat'><thead><tr><th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:55px;'>Wet Bulb</th><th style='width:55px;'>Globe</th><th style='width:50px;'>แบต</th><th style='width:55px;'>Dry Bulb</th><th style='width:55px;'>ตัวเครื่อง</th><th>หมายเหตุ</th></tr></thead><tbody>" + hchkRowsPdf + "</tbody></table>" +
 
     "<table style='width:100%; margin-top:25px; border:none;'>" +
       "<tr style='border:none;'>" +

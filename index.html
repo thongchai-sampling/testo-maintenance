@@ -138,7 +138,7 @@
                     <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold bg-indigo-500/20 border border-indigo-400/30 rounded-full text-indigo-200 mb-2.5 backdrop-blur-sm">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span>แผนกปฏิบัติการภาคสนาม | ETC 1992</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30 font-mono">v3.0 (Multi-Equipment)</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30 font-mono">v3.1 (Multi-Equipment)</span>
                     </div>
                     <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-heading">
                         ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ
@@ -151,7 +151,7 @@
                     <div class="font-bold text-white font-heading flex items-center md:justify-end gap-1.5">
                         <span class="text-indigo-400">⚡</span> <span id="headerEqTitle">Field Equipment Hub</span>
                     </div>
-                    <div class="text-slate-300" id="headerEqSummary">Flue Gas Analyzer &amp; Sound Level Meter</div>
+                    <div class="text-slate-300" id="headerEqSummary">Flue Gas • Sound Level • Heat Stress</div>
                     <div class="mt-1 inline-flex items-center md:justify-end gap-1.5 text-[11px] text-emerald-300">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -182,29 +182,41 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-2">
                         ประเภทเครื่องมือภาคสนาม (Equipment Category) <span class="text-red-500">*</span>
                     </label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <button type="button" id="catBtn_FLUE_GAS" onclick="switchEquipmentCategory('FLUE_GAS')"
                                 class="flex items-center justify-between p-3.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950 shadow-sm transition-all text-left">
-                            <div class="flex items-center gap-3">
-                                <span class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-sm">🔥</span>
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-base shadow-sm shrink-0">🔥</span>
                                 <div>
-                                    <div class="font-bold text-sm font-heading">Flue Gas Analyzer (Testo)</div>
-                                    <div class="text-[11px] text-indigo-700">เครื่องวัดประสิทธิภาพการเผาไหม้ (6 เครื่อง)</div>
+                                    <div class="font-bold text-sm font-heading">Flue Gas (Testo)</div>
+                                    <div class="text-[11px] text-indigo-700">วัดประสิทธิภาพเผาไหม้ (6 เครื่อง)</div>
                                 </div>
                             </div>
-                            <span id="catBadge_FLUE_GAS" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-600 text-white">กำลังเลือก</span>
+                            <span id="catBadge_FLUE_GAS" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-600 text-white shrink-0">เลือกอยู่</span>
                         </button>
 
                         <button type="button" id="catBtn_SOUND" onclick="switchEquipmentCategory('SOUND')"
                                 class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-teal-400 text-slate-700 transition-all text-left">
-                            <div class="flex items-center gap-3">
-                                <span class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center text-lg shadow-sm">🔊</span>
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center text-base shadow-sm shrink-0">🔊</span>
                                 <div>
-                                    <div class="font-bold text-sm font-heading">เครื่องวัดระดับเสียง (Sound Level Meter)</div>
-                                    <div class="text-[11px] text-slate-500">RION / Cirrus / ACO จากทะเบียนจริง (80 เครื่อง)</div>
+                                    <div class="font-bold text-sm font-heading">เครื่องวัดระดับเสียง</div>
+                                    <div class="text-[11px] text-slate-500">RION / Cirrus / ACO (80 เครื่อง)</div>
                                 </div>
                             </div>
-                            <span id="catBadge_SOUND" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">เลือกใช้</span>
+                            <span id="catBadge_SOUND" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">เลือกใช้</span>
+                        </button>
+
+                        <button type="button" id="catBtn_HEAT" onclick="switchEquipmentCategory('HEAT')"
+                                class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-orange-400 text-slate-700 transition-all text-left">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center text-base shadow-sm shrink-0">🌡️</span>
+                                <div>
+                                    <div class="font-bold text-sm font-heading">เครื่องวัดความร้อน (WBGT)</div>
+                                    <div class="text-[11px] text-slate-500">QUESTemp 32/34 • HD32.2 (18 เครื่อง)</div>
+                                </div>
+                            </div>
+                            <span id="catBadge_HEAT" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">เลือกใช้</span>
                         </button>
                     </div>
                 </div>
@@ -215,7 +227,7 @@
                         <label class="block text-[11px] font-semibold text-teal-900 mb-1" for="soundSearchInput">
                             🔍 ค้นหาด่วนด้วย S/N, รหัสทรัพย์สิน หรือ รุ่น (เช่น 01120943, S660216, NL-52A)
                         </label>
-                        <input type="text" id="soundSearchInput" oninput="renderSoundPresetOptions()"
+                        <input type="text" id="soundSearchInput" oninput="renderCategoryPresetOptions()"
                                placeholder="พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่นเครื่องวัดเสียง..."
                                class="w-full px-3 py-1.5 text-sm border border-teal-300 rounded-lg bg-white focus:ring-2 focus:ring-teal-500 outline-none">
                     </div>
@@ -223,7 +235,7 @@
                         <label class="block text-[11px] font-semibold text-teal-900 mb-1" for="soundStatusFilter">
                             กรองตามสถานะในทะเบียน
                         </label>
-                        <select id="soundStatusFilter" onchange="renderSoundPresetOptions()"
+                        <select id="soundStatusFilter" onchange="renderCategoryPresetOptions()"
                                 class="w-full px-3 py-1.5 text-sm font-semibold border border-teal-300 rounded-lg bg-white focus:ring-2 focus:ring-teal-500 outline-none">
                             <option value="ACTIVE">เฉพาะพร้อมใช้งาน (59 เครื่อง)</option>
                             <option value="ACTIVE_REPAIR">พร้อมใช้งาน + รอซ่อม (63 เครื่อง)</option>
@@ -817,6 +829,15 @@
                                placeholder="เช่น 0.5 (เกณฑ์ยอมรับ ±dB)"
                                class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none font-mono font-semibold placeholder:text-slate-400 placeholder:italic">
                     </div>
+                    <div id="f3_heatTolCol" class="hidden">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_heat_tolerance">
+                            เกณฑ์ยอมรับ Error (± °C)
+                        </label>
+                        <input type="number" id="f3_heat_tolerance" value="0.5" step="0.1" min="0"
+                               oninput="recalculateHeatTable()"
+                               placeholder="เช่น 0.5 (ISO 7243)"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none font-mono font-semibold placeholder:text-slate-400 placeholder:italic">
+                    </div>
                 </div>
 
                 <!-- ส่วนฟอร์ม 3 เฉพาะ Flue Gas Analyzer -->
@@ -1007,6 +1028,138 @@
                     </div>
                 </div>
 
+                <!-- ส่วนฟอร์ม 3 เฉพาะเครื่องวัดความร้อน (Heat Stress / WBGT Verification) -->
+                <div id="f3_heatSection" class="hidden space-y-5">
+                    <div class="bg-orange-50/70 p-4 rounded-2xl border border-orange-200/80 space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-orange-900 flex items-center gap-1.5">
+                            <span>🌡️</span> Verification Module / Reference Thermometer Setup
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_heat_refDevice">
+                                    เครื่อง/ชุดอ้างอิง (Verification Module / Ref Therm.) <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="f3_heat_refDevice"
+                                       placeholder="เช่น QUESTemp Verification Module หรือ Ref Thermometer S/N..."
+                                       class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500 outline-none placeholder:text-slate-400 placeholder:italic">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_heat_method">
+                                    วิธีการทวนสอบ (Verification Method)
+                                </label>
+                                <select id="f3_heat_method"
+                                        class="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500 outline-none">
+                                    <option value="Verification Module / Sensor Check">Verification Module / Electrical Sensor Check</option>
+                                    <option value="Reference Thermometer Comparison">เทียบค่ากับ Reference Thermometer</option>
+                                    <option value="Ambient & Equilibrium Check">เทียบความสอดคล้องในสภาวะควบคุม</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_heat_wbgtCheck">
+                                    ค่า WBGT ที่เครื่องอ่านได้ (°C) <span class="text-slate-400 font-normal">(ถ้าตรวจสอบ)</span>
+                                </label>
+                                <input type="number" id="f3_heat_wbgtCheck" step="0.1" placeholder="เทียบค่าคำนวณ WBGT ด้านล่าง"
+                                       class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500 outline-none font-mono placeholder:text-slate-400 placeholder:italic">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ตารางทวนสอบหัววัด Dry Bulb (Ta), Wet Bulb (Tw), Globe (Tg) -->
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+                        <div class="bg-slate-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-lg bg-orange-500/25 border border-orange-400/40 text-orange-200 text-xs font-mono font-bold">°C</span>
+                                <span class="font-bold text-sm font-heading">Sensor Verification Table (Dry Bulb Ta / Wet Bulb Tw / Globe Tg)</span>
+                            </div>
+                            <span class="text-xs text-slate-300 font-mono">ISO 7243 Tolerance: ±<span class="heat-tol-label">0.5</span> °C</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-3 py-2.5 font-bold">พารามิเตอร์หัววัด (Sensor)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">จุดทดสอบ</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Reference / Module (°C)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Heat Meter Reading (°C)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Error / Diff (°C)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200">
+                                    <tr>
+                                        <td rowspan="2" class="px-3 py-2.5 font-bold text-slate-800 bg-orange-50/40 align-middle">
+                                            <div>1. Dry Bulb (Ta)</div>
+                                            <div class="text-[10px] font-normal text-slate-500">อุณหภูมิกระเปาะแห้ง</div>
+                                        </td>
+                                        <td class="px-2 py-2 text-center font-mono text-slate-600 font-semibold">จุดที่ 1 (หลัก)</td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_ref_Ta1" step="0.1" placeholder="เช่น 25.0" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_read_Ta1" step="0.1" placeholder="เช่น 25.1" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="text" id="heat_err_Ta1" readonly tabindex="-1" class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold outline-none"></td>
+                                        <td class="px-2 py-2 text-center"><span id="heat_badge_Ta1" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span></td>
+                                    </tr>
+                                    <tr class="bg-slate-50/40">
+                                        <td class="px-2 py-2 text-center font-mono text-slate-400">จุดที่ 2 (ถ้ามี)</td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_ref_Ta2" step="0.1" placeholder="เช่น 40.0" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_read_Ta2" step="0.1" placeholder="เช่น 40.2" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="text" id="heat_err_Ta2" readonly tabindex="-1" class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold outline-none"></td>
+                                        <td class="px-2 py-2 text-center"><span id="heat_badge_Ta2" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td rowspan="2" class="px-3 py-2.5 font-bold text-slate-800 bg-sky-50/40 align-middle">
+                                            <div>2. Wet Bulb (Tw)</div>
+                                            <div class="text-[10px] font-normal text-slate-500">อุณหภูมิกระเปาะเปียก</div>
+                                        </td>
+                                        <td class="px-2 py-2 text-center font-mono text-slate-600 font-semibold">จุดที่ 1 (หลัก)</td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_ref_Tw1" step="0.1" placeholder="เช่น 25.0" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_read_Tw1" step="0.1" placeholder="เช่น 25.0" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="text" id="heat_err_Tw1" readonly tabindex="-1" class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold outline-none"></td>
+                                        <td class="px-2 py-2 text-center"><span id="heat_badge_Tw1" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span></td>
+                                    </tr>
+                                    <tr class="bg-slate-50/40">
+                                        <td class="px-2 py-2 text-center font-mono text-slate-400">จุดที่ 2 (ถ้ามี)</td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_ref_Tw2" step="0.1" placeholder="เช่น 35.0" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_read_Tw2" step="0.1" placeholder="เช่น 35.1" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="text" id="heat_err_Tw2" readonly tabindex="-1" class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold outline-none"></td>
+                                        <td class="px-2 py-2 text-center"><span id="heat_badge_Tw2" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td rowspan="2" class="px-3 py-2.5 font-bold text-slate-800 bg-rose-50/40 align-middle">
+                                            <div>3. Globe Temp (Tg)</div>
+                                            <div class="text-[10px] font-normal text-slate-500">อุณหภูมิโกลบ (ทรงกลมดำ)</div>
+                                        </td>
+                                        <td class="px-2 py-2 text-center font-mono text-slate-600 font-semibold">จุดที่ 1 (หลัก)</td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_ref_Tg1" step="0.1" placeholder="เช่น 25.0" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_read_Tg1" step="0.1" placeholder="เช่น 25.2" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="text" id="heat_err_Tg1" readonly tabindex="-1" class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold outline-none"></td>
+                                        <td class="px-2 py-2 text-center"><span id="heat_badge_Tg1" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span></td>
+                                    </tr>
+                                    <tr class="bg-slate-50/40">
+                                        <td class="px-2 py-2 text-center font-mono text-slate-400">จุดที่ 2 (ถ้ามี)</td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_ref_Tg2" step="0.1" placeholder="เช่น 45.0" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="number" id="heat_read_Tg2" step="0.1" placeholder="เช่น 45.1" oninput="recalculateHeatTable()" class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono outline-none focus:ring-2 focus:ring-orange-500"></td>
+                                        <td class="px-2 py-2 text-center"><input type="text" id="heat_err_Tg2" readonly tabindex="-1" class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold outline-none"></td>
+                                        <td class="px-2 py-2 text-center"><span id="heat_badge_Tg2" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bg-orange-50/50 border-t border-orange-100 px-4 py-2.5 text-xs text-slate-700 flex flex-wrap items-center justify-between gap-2">
+                            <span>📐 คำนวณ WBGT อ้างอิงจากจุดที่ 1 (ISO 7243):</span>
+                            <span id="f3_heat_wbgtCalcLabel" class="font-mono font-bold text-orange-900">WBGT(in) = -- °C | WBGT(out) = -- °C</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_heat_notes">
+                            ชื่อโครงการ / สภาวะห้องทวนสอบ / หมายเหตุเพิ่มเติม
+                        </label>
+                        <input type="text" id="f3_heat_notes" placeholder="เช่น ทวนสอบก่อนออกงานตรวจวัดความร้อนในโรงงาน..."
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none placeholder:text-slate-400 placeholder:italic">
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_calibratedBy">
@@ -1082,6 +1235,22 @@
                     </div>
                 </div>
 
+                <div id="f3_heatBannerGroup" class="hidden space-y-2.5 pt-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-500 font-heading">สถานะหัววัด 3 พารามิเตอร์:</span>
+                        <div id="chip_heat_Ta" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> Dry Bulb (Ta): รอกรอก</div>
+                        <div id="chip_heat_Tw" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> Wet Bulb (Tw): รอกรอก</div>
+                        <div id="chip_heat_Tg" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> Globe (Tg): รอกรอก</div>
+                    </div>
+                    <div id="f3_heat_liveResultBanner" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5 text-slate-600 text-xs font-semibold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <span>กรอกค่า Reference / Module และค่าที่เครื่องวัดอ่านได้ (°C) เพื่อประเมินผล</span>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono">เกณฑ์ยอมรับ: ±<span class="heat-tol-label">0.5</span> °C</div>
+                    </div>
+                </div>
+
                 <div class="flex flex-col sm:flex-row gap-3 pt-2">
                     <button type="submit" id="submitBtn3"
                             class="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 active:scale-[0.99]">
@@ -1120,6 +1289,7 @@
                                     class="w-full px-3 py-2 text-sm font-bold border border-indigo-300 rounded-lg bg-indigo-50/50 text-indigo-950 focus:ring-2 focus:ring-blue-500 outline-none">
                                 <option value="FLUE_GAS">🔥 Flue Gas (Testo)</option>
                                 <option value="SOUND">🔊 Sound Level Meter</option>
+                                <option value="HEAT">🌡️ Heat Stress (WBGT)</option>
                             </select>
                         </div>
                         <div>
@@ -1349,6 +1519,8 @@
         const eqSerial = document.getElementById('eqSerial');
         const eqCode = document.getElementById('eqCode');
         const messageModal = document.getElementById('messageModal');
+
+        const HEAT_CATALOG = [{"no": "1", "serial": "TPH 060001", "brand": "TSI", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "2", "serial": "TPI 050069", "brand": "Quest technologies", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "3", "serial": "TPI 050070", "brand": "Quest technologies", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "4", "serial": "TPL 060039", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "5", "serial": "TPL 060040", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "6", "serial": "TPL 090016", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "7", "serial": "TPL 090017", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "8", "serial": "TPQ 030023", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "9", "serial": "TPQ 030024", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "10", "serial": "TEU 080011", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "11", "serial": "TEU 080012", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "12", "serial": "TEU 080013", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "13", "serial": "TEU 080014", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "14", "serial": "TEU 080015", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "15", "serial": "22004316", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "16", "serial": "22004318", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "17", "serial": "22004319", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "18", "serial": "22004320", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}];
 
         const FLUE_GAS_CATALOG = [
             { brand: 'Testo', model: '327-1', serial: '01563443', code: '' },
@@ -1629,82 +1801,98 @@
                 'แบตเตอรี่และระบบจ่ายไฟ',
                 'สายเชื่อมต่อ ขั้วต่อ และการ์ดหน่วยความจำ (SD Card)',
                 'การตอบสนองสัญญาณเสียงเบื้องต้น (Acoustic Check)'
+            ],
+            HEAT: [
+                'สภาพหัววัดกระเปาะเปียก (Wet Bulb) ไส้ผ้าฝ้ายและกระปุกน้ำกลั่น',
+                'สภาพหัววัดโกลบ (Globe Sensor 6"/2") และขั้วต่อ',
+                'สภาพหัววัดกระเปาะแห้ง (Dry Bulb) และแผงกันรังสี',
+                'สภาพตัวเครื่อง จอแสดงผล ปุ่มกด และหน่วยความจำ',
+                'แบตเตอรี่และระบบจ่ายไฟ (Battery / Charger)'
             ]
         };
 
         function switchEquipmentCategory(cat) {
-            currentEquipmentCategory = (cat === 'SOUND') ? 'SOUND' : 'FLUE_GAS';
+            currentEquipmentCategory = (cat === 'SOUND') ? 'SOUND' : (cat === 'HEAT' ? 'HEAT' : 'FLUE_GAS');
             const isSound = currentEquipmentCategory === 'SOUND';
+            const isHeat = currentEquipmentCategory === 'HEAT';
+            const isGas = currentEquipmentCategory === 'FLUE_GAS';
 
-            // 1. สลับสไตล์ปุ่มการ์ดหมวดหมู่
-            const btnGas = document.getElementById('catBtn_FLUE_GAS');
-            const badgeGas = document.getElementById('catBadge_FLUE_GAS');
-            const btnSound = document.getElementById('catBtn_SOUND');
-            const badgeSound = document.getElementById('catBadge_SOUND');
-            if (btnGas && btnSound) {
-                if (isSound) {
-                    btnGas.className = 'flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-indigo-400 text-slate-700 transition-all text-left';
-                    badgeGas.textContent = 'เลือกใช้';
-                    badgeGas.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200';
-
-                    btnSound.className = 'flex items-center justify-between p-3.5 rounded-2xl border-2 border-teal-600 bg-teal-50/90 text-teal-950 shadow-sm transition-all text-left';
-                    badgeSound.textContent = 'กำลังเลือก';
-                    badgeSound.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-teal-600 text-white';
+            const catThemes = {
+                FLUE_GAS: { border: 'border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950', badge: 'bg-indigo-600 text-white' },
+                SOUND:    { border: 'border-2 border-teal-600 bg-teal-50/90 text-teal-950', badge: 'bg-teal-600 text-white' },
+                HEAT:     { border: 'border-2 border-orange-600 bg-orange-50/90 text-orange-950', badge: 'bg-orange-600 text-white' }
+            };
+            ['FLUE_GAS', 'SOUND', 'HEAT'].forEach(k => {
+                const btn = document.getElementById(`catBtn_${k}`);
+                const bdg = document.getElementById(`catBadge_${k}`);
+                if (!btn || !bdg) return;
+                if (k === currentEquipmentCategory) {
+                    btn.className = `flex items-center justify-between p-3.5 rounded-2xl ${catThemes[k].border} shadow-sm transition-all text-left`;
+                    bdg.textContent = 'เลือกอยู่';
+                    bdg.className = `text-[10px] font-bold px-2 py-0.5 rounded-full ${catThemes[k].badge} shrink-0`;
                 } else {
-                    btnGas.className = 'flex items-center justify-between p-3.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950 shadow-sm transition-all text-left';
-                    badgeGas.textContent = 'กำลังเลือก';
-                    badgeGas.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-600 text-white';
-
-                    btnSound.className = 'flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-teal-400 text-slate-700 transition-all text-left';
-                    badgeSound.textContent = 'เลือกใช้';
-                    badgeSound.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200';
+                    btn.className = 'flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-slate-400 text-slate-700 transition-all text-left';
+                    bdg.textContent = 'เลือกใช้';
+                    bdg.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0';
                 }
+            });
+
+            const filterRow = document.getElementById('soundFilterRow');
+            if (filterRow) {
+                filterRow.classList.toggle('hidden', isGas);
+                const sInput = document.getElementById('soundSearchInput');
+                if (sInput) {
+                    sInput.value = '';
+                    sInput.placeholder = isHeat
+                        ? 'พิมพ์ S/N หรือรุ่นเครื่องวัดความร้อน เช่น TEU, QUESTemp 34, HD32.2...'
+                        : 'พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่นเครื่องวัดเสียง...';
+                }
+                const stFilter = document.getElementById('soundStatusFilter')?.parentElement;
+                if (stFilter) stFilter.classList.toggle('hidden', !isSound);
             }
+            document.getElementById('soundMetaBanner')?.classList.toggle('hidden', isGas);
 
-            // 2. แสดง/ซ่อน แถบค้นหา Sound และ Meta Banner
-            document.getElementById('soundFilterRow')?.classList.toggle('hidden', !isSound);
-            document.getElementById('soundMetaBanner')?.classList.toggle('hidden', !isSound);
-
-            // 3. เติมรายการเครื่องมือใน Quick Select และ Tab 4
-            if (isSound) {
-                renderSoundPresetOptions();
+            if (isSound || isHeat) {
+                renderCategoryPresetOptions();
             } else {
                 renderFlueGasPresetOptions();
             }
 
-            // 4. ปรับ Checklist 5 ข้อใน Tab 1
             const labels = CHECKLIST_TEMPLATES[currentEquipmentCategory];
             labels.forEach((txt, idx) => {
                 const el = document.getElementById(`chk_label_${idx + 1}`);
                 if (el) el.textContent = txt;
             });
 
-            // 5. ปรับข้อความและฟิลด์ใน Tab 1
-            if (isSound) {
-                if (f1SubType.value === 'weekly_check') {
-                    document.getElementById('f1_description').value = 'ตรวจสภาพและบำรุงรักษาเครื่องวัดระดับเสียงประจำสัปดาห์';
-                    document.getElementById('f1_tolerance').value = 'สภาพพร้อมใช้งาน';
-                } else {
-                    document.getElementById('f1_description').value = 'สอบเทียบเครื่องวัดระดับเสียง (Sound Level Meter Calibration)';
-                    document.getElementById('f1_tolerance').value = '± 0.5 dB';
-                }
+            if (isHeat) {
+                document.getElementById('f1_description').value = f1SubType.value === 'weekly_check'
+                    ? 'ตรวจสภาพและบำรุงรักษาเครื่องวัดความร้อนประจำสัปดาห์ (Wet Bulb, Globe, Dry Bulb, ตัวเครื่อง, แบต)'
+                    : 'สอบเทียบเครื่องวัดความร้อน (Heat Stress / WBGT Calibration)';
+                document.getElementById('f1_tolerance').value = f1SubType.value === 'weekly_check' ? 'สภาพพร้อมใช้งาน' : '± 0.5 °C';
+            } else if (isSound) {
+                document.getElementById('f1_description').value = f1SubType.value === 'weekly_check'
+                    ? 'ตรวจสภาพและบำรุงรักษาเครื่องวัดระดับเสียงประจำสัปดาห์'
+                    : 'สอบเทียบเครื่องวัดระดับเสียง (Sound Level Meter Calibration)';
+                document.getElementById('f1_tolerance').value = f1SubType.value === 'weekly_check' ? 'สภาพพร้อมใช้งาน' : '± 0.5 dB';
             } else {
-                if (f1SubType.value === 'weekly_check') {
-                    document.getElementById('f1_description').value = 'ตรวจสภาพและบำรุงรักษาเครื่องมือประจำสัปดาห์ (กรองฝุ่น, ปั๊ม, แบตเตอรี่, ความสะอาด, เซ็นเซอร์)';
-                    document.getElementById('f1_tolerance').value = 'สภาพพร้อมใช้งาน';
-                } else {
-                    document.getElementById('f1_description').value = 'สอบเทียบเครื่องมือวัดประสิทธิภาพการเผาไหม้';
-                    document.getElementById('f1_tolerance').value = '± 5%';
-                }
+                document.getElementById('f1_description').value = f1SubType.value === 'weekly_check'
+                    ? 'ตรวจสภาพและบำรุงรักษาเครื่องมือประจำสัปดาห์ (กรองฝุ่น, ปั๊ม, แบตเตอรี่, ความสะอาด, เซ็นเซอร์)'
+                    : 'สอบเทียบเครื่องมือวัดประสิทธิภาพการเผาไหม้';
+                document.getElementById('f1_tolerance').value = f1SubType.value === 'weekly_check' ? 'สภาพพร้อมใช้งาน' : '± 5%';
             }
 
-            // 6. ปรับ Tab 3 (Flue Gas Verification vs Sound Level Meter Verification)
             const tab3Title = document.getElementById('tab3BtnTitle');
             const tab3Sub = document.getElementById('tab3BtnSubtitle');
             const f3Title = document.getElementById('f3_headerTitle');
             const f3Sub = document.getElementById('f3_headerSubtitle');
             const f3Banner = document.getElementById('f3_headerBanner');
-            if (isSound) {
+            if (isHeat) {
+                if (tab3Title) tab3Title.textContent = 'Heat Stress Check';
+                if (tab3Sub) tab3Sub.textContent = 'ทวนสอบ Ta, Tw, Tg (±0.5 °C)';
+                if (f3Title) f3Title.textContent = 'แบบฟอร์มที่ 3: Heat Stress (WBGT) Verification';
+                if (f3Sub) f3Sub.textContent = 'ทวนสอบหัววัด Dry Bulb (Ta), Wet Bulb (Tw) และ Globe (Tg) เทียบ Verification Module / Reference Thermometer (±0.5 °C)';
+                if (f3Banner) f3Banner.className = 'bg-orange-50 border border-orange-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+            } else if (isSound) {
                 if (tab3Title) tab3Title.textContent = 'Sound Calibration Check';
                 if (tab3Sub) tab3Sub.textContent = 'Pre/Post Check (94 dB / 114 dB)';
                 if (f3Title) f3Title.textContent = 'แบบฟอร์มที่ 3: Sound Level Meter Verification (Pre / Post Calibration Check)';
@@ -1718,24 +1906,28 @@
                 if (f3Banner) f3Banner.className = 'bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
             }
 
-            // สลับ Section ภายใน Tab 3 และจัดการ required
-            document.getElementById('f3_gasSection')?.classList.toggle('hidden', isSound);
+            document.getElementById('f3_gasSection')?.classList.toggle('hidden', !isGas);
             document.getElementById('f3_soundSection')?.classList.toggle('hidden', !isSound);
-            document.getElementById('f3_gasBannerGroup')?.classList.toggle('hidden', isSound);
+            document.getElementById('f3_heatSection')?.classList.toggle('hidden', !isHeat);
+            document.getElementById('f3_gasBannerGroup')?.classList.toggle('hidden', !isGas);
             document.getElementById('f3_soundBannerGroup')?.classList.toggle('hidden', !isSound);
+            document.getElementById('f3_heatBannerGroup')?.classList.toggle('hidden', !isHeat);
+
             document.getElementById('f3_gasTimeCol')?.classList.toggle('hidden', isSound);
             document.getElementById('f3_soundTimeCols')?.classList.toggle('hidden', !isSound);
-            document.getElementById('f3_gasTolCol')?.classList.toggle('hidden', isSound);
+            document.getElementById('f3_gasTolCol')?.classList.toggle('hidden', !isGas);
             document.getElementById('f3_soundTolCol')?.classList.toggle('hidden', !isSound);
+            document.getElementById('f3_heatTolCol')?.classList.toggle('hidden', !isHeat);
 
             const f3TimeEl = document.getElementById('f3_time');
             const f3PreEl = document.getElementById('f3_snd_preTime');
             const f3CalEl = document.getElementById('f3_snd_calibrator');
+            const f3HeatRefEl = document.getElementById('f3_heat_refDevice');
             if (f3TimeEl) f3TimeEl.required = !isSound;
             if (f3PreEl) f3PreEl.required = isSound;
             if (f3CalEl) f3CalEl.required = isSound;
+            if (f3HeatRefEl) f3HeatRefEl.required = isHeat;
 
-            // 7. ซิงค์หมวดหมู่ไปยัง Tab 4
             const qCat = document.getElementById('q_category');
             if (qCat && qCat.value !== currentEquipmentCategory) {
                 qCat.value = currentEquipmentCategory;
@@ -1744,6 +1936,7 @@
 
             applyEquipmentPreset();
             if (isSound) recalculateSoundTable();
+            if (isHeat) recalculateHeatTable();
             updateEquipmentDashboard();
         }
 
@@ -1756,9 +1949,39 @@
         }
 
         function renderSoundPresetOptions(preferredSerial) {
-            const searchTxt = (document.getElementById('soundSearchInput')?.value || '').trim().toLowerCase();
-            const statusFilter = document.getElementById('soundStatusFilter')?.value || 'ACTIVE';
+            return renderCategoryPresetOptions(preferredSerial);
+        }
 
+        function renderCategoryPresetOptions(preferredSerial) {
+            const searchTxt = (document.getElementById('soundSearchInput')?.value || '').trim().toLowerCase();
+
+            if (currentEquipmentCategory === 'HEAT') {
+                const filtered = HEAT_CATALOG.filter(it => {
+                    if (searchTxt) {
+                        const hay = `${it.serial} ${it.code} ${it.brand} ${it.model} ${it.standard}`.toLowerCase();
+                        if (!hay.includes(searchTxt)) return false;
+                    }
+                    return true;
+                });
+                let htmlOpts = filtered.map((it, idx) =>
+                    `<option value="HEAT|${it.serial}">${it.no || idx + 1}. ${it.brand} ${it.model} (${it.standard}) — S/N: ${it.serial} (✓)</option>`
+                ).join('');
+                htmlOpts = filtered.length === 0
+                    ? '<option value="CUSTOM">-- ไม่พบรายการที่ค้นหา (กดเพื่อกรอกเอง) --</option>'
+                    : htmlOpts + '<option value="CUSTOM">-- ระบุเอง / เครื่องมืออื่น --</option>';
+
+                const prevVal = equipmentPreset.value;
+                equipmentPreset.innerHTML = htmlOpts;
+                if (preferredSerial && Array.from(equipmentPreset.options).some(o => o.value === `HEAT|${preferredSerial}`)) {
+                    equipmentPreset.value = `HEAT|${preferredSerial}`;
+                } else if (Array.from(equipmentPreset.options).some(o => o.value === prevVal)) {
+                    equipmentPreset.value = prevVal;
+                }
+                applyEquipmentPreset();
+                return;
+            }
+
+            const statusFilter = document.getElementById('soundStatusFilter')?.value || 'ACTIVE';
             const filtered = SOUND_CATALOG.filter(it => {
                 if (statusFilter === 'ACTIVE' && it.status !== 'พร้อมใช้งาน') return false;
                 if (statusFilter === 'ACTIVE_REPAIR' && it.status === 'ชำรุด / ยกเลิกใช้งาน') return false;
@@ -1800,12 +2023,43 @@
             if (val === 'CUSTOM') {
                 eqModel.readOnly = false;
                 eqSerial.readOnly = false;
-                eqName.value = currentEquipmentCategory === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer';
+                eqName.value = currentEquipmentCategory === 'HEAT' ? 'Heat Stress Monitor' : (currentEquipmentCategory === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer');
                 eqModel.value = '';
                 eqSerial.value = '';
                 eqCode.value = '';
                 document.getElementById('soundMetaBanner')?.classList.add('hidden');
                 eqModel.focus();
+                return;
+            }
+
+            if (val.startsWith('HEAT|')) {
+                const sn = val.split('|')[1];
+                const item = HEAT_CATALOG.find(x => x.serial === sn);
+                if (item) {
+                    eqName.value = 'Heat Stress Monitor';
+                    eqModel.value = `${item.brand} ${item.model}`;
+                    eqSerial.value = item.serial;
+                    eqCode.value = localStorage.getItem(`etc_eqcode_${item.serial}`) || item.code || '';
+
+                    const banner = document.getElementById('soundMetaBanner');
+                    const clsBadge = document.getElementById('soundMetaClassBadge');
+                    const stBadge = document.getElementById('soundMetaStatusBadge');
+                    const notesEl = document.getElementById('soundMetaNotes');
+                    if (banner && clsBadge && stBadge && notesEl) {
+                        banner.className = 'rounded-xl p-3 border border-orange-200 bg-orange-50/50 text-xs flex flex-wrap items-center justify-between gap-2';
+                        clsBadge.textContent = item.standard || 'ISO 7243';
+                        clsBadge.className = 'px-2.5 py-0.5 rounded-full font-bold bg-orange-100 text-orange-900 border border-orange-200';
+                        stBadge.textContent = `✓ ${item.status || 'พร้อมใช้งาน'}`;
+                        stBadge.className = 'px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+                        notesEl.textContent = item.notes || '';
+                    }
+
+                    const qSerial = document.getElementById('q_serial');
+                    if (qSerial && Array.from(qSerial.options).some(o => o.value === item.serial)) {
+                        qSerial.value = item.serial;
+                    }
+                }
+                updateEquipmentDashboard();
                 return;
             }
 
@@ -1946,6 +2200,9 @@
             if (document.getElementById('f3_snd_calibrator')) {
                 document.getElementById('f3_snd_calibrator').value = localStorage.getItem('etc_last_sound_calibrator') || '';
             }
+            if (document.getElementById('f3_heat_refDevice')) {
+                document.getElementById('f3_heat_refDevice').value = localStorage.getItem('etc_last_heat_ref') || '';
+            }
             addDaysToDate('f1_date', 'f1_nextDate', 7);
             addDaysToDate('f3_date', 'f3_nextDate', 30);
 
@@ -1969,18 +2226,19 @@
 
         f1SubType.addEventListener('change', () => {
             const isSound = currentEquipmentCategory === 'SOUND';
+            const isHeat = currentEquipmentCategory === 'HEAT';
             if (f1SubType.value === 'weekly_check') {
                 f1ChecklistBox.classList.remove('hidden');
-                document.getElementById('f1_description').value = isSound
-                    ? 'ตรวจสภาพและบำรุงรักษาเครื่องวัดระดับเสียงประจำสัปดาห์'
-                    : 'ตรวจสภาพและบำรุงรักษาเครื่องมือประจำสัปดาห์';
+                document.getElementById('f1_description').value = isHeat
+                    ? 'ตรวจสภาพและบำรุงรักษาเครื่องวัดความร้อนประจำสัปดาห์ (Wet Bulb, Globe, Dry Bulb, ตัวเครื่อง, แบต)'
+                    : (isSound ? 'ตรวจสภาพและบำรุงรักษาเครื่องวัดระดับเสียงประจำสัปดาห์' : 'ตรวจสภาพและบำรุงรักษาเครื่องมือประจำสัปดาห์');
                 document.getElementById('f1_tolerance').value = 'สภาพพร้อมใช้งาน';
             } else {
                 f1ChecklistBox.classList.add('hidden');
-                document.getElementById('f1_description').value = isSound
-                    ? 'สอบเทียบเครื่องวัดระดับเสียง (Sound Level Meter Calibration)'
-                    : 'สอบเทียบเครื่องมือวัดประสิทธิภาพการเผาไหม้';
-                document.getElementById('f1_tolerance').value = isSound ? '± 0.5 dB' : '± 5%';
+                document.getElementById('f1_description').value = isHeat
+                    ? 'สอบเทียบเครื่องวัดความร้อน (Heat Stress / WBGT Calibration)'
+                    : (isSound ? 'สอบเทียบเครื่องวัดระดับเสียง (Sound Level Meter Calibration)' : 'สอบเทียบเครื่องมือวัดประสิทธิภาพการเผาไหม้');
+                document.getElementById('f1_tolerance').value = isHeat ? '± 0.5 °C' : (isSound ? '± 0.5 dB' : '± 5%');
             }
             evaluateForm1Issues();
         });
@@ -2368,6 +2626,169 @@
             return { soundData, maxDev, maxDrift, hasMeasured, calPointsSummary: points.join(' & ') || '94 dB' };
         }
 
+        function recalculateHeatTable() {
+            const tol = parseFloat(document.getElementById('f3_heat_tolerance')?.value || '0.5') || 0.5;
+            document.querySelectorAll('.heat-tol-label').forEach(el => {
+                el.textContent = tol.toFixed(1);
+            });
+
+            let anyExceed = false;
+            let hasAny = false;
+            const sensorKeys = [
+                { key: 'Ta', label: 'Dry Bulb (Ta)', chipId: 'chip_heat_Ta' },
+                { key: 'Tw', label: 'Wet Bulb (Tw)', chipId: 'chip_heat_Tw' },
+                { key: 'Tg', label: 'Globe (Tg)', chipId: 'chip_heat_Tg' }
+            ];
+            let maxAbsAll = 0;
+
+            sensorKeys.forEach(s => {
+                let sHas = false;
+                let sFail = false;
+                let sMax = 0;
+
+                [1, 2].forEach(pt => {
+                    const refEl = document.getElementById(`heat_ref_${s.key}${pt}`);
+                    const readEl = document.getElementById(`heat_read_${s.key}${pt}`);
+                    const errEl = document.getElementById(`heat_err_${s.key}${pt}`);
+                    const badgeEl = document.getElementById(`heat_badge_${s.key}${pt}`);
+
+                    const rVal = parseFloat(refEl?.value);
+                    const mVal = parseFloat(readEl?.value);
+                    if (!isNaN(rVal) && !isNaN(mVal)) {
+                        const diff = mVal - rVal;
+                        const absD = Math.abs(diff);
+                        if (errEl) errEl.value = (diff >= 0 ? '+' : '') + diff.toFixed(2);
+                        hasAny = true;
+                        sHas = true;
+                        if (absD > sMax) sMax = absD;
+                        if (absD > maxAbsAll) maxAbsAll = absD;
+                        const exceed = absD > tol;
+                        if (exceed) {
+                            sFail = true;
+                            anyExceed = true;
+                        }
+                        if (badgeEl) {
+                            badgeEl.className = exceed
+                                ? 'px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 border border-rose-300 font-bold whitespace-nowrap'
+                                : 'px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold whitespace-nowrap';
+                            badgeEl.textContent = exceed ? '❌ เกินเกณฑ์' : '✓ ผ่านเกณฑ์';
+                        }
+                    } else {
+                        if (errEl) errEl.value = '';
+                        if (badgeEl) {
+                            badgeEl.className = 'px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap';
+                            badgeEl.textContent = '--';
+                        }
+                    }
+                });
+
+                const chipEl = document.getElementById(s.chipId);
+                if (chipEl) {
+                    if (!sHas) {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400"></span> ${s.label}: รอกรอก`;
+                    } else if (sFail) {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold border border-rose-300 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> ${s.label}: FAIL (±${sMax.toFixed(2)} °C)`;
+                    } else {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-300 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${s.label}: PASS (±${sMax.toFixed(2)} °C)`;
+                    }
+                }
+            });
+
+            const ta1 = parseFloat(document.getElementById('heat_read_Ta1')?.value);
+            const tw1 = parseFloat(document.getElementById('heat_read_Tw1')?.value);
+            const tg1 = parseFloat(document.getElementById('heat_read_Tg1')?.value);
+            const wbgtLabel = document.getElementById('f3_heat_wbgtCalcLabel');
+            if (wbgtLabel) {
+                if (!isNaN(tw1) && !isNaN(tg1)) {
+                    const wIn = (0.7 * tw1 + 0.3 * tg1).toFixed(2);
+                    const wOut = !isNaN(ta1) ? (0.7 * tw1 + 0.2 * tg1 + 0.1 * ta1).toFixed(2) : '--';
+                    wbgtLabel.textContent = `WBGT(in) = ${wIn} °C | WBGT(out) = ${wOut} °C`;
+                } else {
+                    wbgtLabel.textContent = 'WBGT(in) = -- °C | WBGT(out) = -- °C';
+                }
+            }
+
+            if (currentEquipmentCategory === 'HEAT') {
+                const overallEl = document.getElementById('f3_overallResult');
+                if (overallEl) overallEl.value = anyExceed ? 'ไม่ผ่าน' : 'ผ่าน';
+            }
+
+            const banner = document.getElementById('f3_heat_liveResultBanner');
+            if (banner) {
+                if (!hasAny) {
+                    banner.className = 'bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                    banner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-slate-600 text-xs font-semibold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <span>กรอกค่า Reference / Module และค่าที่เครื่องวัดอ่านได้ (°C) เพื่อประเมินผล</span>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono">เกณฑ์ยอมรับ: ±<span class="heat-tol-label">${tol.toFixed(1)}</span> °C</div>`;
+                } else if (anyExceed) {
+                    banner.className = 'bg-rose-50 border-2 border-rose-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs';
+                    banner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-rose-800 text-sm font-bold font-heading">
+                            <span class="w-3.5 h-3.5 rounded-full bg-rose-500"></span>
+                            <span>⚠️ ผลการทวนสอบ: ไม่ผ่านเกณฑ์ (Max Error: ±${maxAbsAll.toFixed(2)} °C เกิน ±${tol.toFixed(1)} °C)</span>
+                        </div>
+                        <div class="text-xs text-rose-700 font-mono font-bold">FAIL</div>`;
+                } else {
+                    banner.className = 'bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs';
+                    banner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-emerald-800 text-sm font-bold font-heading">
+                            <span class="w-3.5 h-3.5 rounded-full bg-emerald-500"></span>
+                            <span>✅ ผลการทวนสอบ: ผ่านเกณฑ์ ISO 7243 (Max Error: ±${maxAbsAll.toFixed(2)} °C ภายใน ±${tol.toFixed(1)} °C)</span>
+                        </div>
+                        <div class="text-xs text-emerald-700 font-mono font-bold">PASS</div>`;
+                }
+            }
+            updateEquipmentDashboard();
+        }
+
+        function collectHeatVerificationData() {
+            const tol = parseFloat(document.getElementById('f3_heat_tolerance')?.value || '0.5') || 0.5;
+            const heatData = [];
+            let maxAbsErr = 0;
+            let hasMeasured = false;
+            const defs = [
+                { key: 'Ta', name: 'Dry Bulb (Ta)' },
+                { key: 'Tw', name: 'Wet Bulb (Tw)' },
+                { key: 'Tg', name: 'Globe Temp (Tg)' }
+            ];
+
+            defs.forEach(d => {
+                [1, 2].forEach(pt => {
+                    const ref = document.getElementById(`heat_ref_${d.key}${pt}`)?.value || '';
+                    const reading = document.getElementById(`heat_read_${d.key}${pt}`)?.value || '';
+                    const err = document.getElementById(`heat_err_${d.key}${pt}`)?.value || '';
+                    if (ref !== '' && reading !== '') {
+                        hasMeasured = true;
+                        const absE = Math.abs(parseFloat(err) || 0);
+                        if (absE > maxAbsErr) maxAbsErr = absE;
+                        heatData.push({
+                            key: d.key,
+                            point: pt,
+                            sensor: `${d.name} (จุด ${pt})`,
+                            ref,
+                            reading,
+                            err,
+                            status: absE > tol ? 'ไม่ผ่าน' : 'ผ่าน'
+                        });
+                    } else if (pt === 1) {
+                        heatData.push({ key: d.key, point: pt, sensor: `${d.name} (จุด 1)`, ref, reading, err, status: '-' });
+                    }
+                });
+            });
+
+            const wbgtText = document.getElementById('f3_heat_wbgtCalcLabel')?.textContent || '-';
+            const wbgtMeter = document.getElementById('f3_heat_wbgtCheck')?.value || '';
+            const wbgtSummary = wbgtMeter ? `Meter: ${wbgtMeter} °C | ${wbgtText}` : wbgtText;
+
+            return { heatData, maxAbsErr, hasMeasured, wbgtCheck: wbgtSummary };
+        }
+
         document.getElementById('formTab3').addEventListener('submit', async (e) => {
             e.preventDefault();
             const f = e.target;
@@ -2380,6 +2801,41 @@
             const appBy = document.getElementById('f3_approvedBy').value.trim();
             localStorage.setItem('etc_operator', calBy);
             if (appBy) localStorage.setItem('etc_supervisor', appBy);
+
+            if (currentEquipmentCategory === 'HEAT') {
+                const { heatData, maxAbsErr, hasMeasured, wbgtCheck } = collectHeatVerificationData();
+                if (!hasMeasured) {
+                    showModal('error', 'ยังไม่ได้กรอกค่าอุณหภูมิ', 'กรุณากรอกค่า Reference และ Meter Reading อย่างน้อย 1 หัววัดครับ');
+                    return;
+                }
+                const refDev = document.getElementById('f3_heat_refDevice').value.trim();
+                localStorage.setItem('etc_last_heat_ref', refDev);
+                const tolC = document.getElementById('f3_heat_tolerance').value || '0.5';
+                const sn = eqSerial.value.trim();
+                const masterItem = HEAT_CATALOG.find(x => x.serial === sn) || {};
+
+                const payload = {
+                    category: 'HEAT',
+                    formType: 'FORM_3_HEAT_VERIFICATION',
+                    date: document.getElementById('f3_date').value,
+                    time: document.getElementById('f3_time').value,
+                    nextDate: document.getElementById('f3_nextDate').value,
+                    standard: masterItem.standard || 'ISO 7243',
+                    refDevice: refDev,
+                    method: document.getElementById('f3_heat_method').value,
+                    toleranceC: `±${tolC} °C`,
+                    maxErrorC: `±${maxAbsErr.toFixed(2)} °C`,
+                    wbgtCheck: wbgtCheck,
+                    result: document.getElementById('f3_overallResult').value,
+                    calibratedBy: calBy,
+                    approvedBy: appBy,
+                    notes: document.getElementById('f3_heat_notes').value.trim(),
+                    syncToForm1: document.getElementById('f3_syncToForm1').checked,
+                    heatData: heatData
+                };
+                await postToGoogleSheet(payload, 'submitBtn3', '<span>💾 บันทึกผล Verification ลงฐานข้อมูล Google Sheet</span>');
+                return;
+            }
 
             if (currentEquipmentCategory === 'SOUND') {
                 const { soundData, maxDev, maxDrift, hasMeasured, calPointsSummary } = collectSoundVerificationData();
@@ -2456,6 +2912,30 @@
                 serial: eqSerial.value,
                 code: eqCode.value
             };
+            if (currentEquipmentCategory === 'HEAT') {
+                const { heatData, maxAbsErr, wbgtCheck } = collectHeatVerificationData();
+                const sn = eqSerial.value.trim();
+                const masterItem = HEAT_CATALOG.find(x => x.serial === sn) || {};
+                const rec = {
+                    date: formatCellDate(document.getElementById('f3_date').value) || '....................',
+                    time: document.getElementById('f3_time').value || '..........',
+                    eqModel: eqModel.value || '....................',
+                    serial: eqSerial.value || '....................',
+                    eqCode: eqCode.value || '-',
+                    standard: masterItem.standard || 'ISO 7243',
+                    refDevice: document.getElementById('f3_heat_refDevice').value || '........................................',
+                    method: document.getElementById('f3_heat_method').value,
+                    toleranceC: `±${document.getElementById('f3_heat_tolerance').value || '0.5'} °C`,
+                    maxErrorC: `±${maxAbsErr.toFixed(2)} °C`,
+                    wbgtCheck: wbgtCheck,
+                    result: document.getElementById('f3_overallResult').value || 'ผ่าน',
+                    calibratedBy: document.getElementById('f3_calibratedBy').value || '........................................',
+                    approvedBy: document.getElementById('f3_approvedBy').value || '........................................',
+                    notes: document.getElementById('f3_heat_notes').value || '-',
+                    heatData: heatData
+                };
+                return buildOfficialForm3HeatHtml(rec, eqObj);
+            }
             if (currentEquipmentCategory === 'SOUND') {
                 const { soundData, maxDev, maxDrift } = collectSoundVerificationData();
                 const sn = eqSerial.value.trim();
@@ -2557,7 +3037,14 @@
             const qFormSel = document.getElementById('q_targetForm');
             if (!qSerial) return;
 
-            if (category === 'SOUND') {
+            if (category === 'HEAT') {
+                qSerial.innerHTML = HEAT_CATALOG.map(it =>
+                    `<option value="${it.serial}">${it.serial} (${it.brand} ${it.model})</option>`
+                ).join('');
+                if (qFormSel && qFormSel.options[2]) {
+                    qFormSel.options[2].text = 'แบบฟอร์มที่ 3: Heat Stress Verification';
+                }
+            } else if (category === 'SOUND') {
                 qSerial.innerHTML = SOUND_CATALOG.map(it =>
                     `<option value="${it.serial}">${it.serial} (${it.brand} ${it.model} | ${it.code})</option>`
                 ).join('');
@@ -2639,9 +3126,9 @@
                 if (targetForm === 'FORM_3' && res.records.length > 0) {
                     pickerBox.classList.remove('hidden');
                     pickerSelect.innerHTML = res.records.map((r, idx) => {
-                        const metric = qCat === 'SOUND'
-                            ? `Max Dev: ${r.maxDevDb || '-'}`
-                            : `Max Error: ${r.maxErrorPct || '-'}`;
+                        const metric = qCat === 'HEAT'
+                            ? `Max Err: ${r.maxErrorC || '-'}`
+                            : (qCat === 'SOUND' ? `Max Dev: ${r.maxDevDb || '-'}` : `Max Error: ${r.maxErrorPct || '-'}`);
                         const tm = qCat === 'SOUND' ? `${r.preTime || '-'}` : `${r.time || '-'}`;
                         return `<option value="${idx}" ${idx === res.records.length - 1 ? 'selected' : ''}>ครั้งที่ ${r.seq}: วันที่ ${r.date} เวลา ${tm} (ผล: ${r.result} | ${metric})</option>`;
                     }).join('');
@@ -2936,6 +3423,113 @@
                 </div>`;
         }
 
+        // สร้าง HTML แบบฟอร์มที่ 3 สำหรับเครื่องวัดความร้อน (Heat Stress / WBGT Verification - ยังไม่มีรหัส FM-LAB)
+        function buildOfficialForm3HeatHtml(rec, eq) {
+            eq = (eq && typeof eq === 'object') ? eq : { name: 'Heat Stress Monitor', model: '', serial: '', code: '-' };
+            eq.code = eq.code || '-';
+            const data = rec || {
+                date: '....................',
+                time: '..........',
+                standard: 'ISO 7243',
+                refDevice: '........................................',
+                method: 'Verification Module / Reference Thermometer',
+                toleranceC: '±0.5 °C',
+                maxErrorC: '-',
+                wbgtCheck: '-',
+                result: '-',
+                calibratedBy: '........................................',
+                approvedBy: '........................................',
+                notes: '-',
+                heatData: [
+                    { sensor: 'Dry Bulb (Ta) (จุด 1)', ref: '', reading: '', err: '', status: '-' },
+                    { sensor: 'Wet Bulb (Tw) (จุด 1)', ref: '', reading: '', err: '', status: '-' },
+                    { sensor: 'Globe Temp (Tg) (จุด 1)', ref: '', reading: '', err: '', status: '-' }
+                ]
+            };
+            const rows = Array.isArray(data.heatData) && data.heatData.length > 0
+                ? data.heatData
+                : [
+                    { sensor: 'Dry Bulb (Ta)', ref: '', reading: '', err: '', status: '-' },
+                    { sensor: 'Wet Bulb (Tw)', ref: '', reading: '', err: '', status: '-' },
+                    { sensor: 'Globe Temp (Tg)', ref: '', reading: '', err: '', status: '-' }
+                ];
+
+            const trs = rows.map(r => `
+                <tr>
+                    <td style="padding:5px 8px; height:26px; font-weight:bold;">${escapeHtml(r.sensor || '-')}</td>
+                    <td style="text-align:center;">${escapeHtml(r.ref || '-')}</td>
+                    <td style="text-align:center;">${escapeHtml(r.reading || '-')}</td>
+                    <td style="text-align:center;">${escapeHtml(r.err || '-')}</td>
+                    <td style="text-align:center; font-weight:bold;">${escapeHtml(r.status || '-')}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <div style="font-family:'Sarabun', sans-serif; color:#000; max-width:760px; margin:0 auto;">
+                    <div style="text-align:center; font-size:17px; font-weight:bold; text-decoration:underline;">
+                        Heat Stress (WBGT) Monitor Verification
+                    </div>
+                    <div style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:12px;">
+                        แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด
+                    </div>
+                    <table style="width:100%; font-size:12.5px; margin-bottom:10px; border-collapse:collapse;">
+                        <tr>
+                            <td style="padding:3px 0; width:52%;"><b>Calibrated Date :</b> ${escapeHtml(data.date || '....................')}</td>
+                            <td style="padding:3px 0; width:48%;"><b>Calibrated Time :</b> ${escapeHtml(data.time || '-')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Heat Stress Model :</b> ${escapeHtml(data.eqModel || eq.model || '')} (${escapeHtml(data.standard || 'ISO 7243')})</td>
+                            <td style="padding:3px 0;"><b>Serial No. :</b> ${escapeHtml(data.serial || eq.serial || '')} ${eq.code && eq.code !== '-' ? '(' + escapeHtml(eq.code) + ')' : ''}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Ref / Verification Module :</b> ${escapeHtml(data.refDevice || '-')}</td>
+                            <td style="padding:3px 0;"><b>Tolerance :</b> ${escapeHtml(data.toleranceC || '±0.5 °C')}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:3px 0;"><b>Verification Method :</b> ${escapeHtml(data.method || '-')}</td>
+                        </tr>
+                    </table>
+
+                    <table class="official-form-table" border="1" cellspacing="0" cellpadding="5" style="margin-top:8px;">
+                        <thead>
+                            <tr>
+                                <th style="width:30%;">Sensor Parameter</th>
+                                <th style="width:18%;">Reference / Module (°C)</th>
+                                <th style="width:18%;">Meter Reading (°C)</th>
+                                <th style="width:18%;">Difference / Error (°C)</th>
+                                <th style="width:16%;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>${trs}</tbody>
+                    </table>
+
+                    <table style="width:100%; font-size:12.5px; margin-top:10px;">
+                        <tr>
+                            <td style="padding:3px 0;"><b>Verification Summary :</b> Result = <b>${escapeHtml(data.result || 'ผ่าน')}</b> &nbsp;|&nbsp; Max Error = ${escapeHtml(data.maxErrorC || '-')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>WBGT Check :</b> ${escapeHtml(data.wbgtCheck || '-')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Project / Notes :</b> ${escapeHtml(data.notes || '-')}</td>
+                        </tr>
+                    </table>
+
+                    <table style="width:100%; margin-top:34px; font-size:13px; text-align:center;">
+                        <tr>
+                            <td style="width:50%;">
+                                <div>Calibrated By .......................................................</div>
+                                <div style="margin-top:6px;">( ${escapeHtml(data.calibratedBy || '........................................')} )</div>
+                            </td>
+                            <td style="width:50%;">
+                                <div>Approve By .......................................................</div>
+                                <div style="margin-top:6px;">( ${escapeHtml(data.approvedBy || '........................................')} )</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>`;
+        }
+
         // สร้าง HTML แบบฟอร์มที่ 3 สำหรับเครื่องวัดระดับเสียง (Pre/Post Calibration Check - ยังไม่มีรหัส FM-LAB)
         function buildOfficialForm3SoundHtml(rec, eq) {
             eq = (eq && typeof eq === 'object') ? eq : { name: 'Sound Level Meter', model: '', serial: '', code: '-' };
@@ -3048,7 +3642,7 @@
             const targetForm = currentHistoricalData.targetForm || 'FORM_1';
             const equipment = (currentHistoricalData.equipment && typeof currentHistoricalData.equipment === 'object')
                 ? currentHistoricalData.equipment
-                : { name: cat === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer', model: '', serial: '', code: '-' };
+                : { name: cat === 'HEAT' ? 'Heat Stress Monitor' : (cat === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer'), model: '', serial: '', code: '-' };
             equipment.code = equipment.code || '-';
             const records = Array.isArray(currentHistoricalData.records) ? currentHistoricalData.records : [];
             if (targetForm === 'FORM_1') {
@@ -3059,9 +3653,9 @@
                 const selectEl = document.getElementById('q_form3RecordSelect');
                 const idx = selectEl ? parseInt(selectEl.value, 10) : NaN;
                 const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records.length > 0 ? records[records.length - 1] : null);
-                return cat === 'SOUND'
-                    ? buildOfficialForm3SoundHtml(chosen, equipment)
-                    : buildOfficialForm3Html(chosen, equipment);
+                if (cat === 'HEAT') return buildOfficialForm3HeatHtml(chosen, equipment);
+                if (cat === 'SOUND') return buildOfficialForm3SoundHtml(chosen, equipment);
+                return buildOfficialForm3Html(chosen, equipment);
             }
         }
 
@@ -3148,6 +3742,21 @@
                     csvRows.push([r.seq, r.date, r.damageDetail, r.operator, r.supervisor, r.notes]);
                 });
                 csvRows.push(['', '', '', '', '', 'FM-LAB-026 / 1 / 30-08-56']);
+            } else if (currentHistoricalData.category === 'HEAT') {
+                const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
+                const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records[records.length - 1] || {});
+                csvRows.push(['Heat Stress (WBGT) Monitor Verification']);
+                csvRows.push(['Calibrated Date', chosen.date || '', 'Calibrated Time', chosen.time || '-']);
+                csvRows.push(['Model', chosen.eqModel || equipment.model, 'Serial No.', `'${equipment.serial}`, 'Standard', chosen.standard || 'ISO 7243']);
+                csvRows.push(['Ref / Verification Module', chosen.refDevice || '-', 'Method', chosen.method || '-', 'Tolerance', chosen.toleranceC || '±0.5 °C']);
+                csvRows.push([]);
+                csvRows.push(['Sensor Parameter', 'Reference / Module (°C)', 'Meter Reading (°C)', 'Difference / Error (°C)', 'Status']);
+                (chosen.heatData || []).forEach(r => {
+                    csvRows.push([r.sensor || '-', r.ref || '', r.reading || '', r.err || '', r.status || '-']);
+                });
+                csvRows.push([]);
+                csvRows.push(['Result', chosen.result || '', 'Max Error', chosen.maxErrorC || '', 'WBGT Check', chosen.wbgtCheck || '-']);
+                csvRows.push(['Calibrated By', chosen.calibratedBy || '', 'Approve By', chosen.approvedBy || '']);
             } else if (currentHistoricalData.category === 'SOUND') {
                 const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
                 const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records[records.length - 1] || {});
@@ -3340,11 +3949,28 @@
                 }
             }
 
-            // 3. เสถียรภาพเซ็นเซอร์ / ความคลาดเคลื่อน (ตามหมวด FLUE_GAS vs SOUND)
+            // 3. เสถียรภาพเซ็นเซอร์ / ความคลาดเคลื่อน (ตามหมวด FLUE_GAS vs SOUND vs HEAT)
             const driftEl = document.getElementById('kpi_max_drift');
             const driftBadge = document.getElementById('kpi_drift_badge');
             const driftTolLabel = document.getElementById('kpi_drift_tol_label');
-            if (currentEquipmentCategory === 'SOUND') {
+            if (currentEquipmentCategory === 'HEAT') {
+                const { maxAbsErr } = collectHeatVerificationData();
+                const tolC = parseFloat(document.getElementById('f3_heat_tolerance')?.value || '0.5') || 0.5;
+                if (driftTolLabel) driftTolLabel.textContent = `เกณฑ์ยอมรับ ±${tolC.toFixed(1)} °C`;
+                if (driftEl && driftBadge) {
+                    driftEl.textContent = `${maxAbsErr.toFixed(2)} °C`;
+                    if (maxAbsErr === 0) {
+                        driftBadge.textContent = 'พร้อมวัดผล';
+                        driftBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200';
+                    } else if (maxAbsErr <= tolC) {
+                        driftBadge.textContent = '✓ ผ่านเกณฑ์ °C';
+                        driftBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
+                    } else {
+                        driftBadge.textContent = `❌ เกิน ±${tolC.toFixed(1)} °C`;
+                        driftBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200';
+                    }
+                }
+            } else if (currentEquipmentCategory === 'SOUND') {
                 const { maxDev } = collectSoundVerificationData();
                 const tolDb = parseFloat(document.getElementById('f3_snd_tolerance')?.value || '0.5') || 0.5;
                 if (driftTolLabel) driftTolLabel.textContent = `เกณฑ์ยอมรับ ±${tolDb.toFixed(1)} dB`;
@@ -3406,7 +4032,10 @@
             const activeCat = (currentHistoricalData && currentHistoricalData.category) || document.getElementById('q_category')?.value || 'FLUE_GAS';
             const badgeEl = document.getElementById('trendTolBadge');
             const filterRow = document.getElementById('chartGasFilter');
-            if (activeCat === 'SOUND') {
+            if (activeCat === 'HEAT') {
+                if (badgeEl) badgeEl.textContent = 'Heat Stress ISO 7243 (±0.5 °C)';
+                if (filterRow) filterRow.classList.add('hidden');
+            } else if (activeCat === 'SOUND') {
                 if (badgeEl) badgeEl.textContent = 'Sound Check (±0.5 dB)';
                 if (filterRow) filterRow.classList.add('hidden');
             } else {
@@ -3423,6 +4052,66 @@
                 container.innerHTML = `
                     <div class="text-xs text-slate-400 py-10 flex flex-col items-center gap-2">
                         <span>📊 ยังไม่มีข้อมูลการทวนสอบในระบบ หรือ กดปุ่ม <b>"🔍 ดึงข้อมูลจาก Google Sheet"</b> เพื่อแสดงแนวโน้ม</span>
+                    </div>`;
+                return;
+            }
+
+            if (activeCat === 'HEAT') {
+                const width = 760, height = 230, padLeft = 50, padRight = 35, padTop = 25, padBottom = 35;
+                const plotW = width - padLeft - padRight, plotH = height - padTop - padBottom;
+                const minY = -0.8, maxY = 0.8;
+                const toY = val => padTop + plotH * (1 - (val - minY) / (maxY - minY));
+                const n = recs.length;
+                const toX = idx => n === 1 ? padLeft + plotW / 2 : padLeft + (idx / (n - 1)) * plotW;
+
+                const gridHtml = `
+                    <line x1="${padLeft}" y1="${toY(0.5)}" x2="${width - padRight}" y2="${toY(0.5)}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.2" opacity="0.7"/>
+                    <text x="${width - padRight + 4}" y="${toY(0.5) + 3}" fill="#dc2626" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold">+0.5°C</text>
+                    <line x1="${padLeft}" y1="${toY(0)}" x2="${width - padRight}" y2="${toY(0)}" stroke="#94a3b8" stroke-width="1.2"/>
+                    <text x="${padLeft - 6}" y="${toY(0) + 3}" fill="#64748b" font-size="9" font-family="'JetBrains Mono', monospace" text-anchor="end">0°C</text>
+                    <line x1="${padLeft}" y1="${toY(-0.5)}" x2="${width - padRight}" y2="${toY(-0.5)}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.2" opacity="0.7"/>
+                    <text x="${width - padRight + 4}" y="${toY(-0.5) + 3}" fill="#dc2626" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold">-0.5°C</text>
+                `;
+
+                const seriesDefs = [
+                    { key: 'Ta', name: 'Dry Bulb (Ta)', color: '#ea580c' },
+                    { key: 'Tw', name: 'Wet Bulb (Tw)', color: '#0284c7' },
+                    { key: 'Tg', name: 'Globe (Tg)', color: '#dc2626' }
+                ];
+
+                let seriesHtml = '';
+                seriesDefs.forEach(s => {
+                    const pts = [];
+                    recs.forEach((r, idx) => {
+                        const rows = Array.isArray(r.heatData) ? r.heatData : [];
+                        const match = rows.find(x => x.key === s.key && x.err !== '') || {};
+                        const v = parseFloat(match.err) || 0;
+                        pts.push({ x: toX(idx), y: toY(Math.max(minY, Math.min(maxY, v))), val: v, date: r.date, seq: r.seq });
+                    });
+                    if (pts.length > 1) {
+                        const dStr = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+                        seriesHtml += `<path d="${dStr}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linecap="round"/>`;
+                    }
+                    pts.forEach(p => {
+                        seriesHtml += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="${s.color}" stroke="#fff" stroke-width="2"><title>${s.name} (ครั้งที่ ${p.seq}, ${p.date}): ${p.val >= 0 ? '+' : ''}${p.val.toFixed(2)} °C</title></circle>`;
+                    });
+                });
+
+                const xLabelsHtml = recs.map((r, idx) =>
+                    `<text x="${toX(idx).toFixed(1)}" y="${height - 10}" fill="#64748b" font-size="10" text-anchor="middle">${escapeHtml(r.date || `รอบ ${r.seq}`)}</text>`
+                ).join('');
+
+                container.innerHTML = `
+                    <div class="w-full flex flex-col items-center">
+                        <svg viewBox="0 0 ${width} ${height}" class="w-full max-w-[800px] h-auto select-none">
+                            ${gridHtml}${seriesHtml}${xLabelsHtml}
+                        </svg>
+                        <div class="flex flex-wrap items-center justify-center gap-4 mt-2 text-[11px]">
+                            <div class="flex items-center gap-1.5 font-bold"><span class="w-3 h-3 rounded-full bg-orange-600"></span><span>Dry Bulb (Ta)</span></div>
+                            <div class="flex items-center gap-1.5 font-bold"><span class="w-3 h-3 rounded-full bg-sky-600"></span><span>Wet Bulb (Tw)</span></div>
+                            <div class="flex items-center gap-1.5 font-bold"><span class="w-3 h-3 rounded-full bg-red-600"></span><span>Globe (Tg)</span></div>
+                            <div class="text-[10px] text-red-500 font-mono font-semibold">-- เส้นประแดง = เกณฑ์ยอมรับ ±0.5 °C</div>
+                        </div>
                     </div>`;
                 return;
             }
@@ -3666,6 +4355,23 @@
             if (lastOp) document.getElementById('f3_calibratedBy').value = lastOp;
             if (lastSup) document.getElementById('f3_approvedBy').value = lastSup;
 
+            if (currentEquipmentCategory === 'HEAT') {
+                document.getElementById('f3_time').value = nowTime;
+                const refEl = document.getElementById('f3_heat_refDevice');
+                if (refEl && !refEl.value.trim()) {
+                    refEl.value = localStorage.getItem('etc_last_heat_ref') || 'QUESTemp Verification Module';
+                }
+                document.getElementById('heat_ref_Ta1').value = '25.0';
+                document.getElementById('heat_read_Ta1').value = '25.0';
+                document.getElementById('heat_ref_Tw1').value = '25.0';
+                document.getElementById('heat_read_Tw1').value = '25.0';
+                document.getElementById('heat_ref_Tg1').value = '25.0';
+                document.getElementById('heat_read_Tg1').value = '25.0';
+                recalculateHeatTable();
+                updateEquipmentDashboard();
+                return;
+            }
+
             if (currentEquipmentCategory === 'SOUND') {
                 document.getElementById('f3_snd_preTime').value = nowTime;
                 document.getElementById('f3_snd_postTime').value = nowTime;
@@ -3738,9 +4444,12 @@
             const urlParams = new URLSearchParams(window.location.search);
             const paramCat = (urlParams.get('cat') || '').toUpperCase();
             const paramSn = (urlParams.get('sn') || '').trim();
-            if (paramCat === 'SOUND' || (paramSn && SOUND_CATALOG.some(x => x.serial === paramSn))) {
+            if (paramCat === 'HEAT' || (paramSn && HEAT_CATALOG.some(x => x.serial === paramSn))) {
+                switchEquipmentCategory('HEAT');
+                if (paramSn) renderCategoryPresetOptions(paramSn);
+            } else if (paramCat === 'SOUND' || (paramSn && SOUND_CATALOG.some(x => x.serial === paramSn))) {
                 switchEquipmentCategory('SOUND');
-                if (paramSn) renderSoundPresetOptions(paramSn);
+                if (paramSn) renderCategoryPresetOptions(paramSn);
             } else {
                 switchEquipmentCategory('FLUE_GAS');
                 if (paramSn) {
