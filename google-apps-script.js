@@ -25,6 +25,11 @@ const CONFIG = {
   DB_HEAT_FORM2_SHEET: "DB_Heat_Repair_History",
   DB_HEAT_FORM3_SHEET: "DB_Heat_Verification",
 
+  // ชื่อ Sheet ฐานข้อมูลเครื่อง Noise DosiMeter
+  DB_DOSIMETER_FORM1_SHEET: "DB_Dosimeter_Maintenance_Cal",
+  DB_DOSIMETER_FORM2_SHEET: "DB_Dosimeter_Repair_History",
+  DB_DOSIMETER_FORM3_SHEET: "DB_Dosimeter_Verification",
+
   // ชื่อ Sheet แบบฟอร์มมาตรฐานพร้อมพิมพ์ (Form Template Sheets)
   FORM1_TEMPLATE_SHEET: "Form1_สอบเทียบและบำรุงรักษา",
   FORM2_TEMPLATE_SHEET: "Form2_ประวัติเครื่องมือ",
@@ -35,6 +40,9 @@ const CONFIG = {
   HEAT_FORM1_TEMPLATE_SHEET: "Form1_Heat_สอบเทียบและบำรุงรักษา",
   HEAT_FORM2_TEMPLATE_SHEET: "Form2_Heat_ประวัติเครื่องมือ",
   HEAT_FORM3_TEMPLATE_SHEET: "Form3_Heat_Verification",
+  DOSIMETER_FORM1_TEMPLATE_SHEET: "Form1_Dosimeter_สอบเทียบและบำรุงรักษา",
+  DOSIMETER_FORM2_TEMPLATE_SHEET: "Form2_Dosimeter_ประวัติเครื่องมือ",
+  DOSIMETER_FORM3_TEMPLATE_SHEET: "Form3_Dosimeter_Verification",
 
   // อีเมลผู้รับรายงานสรุปประจำสัปดาห์ (คั่นด้วย , หากมีหลายอีเมล)
   EMAIL_RECIPIENTS: "thongchai_b@etc1992.com",
@@ -160,6 +168,58 @@ const HEAT_EQUIPMENT_MASTER = {
   "22004320": {"name": "Heat Stress Monitor", "brand": "DeltaOHM", "model": "DeltaOHM HD32.2", "code": "", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": ""}
 };
 
+// ทะเบียนเครื่องวัดเสียงสะสม (Noise DosiMeter - ข้อมูลจริง 33 เครื่องจากทะเบียน Sampling)
+const DOSIMETER_EQUIPMENT_MASTER = {
+  "070204292": {"name": "Noise DosiMeter", "brand": "TES", "model": "TES 1355", "code": "S50020405", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "070204327": {"name": "Noise DosiMeter", "brand": "TES", "model": "TES 1355", "code": "S50020406", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "091103792": {"name": "Noise DosiMeter", "brand": "TES", "model": "TES 1355", "code": "S53020553", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "100605010": {"name": "Noise DosiMeter", "brand": "TES", "model": "TES 1355", "code": "S53020554", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "100605019": {"name": "Noise DosiMeter", "brand": "TES", "model": "TES 1355", "code": "S53020555", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "NXL060044": {"name": "Noise DosiMeter", "brand": "3M", "model": "3M NoisePro DLX", "code": "S55010044/16", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "NXL060045": {"name": "Noise DosiMeter", "brand": "3M", "model": "3M NoisePro DLX", "code": "S55010044/17", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "NXL060046": {"name": "Noise DosiMeter", "brand": "3M", "model": "3M NoisePro DLX", "code": "S55010044/18", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "โหลดข้อมูลดิบผลการตรวจวัดไม่ได้"},
+  "NXL060047": {"name": "Noise DosiMeter", "brand": "3M", "model": "3M NoisePro DLX", "code": "S55010044/19", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "NXL060048": {"name": "Noise DosiMeter", "brand": "3M", "model": "3M NoisePro DLX", "code": "S55010044/20", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "NXQ070006": {"name": "Noise DosiMeter", "brand": "3M", "model": "3M NoisePro DLX", "code": "S59021052", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "โหลดข้อมูลดิบผลการตรวจวัดไม่ได้"},
+  "NXQ070007": {"name": "Noise DosiMeter", "brand": "3M", "model": "3M NoisePro DLX", "code": "S59021053", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน"},
+  "NXQ070008": {"name": "Noise DosiMeter", "brand": "3M", "model": "3M NoisePro DLX", "code": "S59021054", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "โหลดข้อมูลดิบผลการตรวจวัดไม่ได้"},
+  "CA8879": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "B58020007", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CA8886": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "B58020007", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CA8887": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "B58020007", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CA8888": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "B58020007", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CA8889": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "B58020007", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0640": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S62021267", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0641": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S62021267", "standard": "IEC 61252", "status": "รอซ่อม / ส่งซ่อม", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0642": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S62021267", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0643": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S62021267", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0644": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S62021267", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0954": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S63021404", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0955": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S63021404", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0956": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S63021404", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0957": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S63021404", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB0958": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S63021404", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB1365": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S66021634", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB1497": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S66021635", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB1498": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S66021636", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB1499": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S66021637", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"},
+  "CB1500": {"name": "Noise DosiMeter", "brand": "Cirrus", "model": "Cirrus CR:110A", "code": "S66021638", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้"}
+};
+
+function getDosimeterSerialList() {
+  var active = [];
+  var others = [];
+  var keys = Object.keys(DOSIMETER_EQUIPMENT_MASTER);
+  for (var i = 0; i < keys.length; i++) {
+    var sn = keys[i];
+    if (DOSIMETER_EQUIPMENT_MASTER[sn].status === "พร้อมใช้งาน") {
+      active.push(sn);
+    } else {
+      others.push(sn);
+    }
+  }
+  return active.concat(others);
+}
+
 function getHeatSerialList() {
   return Object.keys(HEAT_EQUIPMENT_MASTER);
 }
@@ -177,6 +237,19 @@ function resolveCategoryConfig(category) {
       tpl3: CONFIG.SOUND_FORM3_TEMPLATE_SHEET,
       defaultName: "Sound Level Meter",
       defaultSerial: "01120943"
+    };
+  }
+  if (cat === "DOSIMETER") {
+    return {
+      category: "DOSIMETER",
+      db1: CONFIG.DB_DOSIMETER_FORM1_SHEET,
+      db2: CONFIG.DB_DOSIMETER_FORM2_SHEET,
+      db3: CONFIG.DB_DOSIMETER_FORM3_SHEET,
+      tpl1: CONFIG.DOSIMETER_FORM1_TEMPLATE_SHEET,
+      tpl2: CONFIG.DOSIMETER_FORM2_TEMPLATE_SHEET,
+      tpl3: CONFIG.DOSIMETER_FORM3_TEMPLATE_SHEET,
+      defaultName: "Noise DosiMeter",
+      defaultSerial: "CB1365"
     };
   }
   if (cat === "HEAT") {
@@ -229,6 +302,7 @@ function onOpen() {
     .addItem("🔄 สร้าง/รีเฟรชหน้าแบบฟอร์ม Flue Gas (Testo)", "initializeAllSheetsAndForms")
     .addItem("🔊 สร้าง/รีเฟรชหน้าแบบฟอร์มเครื่องวัดเสียง (Sound)", "initializeSoundSheetsAndForms")
     .addItem("🌡️ สร้าง/รีเฟรชหน้าแบบฟอร์มเครื่องวัดความร้อน (Heat Stress)", "initializeHeatSheetsAndForms")
+    .addItem("🎧 สร้าง/รีเฟรชหน้าแบบฟอร์ม Noise DosiMeter", "initializeDosimeterSheetsAndForms")
     .addItem("📄 ดึงข้อมูลตาม S/N และช่วงวันที่ที่ระบุในแบบฟอร์ม", "refreshAllFormViews")
     .addItem("📥 ดาวน์โหลดหน้าแบบฟอร์มปัจจุบัน (PDF / Excel)", "showDownloadDialogForActiveSheet")
     .addSeparator()
@@ -303,6 +377,20 @@ function onEdit(e) {
     var hSn3 = String(sheet.getRange("F3").getValue()).trim();
     var hSelectedRec = a1 === "F4" ? String(sheet.getRange("F4").getValue()).trim() : "";
     populateHeatForm3BySerialAndRecord(hSn3, hSelectedRec);
+  }
+  // Dosimeter Form 1
+  else if (sheetName === CONFIG.DOSIMETER_FORM1_TEMPLATE_SHEET && (a1 === "I4" || a1 === "I5" || a1 === "K5")) {
+    populateForm1BySerial(String(sheet.getRange("I4").getValue()).trim(), sheet.getRange("I5").getValue(), sheet.getRange("K5").getValue(), "DOSIMETER");
+  }
+  // Dosimeter Form 2
+  else if (sheetName === CONFIG.DOSIMETER_FORM2_TEMPLATE_SHEET && (a1 === "E5" || a1 === "B6" || a1 === "E6")) {
+    populateForm2BySerial(String(sheet.getRange("E5").getValue()).trim(), sheet.getRange("B6").getValue(), sheet.getRange("E6").getValue(), "DOSIMETER");
+  }
+  // Dosimeter Form 3
+  else if (sheetName === CONFIG.DOSIMETER_FORM3_TEMPLATE_SHEET && (a1 === "F3" || a1 === "F4")) {
+    var dSn3 = String(sheet.getRange("F3").getValue()).trim();
+    var dSelectedRec = a1 === "F4" ? String(sheet.getRange("F4").getValue()).trim() : "";
+    populateDosimeterForm3BySerialAndRecord(dSn3, dSelectedRec);
   }
 }
 
@@ -481,6 +569,34 @@ function doPost(e) {
       }
     }
 
+    // =========================================================================
+    // กรณีที่ 3D: บันทึก Noise DosiMeter Pre/Post Calibration Check
+    // =========================================================================
+    else if (data.formType === "FORM_3_DOSIMETER_VERIFICATION") {
+      recordDosimeterForm3Data(data, eq);
+      populateDosimeterForm3BySerialAndRecord(eq.serial, "");
+      summaryMessages.push("✓ บันทึกลงฐานข้อมูลและแบบฟอร์มทวนสอบ Noise DosiMeter เรียบร้อย");
+
+      if (data.syncToForm1) {
+        recordForm1Data({
+          subType: "verification",
+          date: data.date,
+          nextDate: data.nextDate || "",
+          description: "ทวนสอบ Noise DosiMeter Pre/Post (" + (data.calPointsSummary || "114.0 dB") + ", " + (data.freq || "1 kHz") + ")",
+          correction: "Max Dev: " + (data.maxDevDb || "-"),
+          uncertainty: "Drift: " + (data.maxDriftDb || "-"),
+          tolerance: data.toleranceDb || "±1.0 dB",
+          result: data.result || "ผ่าน",
+          agency: "ภายในแผนกปฏิบัติการภาคสนาม (ETC)",
+          operator: data.calibratedBy || "",
+          supervisor: data.approvedBy || "",
+          notes: "Reader/Cal: " + (data.calibrator || "-") + (data.notes ? " | " + data.notes : "")
+        }, eq, CONFIG.DB_DOSIMETER_FORM1_SHEET);
+        populateForm1BySerial(eq.serial, "", "", "DOSIMETER");
+        summaryMessages.push("✓ ส่งผลสรุปเข้าแบบฟอร์มที่ 1 (Noise DosiMeter) อัตโนมัติ");
+      }
+    }
+
     return createJsonResponse({
       status: "success",
       message: "Data recorded successfully",
@@ -602,7 +718,50 @@ function queryHistoricalData(params) {
     }
   }
 
-  // ดึงข้อมูลแบบฟอร์มที่ 3 (แยก Flue Gas vs Sound vs Heat Stress)
+  // ดึงข้อมูลแบบฟอร์มที่ 3 (แยก Flue Gas vs Sound vs Heat Stress vs Dosimeter)
+  else if (targetForm === "FORM_3" && catCfg.category === "DOSIMETER") {
+    var seqD = 1;
+    for (var dIdx = 1; dIdx < allData.length; dIdx++) {
+      var rd = allData[dIdx];
+      var rowSnD = String(rd[4] || "").replace(/^'/, "").trim();
+      if (cleanSerial && cleanSerial !== "ALL" && rowSnD !== cleanSerial) continue;
+
+      var recDateD = parseDateValue(rd[1]);
+      if (startDt && recDateD && recDateD < startDt) continue;
+      if (endDt && recDateD && recDateD > endDt) continue;
+
+      var parsedDosi = [];
+      try {
+        parsedDosi = JSON.parse(rd[15] || "[]");
+      } catch (errD) {
+        parsedDosi = [];
+      }
+
+      records.push({
+        seq: seqD++,
+        rowIndex: dIdx + 1,
+        date: formatCellDate(rd[1]),
+        rawDate: formatIsoDate(rd[1]),
+        preTime: formatCellTime(rd[2]),
+        postTime: formatCellTime(rd[3]),
+        serial: rowSnD,
+        eqModel: rd[5] || eqInfo.model,
+        eqCode: rd[6] || eqInfo.code,
+        standard: rd[7] || eqInfo.standard || "IEC 61252",
+        calibrator: rd[8] || "-",
+        freq: rd[9] || "1 kHz",
+        weighting: rd[10] || "A-Weighting / Slow",
+        toleranceDb: rd[11] || "±1.0 dB",
+        calibratedBy: rd[12] || "",
+        approvedBy: rd[13] || "",
+        result: rd[14] || "ผ่าน",
+        dosiData: parsedDosi,
+        maxDevDb: rd[16] || "-",
+        maxDriftDb: rd[17] || "-",
+        notes: rd[18] || ""
+      });
+    }
+  }
   else if (targetForm === "FORM_3" && catCfg.category === "HEAT") {
     var seqH = 1;
     for (var hIdx = 1; hIdx < allData.length; hIdx++) {
@@ -920,6 +1079,47 @@ function recordHeatForm3Data(data, eq) {
   ]);
 }
 
+function recordDosimeterForm3Data(data, eq) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(CONFIG.DB_DOSIMETER_FORM3_SHEET);
+  if (!sheet) sheet = ss.insertSheet(CONFIG.DB_DOSIMETER_FORM3_SHEET);
+
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "Timestamp", "Calibrated Date", "Pre-Cal Time", "Post-Cal Time", "Serial No.",
+      "Model", "Equipment Code", "Standard", "Reader Unit / Calibrator",
+      "Frequency", "Weighting", "Tolerance (±dB)", "Calibrated By", "Approve By", "Result",
+      "DosimeterData_JSON", "Max Deviation (dB)", "Max Drift (dB)", "Notes"
+    ];
+    sheet.appendRow(headers);
+    styleDbHeader(sheet, headers.length, "#6d28d9");
+  }
+
+  var snClean = String(eq.serial || "").trim();
+  var masterMeta = DOSIMETER_EQUIPMENT_MASTER[snClean] || {};
+  sheet.appendRow([
+    new Date(),
+    data.date || "",
+    data.preTime || "-",
+    data.postTime || "-",
+    "'" + snClean,
+    eq.model || masterMeta.model || "",
+    eq.code || masterMeta.code || "",
+    data.standard || masterMeta.standard || "IEC 61252",
+    data.calibrator || "-",
+    data.freq || "1 kHz",
+    data.weighting || "A-Weighting / Slow",
+    data.toleranceDb || "±1.0 dB",
+    data.calibratedBy || "",
+    data.approvedBy || "",
+    data.result || "ผ่าน",
+    JSON.stringify(data.dosiData || []),
+    data.maxDevDb || "-",
+    data.maxDriftDb || "-",
+    data.notes || ""
+  ]);
+}
+
 function recordLegacyChecklist(data, eq, category) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(CONFIG.LEGACY_SHEET);
@@ -981,6 +1181,12 @@ function initializeHeatSheetsAndForms() {
   populateHeatForm3BySerialAndRecord("TPH 060001", "");
 }
 
+function initializeDosimeterSheetsAndForms() {
+  populateForm1BySerial("CB1365", "", "", "DOSIMETER");
+  populateForm2BySerial("CB1365", "", "", "DOSIMETER");
+  populateDosimeterForm3BySerialAndRecord("CB1365", "");
+}
+
 function refreshAllFormViews() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -1030,6 +1236,19 @@ function refreshAllFormViews() {
   if (hs3) {
     populateHeatForm3BySerialAndRecord(String(hs3.getRange("F3").getValue()).trim() || "TPH 060001", String(hs3.getRange("F4").getValue()).trim());
   }
+
+  var ds1 = ss.getSheetByName(CONFIG.DOSIMETER_FORM1_TEMPLATE_SHEET);
+  if (ds1) {
+    populateForm1BySerial(String(ds1.getRange("I4").getValue()).trim() || "CB1365", ds1.getRange("I5").getValue(), ds1.getRange("K5").getValue(), "DOSIMETER");
+  }
+  var ds2 = ss.getSheetByName(CONFIG.DOSIMETER_FORM2_TEMPLATE_SHEET);
+  if (ds2) {
+    populateForm2BySerial(String(ds2.getRange("E5").getValue()).trim() || "CB1365", ds2.getRange("B6").getValue(), ds2.getRange("E6").getValue(), "DOSIMETER");
+  }
+  var ds3 = ss.getSheetByName(CONFIG.DOSIMETER_FORM3_TEMPLATE_SHEET);
+  if (ds3) {
+    populateDosimeterForm3BySerialAndRecord(String(ds3.getRange("F3").getValue()).trim() || "CB1365", String(ds3.getRange("F4").getValue()).trim());
+  }
 }
 
 /**
@@ -1071,7 +1290,7 @@ function populateForm1BySerial(targetSerial, startDateVal, endDateVal, category)
 
   var snList1 = catCfg.category === "SOUND"
     ? getSoundSerialList()
-    : (catCfg.category === "HEAT" ? getHeatSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"]);
+    : (catCfg.category === "HEAT" ? getHeatSerialList() : (catCfg.category === "DOSIMETER" ? getDosimeterSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"]));
   var snRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(snList1, true)
     .setAllowInvalid(true)
@@ -1209,7 +1428,7 @@ function populateForm2BySerial(targetSerial, startDateVal, endDateVal, category)
 
   var snList2 = catCfg.category === "SOUND"
     ? getSoundSerialList()
-    : (catCfg.category === "HEAT" ? getHeatSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"]);
+    : (catCfg.category === "HEAT" ? getHeatSerialList() : (catCfg.category === "DOSIMETER" ? getDosimeterSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"]));
   var snRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(snList2, true)
     .setAllowInvalid(true)
@@ -1715,6 +1934,132 @@ function renderHeatForm3Sheet(data, eq, recordOptions, currentLabel) {
   sheet.setColumnWidth(6, 200);
 }
 
+/**
+ * 3D. แบบฟอร์มที่ 3 (Noise DosiMeter): Pre/Post Calibration Check (114.0 dB / 94.0 dB)
+ * (ตามข้อกำหนด: ยังไม่ต้องใส่รหัส FM-LAB)
+ */
+function populateDosimeterForm3BySerialAndRecord(targetSerial, selectedRecordLabel) {
+  var cleanSerial = String(targetSerial || "CB1365").replace(/^'/, "").trim();
+  var query = queryHistoricalData({
+    category: "DOSIMETER",
+    targetForm: "FORM_3",
+    serial: cleanSerial
+  });
+  var eqInfo = query.equipment;
+  var records = query.records;
+
+  var recordOptions = [];
+  var chosenRecord = null;
+  for (var i = records.length - 1; i >= 0; i--) {
+    var r = records[i];
+    var label = "#" + r.seq + " | " + r.date + " " + (r.preTime || "-") + " (" + r.result + ")";
+    recordOptions.push(label);
+    if (selectedRecordLabel && label === selectedRecordLabel) {
+      chosenRecord = r;
+    }
+  }
+  if (!chosenRecord && records.length > 0) {
+    chosenRecord = records[records.length - 1];
+    selectedRecordLabel = recordOptions[0];
+  }
+
+  var payload = chosenRecord || {
+    date: "-",
+    preTime: "-",
+    postTime: "-",
+    calibrator: "-",
+    freq: "1 kHz",
+    weighting: "A-Weighting / Slow",
+    toleranceDb: "±1.0 dB",
+    maxDevDb: "-",
+    maxDriftDb: "-",
+    calibratedBy: "........................................",
+    approvedBy: "........................................",
+    notes: "-",
+    dosiData: [
+      { std: "114.0", pre: "", post: "", preErr: "", postErr: "", drift: "" },
+      { std: "94.0", pre: "", post: "", preErr: "", postErr: "", drift: "" }
+    ]
+  };
+  renderDosimeterForm3Sheet(payload, eqInfo, recordOptions, selectedRecordLabel || "ล่าสุด");
+}
+
+function renderDosimeterForm3Sheet(data, eq, recordOptions, currentLabel) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(CONFIG.DOSIMETER_FORM3_TEMPLATE_SHEET);
+  if (!sheet) sheet = ss.insertSheet(CONFIG.DOSIMETER_FORM3_TEMPLATE_SHEET);
+
+  var cleanSerial = String(eq.serial || "CB1365").replace(/^'/, "").trim();
+  sheet.clear();
+
+  sheet.getRange("A1:F1").merge().setValue("Noise DosiMeter Verification (Pre / Post Calibration Check)")
+       .setFontSize(13).setFontWeight("bold").setHorizontalAlignment("center");
+  sheet.getRange("A2:F2").merge().setValue("แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด")
+       .setFontSize(10).setFontWeight("bold").setHorizontalAlignment("center");
+
+  sheet.getRange("A3").setValue("Calibrated Date :").setFontWeight("bold");
+  sheet.getRange("B3").setValue(data.date || "-");
+  sheet.getRange("C3").setValue("Pre / Post Time :").setFontWeight("bold");
+  sheet.getRange("D3").setValue((data.preTime || "-") + " / " + (data.postTime || "-"));
+
+  sheet.getRange("A4").setValue("Dosimeter Model :").setFontWeight("bold");
+  sheet.getRange("B4").setValue((eq.model || "") + " [" + (eq.standard || "IEC 61252") + "]");
+  sheet.getRange("C4").setValue("Serial No. / Code :").setFontWeight("bold");
+  sheet.getRange("D4").setValue("'" + cleanSerial + (eq.code ? " (" + eq.code + ")" : ""));
+
+  sheet.getRange("A5").setValue("Reader Unit / Calibrator :").setFontWeight("bold");
+  sheet.getRange("B5").setValue(data.calibrator || "-");
+  sheet.getRange("C5").setValue("Freq / Tolerance :").setFontWeight("bold");
+  sheet.getRange("D5").setValue((data.freq || "1 kHz") + " | " + (data.toleranceDb || "±1.0 dB"));
+
+  sheet.getRange("A6").setValue("Weighting Setup :").setFontWeight("bold");
+  sheet.getRange("B6:D6").merge().setValue(data.weighting || "A-Weighting / Slow");
+
+  sheet.getRange("E2:F2").merge().setValue("🔍 ค้นหาใบ Verification Noise DosiMeter")
+       .setFontWeight("bold").setBackground("#ede9fe").setHorizontalAlignment("center");
+  sheet.getRange("E3").setValue("1. เลือก S/N:").setFontWeight("bold").setFontSize(9);
+  var snRule = SpreadsheetApp.newDataValidation().requireValueInList(getDosimeterSerialList(), true).setAllowInvalid(true).build();
+  sheet.getRange("F3").setValue("'" + cleanSerial).setDataValidation(snRule).setBackground("#fef9c3").setFontWeight("bold");
+  sheet.getRange("E4").setValue("2. เลือกครั้งที่ทวนสอบ:").setFontWeight("bold").setFontSize(9);
+  sheet.getRange("F4").setValue(currentLabel).setBackground("#fef9c3").setFontSize(9);
+  if (recordOptions && recordOptions.length > 0) {
+    sheet.getRange("F4").setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(recordOptions, true).setAllowInvalid(true).build());
+  } else {
+    sheet.getRange("F4").clearDataValidations();
+  }
+
+  var headers = ["Standard Level (dB)", "Pre-Cal (dB)", "Post-Cal (dB)", "Pre Error (dB)", "Post Error (dB)", "Drift |Post-Pre| (dB)"];
+  sheet.getRange(8, 1, 1, 6).setValues([headers])
+       .setBackground("#e2e8f0").setFontWeight("bold").setHorizontalAlignment("center")
+       .setBorder(true, true, true, true, true, true);
+
+  var rows = Array.isArray(data.dosiData) ? data.dosiData : [];
+  var tableRows = [];
+  for (var i = 0; i < 2; i++) {
+    var pt = rows[i] || {};
+    tableRows.push([pt.std || (i === 0 ? "114.0" : "94.0"), pt.pre || "", pt.post || "", pt.preErr || "", pt.postErr || "", pt.drift || ""]);
+  }
+  sheet.getRange(9, 1, 2, 6).setValues(tableRows).setHorizontalAlignment("center")
+       .setBorder(true, true, true, true, true, true);
+
+  sheet.getRange("A12").setValue("Result :").setFontWeight("bold");
+  sheet.getRange("B12:C12").merge().setValue((data.result || "ผ่าน") + " (Max Dev: " + (data.maxDevDb || "-") + ", Drift: " + (data.maxDriftDb || "-") + ")");
+  sheet.getRange("D12").setValue("Notes :").setFontWeight("bold");
+  sheet.getRange("E12:F12").merge().setValue(data.notes || "-");
+
+  sheet.getRange("A14:C14").merge().setValue("Calibrated By .......................................................").setHorizontalAlignment("center");
+  sheet.getRange("D14:F14").merge().setValue("Approve By .......................................................").setHorizontalAlignment("center");
+  sheet.getRange("A15:C15").merge().setValue("( " + (data.calibratedBy || "........................................") + " )").setHorizontalAlignment("center");
+  sheet.getRange("D15:F15").merge().setValue("( " + (data.approvedBy || "........................................") + " )").setHorizontalAlignment("center");
+
+  sheet.setColumnWidth(1, 180);
+  sheet.setColumnWidth(2, 175);
+  sheet.setColumnWidth(3, 175);
+  sheet.setColumnWidth(4, 140);
+  sheet.setColumnWidth(5, 130);
+  sheet.setColumnWidth(6, 175);
+}
+
 function showDownloadDialogForActiveSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getActiveSheet();
@@ -1722,9 +2067,9 @@ function showDownloadDialogForActiveSheet() {
   var sheetId = sheet.getSheetId();
   var sheetName = sheet.getName();
 
-  var isLandscape = (sheetName === CONFIG.FORM1_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM1_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM1_TEMPLATE_SHEET);
+  var isLandscape = (sheetName === CONFIG.FORM1_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM1_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM1_TEMPLATE_SHEET || sheetName === CONFIG.DOSIMETER_FORM1_TEMPLATE_SHEET);
   var exportRange = "";
-  if (sheetName === CONFIG.FORM3_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM3_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM3_TEMPLATE_SHEET) {
+  if (sheetName === CONFIG.FORM3_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM3_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM3_TEMPLATE_SHEET || sheetName === CONFIG.DOSIMETER_FORM3_TEMPLATE_SHEET) {
     exportRange = "&r1=0&c1=0&r2=26&c2=4"; // พิมพ์เฉพาะคอลัมน์ A-D ของใบ Verification
   }
 
@@ -1755,11 +2100,22 @@ function showDownloadDialogForActiveSheet() {
 function getEquipmentInfoBySerial(serial, dbSheetName, category) {
   var clean = String(serial || "").replace(/^'/, "").trim();
   var catUpper = String(category || "").toUpperCase();
-  var isHeat = catUpper === "HEAT" || Boolean(HEAT_EQUIPMENT_MASTER[clean]);
-  var isSound = catUpper === "SOUND" || (!isHeat && Boolean(SOUND_EQUIPMENT_MASTER[clean]));
+  var isDosi = catUpper === "DOSIMETER" || Boolean(DOSIMETER_EQUIPMENT_MASTER[clean]);
+  var isHeat = catUpper === "HEAT" || (!isDosi && Boolean(HEAT_EQUIPMENT_MASTER[clean]));
+  var isSound = catUpper === "SOUND" || (!isDosi && !isHeat && Boolean(SOUND_EQUIPMENT_MASTER[clean]));
   var info;
 
-  if (isHeat && HEAT_EQUIPMENT_MASTER[clean]) {
+  if (isDosi && DOSIMETER_EQUIPMENT_MASTER[clean]) {
+    var dm = DOSIMETER_EQUIPMENT_MASTER[clean];
+    info = {
+      name: dm.name,
+      model: dm.model,
+      code: dm.code,
+      serial: clean,
+      standard: dm.standard,
+      status: dm.status
+    };
+  } else if (isHeat && HEAT_EQUIPMENT_MASTER[clean]) {
     var hm = HEAT_EQUIPMENT_MASTER[clean];
     info = {
       name: hm.name,
@@ -1788,8 +2144,8 @@ function getEquipmentInfoBySerial(serial, dbSheetName, category) {
     };
   } else {
     info = {
-      name: isHeat ? "Heat Stress Monitor" : (isSound ? "Sound Level Meter" : "Flue Gas Analyzer"),
-      model: (isHeat || isSound) ? "" : "Testo",
+      name: isDosi ? "Noise DosiMeter" : (isHeat ? "Heat Stress Monitor" : (isSound ? "Sound Level Meter" : "Flue Gas Analyzer")),
+      model: (isDosi || isHeat || isSound) ? "" : "Testo",
       code: "",
       serial: clean
     };
@@ -1812,6 +2168,9 @@ function getEquipmentInfoBySerial(serial, dbSheetName, category) {
         } else if (dbSheetName === CONFIG.DB_HEAT_FORM3_SHEET) {
           if (data[i][4]) info.model = data[i][4];
           if (data[i][5]) info.code = data[i][5];
+        } else if (dbSheetName === CONFIG.DB_DOSIMETER_FORM3_SHEET) {
+          if (data[i][5]) info.model = data[i][5];
+          if (data[i][6]) info.code = data[i][6];
         } else {
           if (data[i][1]) info.name = data[i][1];
           if (data[i][2]) info.model = data[i][2];
@@ -2055,14 +2414,61 @@ function sendWeeklyDashboardReport() {
   }
 
   // =========================================================================
+  // หมวด 4: Noise DosiMeter (เครื่องวัดเสียงสะสม)
+  // =========================================================================
+  var dosiForm1 = readWeeklyForm1Records(ss, CONFIG.DB_DOSIMETER_FORM1_SHEET, cutoffDate, "Noise DosiMeter");
+  var dosiForm2 = readWeeklyForm2Records(ss, CONFIG.DB_DOSIMETER_FORM2_SHEET, cutoffDate, "Noise DosiMeter");
+
+  var dosiForm3Records = [];
+  var dosiForm3FailCount = 0;
+  var maxDosiDevAll = 0;
+  var sheetDosi3 = ss.getSheetByName(CONFIG.DB_DOSIMETER_FORM3_SHEET);
+  if (sheetDosi3 && sheetDosi3.getLastRow() > 1) {
+    var dataD3 = sheetDosi3.getDataRange().getValues();
+    for (var kd = 1; kd < dataD3.length; kd++) {
+      var rd3 = dataD3[kd];
+      var dd3 = parseDateValue(rd3[1]);
+      if (!dd3 || dd3 < cutoffDate) continue;
+      var isFailD3 = String(rd3[14] || "").indexOf("ไม่ผ่าน") !== -1;
+      if (isFailD3) dosiForm3FailCount++;
+      var devDNum = parseFloat(String(rd3[16] || "").replace(/[^0-9.\-]/g, ""));
+      if (!isNaN(devDNum) && Math.abs(devDNum) > maxDosiDevAll) {
+        maxDosiDevAll = Math.abs(devDNum);
+      }
+      dosiForm3Records.push({
+        date: formatDateDisplay(dd3),
+        preTime: formatCellTime(rd3[2]),
+        postTime: formatCellTime(rd3[3]),
+        serial: String(rd3[4] || "").replace(/^'/, ""),
+        model: rd3[5] || "Noise DosiMeter",
+        code: rd3[6] || "-",
+        standard: rd3[7] || "IEC 61252",
+        calibrator: rd3[8] || "-",
+        freq: rd3[9] || "1 kHz",
+        weighting: rd3[10] || "A-Weighting / Slow",
+        toleranceDb: rd3[11] || "±1.0 dB",
+        calibratedBy: rd3[12] || "-",
+        approvedBy: rd3[13] || "-",
+        result: rd3[14] || "ผ่าน",
+        isFail: isFailD3,
+        maxDevDb: rd3[16] || "-",
+        maxDriftDb: rd3[17] || "-",
+        notes: rd3[18] || "-"
+      });
+    }
+  }
+
+  // =========================================================================
   // Checklist 5 รายการ (แยก Flue Gas vs Sound)
   // =========================================================================
   var checklistGas = [];
   var checklistSound = [];
   var checklistHeat = [];
+  var checklistDosi = [];
   var checklistIssueGas = 0;
   var checklistIssueSound = 0;
   var checklistIssueHeat = 0;
+  var checklistIssueDosi = 0;
   var sheetLegacy = ss.getSheetByName(CONFIG.LEGACY_SHEET);
   if (sheetLegacy && sheetLegacy.getLastRow() > 1) {
     var dataLegacy = sheetLegacy.getDataRange().getValues();
@@ -2076,8 +2482,9 @@ function sendWeeklyDashboardReport() {
       });
       var snL = String(rL[4] || "-").replace(/^'/, "").trim();
       var catL = String(rL[11] || "").toUpperCase();
-      var isHeatChk = catL === "HEAT" || Boolean(HEAT_EQUIPMENT_MASTER[snL]);
-      var isSoundChk = !isHeatChk && (catL === "SOUND" || Boolean(SOUND_EQUIPMENT_MASTER[snL]));
+      var isDosiChk = catL === "DOSIMETER" || Boolean(DOSIMETER_EQUIPMENT_MASTER[snL]);
+      var isHeatChk = !isDosiChk && (catL === "HEAT" || Boolean(HEAT_EQUIPMENT_MASTER[snL]));
+      var isSoundChk = !isDosiChk && !isHeatChk && (catL === "SOUND" || Boolean(SOUND_EQUIPMENT_MASTER[snL]));
       var chkItem = {
         date: formatDateDisplay(dL),
         technician: rL[2] || "-",
@@ -2091,7 +2498,10 @@ function sendWeeklyDashboardReport() {
         notes: rL[10] || "-",
         hasIssue: hasIssueL
       };
-      if (isHeatChk) {
+      if (isDosiChk) {
+        if (hasIssueL) checklistIssueDosi++;
+        checklistDosi.push(chkItem);
+      } else if (isHeatChk) {
         if (hasIssueL) checklistIssueHeat++;
         checklistHeat.push(chkItem);
       } else if (isSoundChk) {
@@ -2104,16 +2514,18 @@ function sendWeeklyDashboardReport() {
     }
   }
 
-  // รวมสถิติทั้ง 3 หมวดเครื่องมือ
+  // รวมสถิติทั้ง 4 หมวดเครื่องมือ
   var totalGasIssues = gasForm1.fails + gasForm2.records.length + form3FailCount + checklistIssueGas;
   var totalSoundIssues = soundForm1.fails + soundForm2.records.length + soundForm3FailCount + checklistIssueSound;
   var totalHeatIssues = heatForm1.fails + heatForm2.records.length + heatForm3FailCount + checklistIssueHeat;
-  var totalIssues = totalGasIssues + totalSoundIssues + totalHeatIssues;
+  var totalDosiIssues = dosiForm1.fails + dosiForm2.records.length + dosiForm3FailCount + checklistIssueDosi;
+  var totalIssues = totalGasIssues + totalSoundIssues + totalHeatIssues + totalDosiIssues;
 
   var totalGasActivities = gasForm1.records.length + gasForm2.records.length + form3Records.length + checklistGas.length;
   var totalSoundActivities = soundForm1.records.length + soundForm2.records.length + soundForm3Records.length + checklistSound.length;
   var totalHeatActivities = heatForm1.records.length + heatForm2.records.length + heatForm3Records.length + checklistHeat.length;
-  var totalActivities = totalGasActivities + totalSoundActivities + totalHeatActivities;
+  var totalDosiActivities = dosiForm1.records.length + dosiForm2.records.length + dosiForm3Records.length + checklistDosi.length;
+  var totalActivities = totalGasActivities + totalSoundActivities + totalHeatActivities + totalDosiActivities;
 
   var summaryData = {
     cutoffDate: cutoffDate,
@@ -2131,7 +2543,11 @@ function sendWeeklyDashboardReport() {
     heatForm1: heatForm1,
     heatForm2: heatForm2,
     heatForm3: { records: heatForm3Records, fails: heatForm3FailCount, maxErrorC: maxHeatErrorAll },
-    heatChecklist: { records: checklistHeat, issues: checklistIssueHeat }
+    heatChecklist: { records: checklistHeat, issues: checklistIssueHeat },
+    dosiForm1: dosiForm1,
+    dosiForm2: dosiForm2,
+    dosiForm3: { records: dosiForm3Records, fails: dosiForm3FailCount, maxDevDb: maxDosiDevAll },
+    dosiChecklist: { records: checklistDosi, issues: checklistIssueDosi }
   };
 
   // สร้างเนื้อหา PDF และแปลงเป็น Blob
@@ -2141,7 +2557,7 @@ function sendWeeklyDashboardReport() {
     .getAs(MimeType.PDF);
 
   // หัวข้ออีเมล
-  var emailSubject = "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่อง Flue Gas Analyzer, เครื่องวัดเสียง และเครื่องวัดความร้อน ประจำสัปดาห์ (ระหว่างวันที่ " +
+  var emailSubject = "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่องมือภาคสนาม (Flue Gas, Sound, Heat, Dosimeter) ประจำสัปดาห์ (ระหว่างวันที่ " +
     formatDateDisplay(cutoffDate) + " - " + formatDateDisplay(today) + ")";
 
   // เนื้อหาอีเมล HTML
@@ -2250,6 +2666,26 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
     }
   }
 
+  var df1Rows = buildForm1EmailRows(s.dosiForm1.records, "ไม่มีรายการสอบเทียบ/บำรุงรักษา Noise DosiMeter ในรอบสัปดาห์นี้");
+  var df2Rows = buildForm2EmailRows(s.dosiForm2.records, "✓ ไม่พบประวัติความเสียหายหรือส่งซ่อม Noise DosiMeter ในรอบสัปดาห์นี้");
+
+  var df3Rows = "";
+  if (s.dosiForm3.records.length === 0) {
+    df3Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการทวนสอบ Pre/Post Noise DosiMeter ในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var kd = 0; kd < s.dosiForm3.records.length; kd++) {
+      var rd3 = s.dosiForm3.records[kd];
+      var resD3Color = rd3.isFail ? "#dc2626" : "#16a34a";
+      df3Rows += "<tr style='border-bottom:1px solid #e5e7eb; font-size:12px;'>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + rd3.date + "<br><small style='color:#6b7280;'>" + rd3.preTime + " / " + rd3.postTime + "</small></td>" +
+        "<td style='padding:8px 6px;'><b>" + escapeXml(rd3.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(rd3.serial) + "</small></td>" +
+        "<td style='padding:8px 6px; text-align:center; font-family:monospace;'>" + escapeXml(rd3.maxDevDb) + "<br><small style='color:#6b7280;'>Drift: " + escapeXml(rd3.maxDriftDb) + "</small></td>" +
+        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:" + resD3Color + ";'>" + escapeXml(rd3.result) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(rd3.calibratedBy) + "</td>" +
+      "</tr>";
+    }
+  }
+
   var sf3Rows = "";
   if (s.soundForm3.records.length === 0) {
     sf3Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการทวนสอบ Pre/Post เครื่องวัดเสียงในรอบสัปดาห์นี้</td></tr>";
@@ -2271,14 +2707,14 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
     "<div style='background:linear-gradient(135deg, #0f172a 0%, #1e40af 100%); color:#ffffff; padding:24px 20px; text-align:center;'>" +
       "<div style='font-size:12px; letter-spacing:1px; text-transform:uppercase; opacity:0.9; margin-bottom:4px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
       "<h2 style='margin:0 0 8px 0; font-size:19px; font-weight:bold;'>รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่องมือภาคสนาม</h2>" +
-      "<div style='font-size:13px; opacity:0.95;'>Flue Gas • Sound Level • Heat Stress | รอบสัปดาห์: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + "</div>" +
+      "<div style='font-size:13px; opacity:0.95;'>Flue Gas • Sound • Heat • Noise DosiMeter | รอบสัปดาห์: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + "</div>" +
       "<div style='margin-top:14px;'>" + statusBadge + "</div>" +
     "</div>" +
 
     "<div style='padding:20px;'>" +
       "<p style='margin:0 0 16px 0; font-size:14px; color:#374151; line-height:1.7;'>" +
         "เรียนทุกท่าน<br>" +
-        "สรุปผลการดำเนินงานเกี่ยวกับการบำรุงรักษาเครื่อง Flue Gas Analyzer, เครื่องวัดระดับเสียง (Sound Level Meter) และเครื่องวัดความร้อน (Heat Stress Monitor) ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ<br>" +
+        "สรุปผลการดำเนินงานเกี่ยวกับการบำรุงรักษาเครื่อง Flue Gas Analyzer, เครื่องวัดระดับเสียง (Sound Level Meter), เครื่องวัดความร้อน (Heat Stress Monitor) และเครื่อง Noise DosiMeter ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ<br>" +
         "(รายละเอียดเพิ่มเติมดังเอกสารแนบ)<br>" +
         "ขอบคุณครับ" +
       "</p>" +
@@ -2306,13 +2742,22 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
           "</td>" +
         "</tr>" +
         "<tr>" +
-          "<td colspan='2' style='background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:12px;'>" +
-            "<div style='font-size:12px; font-weight:bold; color:#c2410c;'>🌡️ หมวดที่ 3: Heat Stress Monitor (เครื่องวัดความร้อน WBGT - ISO 7243)</div>" +
-            "<div style='font-size:12px; color:#1e293b; margin-top:4px;'>" +
-              "สอบเทียบ/ตรวจสภาพ (F1): <b>" + s.heatForm1.records.length + "</b> (ไม่ผ่าน " + s.heatForm1.fails + ") &nbsp;|&nbsp; " +
-              "แจ้งซ่อม (F2): <b>" + s.heatForm2.records.length + "</b> &nbsp;|&nbsp; " +
-              "ทวนสอบ Ta/Tw/Tg (F3): <b>" + s.heatForm3.records.length + "</b> (Max Err: " + (s.heatForm3.maxErrorC > 0 ? s.heatForm3.maxErrorC.toFixed(2) + " °C" : "-") + ") &nbsp;|&nbsp; " +
-              "Checklist: <b>" + s.heatChecklist.records.length + "</b> (แก้ไข " + s.heatChecklist.issues + ")" +
+          "<td style='width:50%; background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:12px; font-weight:bold; color:#c2410c;'>🌡️ หมวดที่ 3: Heat Stress Monitor (ISO 7243)</div>" +
+            "<div style='font-size:12px; color:#1e293b; margin-top:6px; line-height:1.6;'>" +
+              "• สอบเทียบ/ตรวจ (F1): <b>" + s.heatForm1.records.length + "</b> (ไม่ผ่าน " + s.heatForm1.fails + ")<br>" +
+              "• แจ้งซ่อม (F2): <b>" + s.heatForm2.records.length + "</b><br>" +
+              "• ทวนสอบ Ta/Tw/Tg (F3): <b>" + s.heatForm3.records.length + "</b> (Max: " + (s.heatForm3.maxErrorC > 0 ? s.heatForm3.maxErrorC.toFixed(2) + " °C" : "-") + ")<br>" +
+              "• Checklist 5 ระบบ: <b>" + s.heatChecklist.records.length + "</b> (แก้ไข " + s.heatChecklist.issues + ")" +
+            "</div>" +
+          "</td>" +
+          "<td style='width:50%; background:#f5f3ff; border:1px solid #ddd6fe; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:12px; font-weight:bold; color:#6d28d9;'>🎧 หมวดที่ 4: Noise DosiMeter (IEC 61252)</div>" +
+            "<div style='font-size:12px; color:#1e293b; margin-top:6px; line-height:1.6;'>" +
+              "• สอบเทียบ/ตรวจ (F1): <b>" + s.dosiForm1.records.length + "</b> (ไม่ผ่าน " + s.dosiForm1.fails + ")<br>" +
+              "• แจ้งซ่อม (F2): <b>" + s.dosiForm2.records.length + "</b><br>" +
+              "• Pre/Post Check (F3): <b>" + s.dosiForm3.records.length + "</b> (Max: " + (s.dosiForm3.maxDevDb > 0 ? s.dosiForm3.maxDevDb.toFixed(2) + " dB" : "-") + ")<br>" +
+              "• Checklist 5 ระบบ: <b>" + s.dosiChecklist.records.length + "</b> (แก้ไข " + s.dosiChecklist.issues + ")" +
             "</div>" +
           "</td>" +
         "</tr>" +
@@ -2361,6 +2806,21 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
       "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
         "<div style='background:#fff7ed; padding:8px 12px; font-weight:bold; font-size:12px; color:#9a3412; border-bottom:1px solid #e5e7eb;'>🌡️ แบบฟอร์มที่ 3: Heat Stress Verification (Ta, Tw, Tg ±0.5 °C)</div>" +
         "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Error</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th></tr></thead><tbody>" + hf3Rows + "</tbody></table>" +
+      "</div>" +
+
+      // --- ส่วนที่ 4: Noise DosiMeter ---
+      "<div style='font-size:14px; font-weight:bold; color:#6d28d9; margin:22px 0 8px 0; border-bottom:2px solid #ddd6fe; padding-bottom:4px;'>🎧 หมวด Noise DosiMeter (เครื่องวัดเสียงสะสม)</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#f5f3ff; padding:8px 12px; font-weight:bold; font-size:12px; color:#5b21b6; border-bottom:1px solid #e5e7eb;'>📋 แบบฟอร์มที่ 1: การสอบเทียบและบำรุงรักษา (Noise DosiMeter)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายการ</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ตรวจ</th></tr></thead><tbody>" + df1Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid " + (s.dosiForm2.records.length > 0 ? "#fed7aa" : "#e5e7eb") + "; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:" + (s.dosiForm2.records.length > 0 ? "#ffedd5" : "#f5f3ff") + "; padding:8px 12px; font-weight:bold; font-size:12px; color:#5b21b6; border-bottom:1px solid #e5e7eb;'>🛠️ แบบฟอร์มที่ 2: ประวัติความเสียหาย / ซ่อมแซม (Noise DosiMeter)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายละเอียด</th><th style='padding:6px; text-align:center;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + df2Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#f5f3ff; padding:8px 12px; font-weight:bold; font-size:12px; color:#5b21b6; border-bottom:1px solid #e5e7eb;'>🎧 แบบฟอร์มที่ 3: Noise DosiMeter Verification (114.0 / 94.0 dB ±1.0 dB)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Dev / Drift</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th></tr></thead><tbody>" + df3Rows + "</tbody></table>" +
       "</div>" +
 
       "<div style='margin-top:24px; text-align:center;'>" +
@@ -2524,6 +2984,31 @@ function buildWeeklyHtmlReport(s) {
     }
   }
 
+  // หมวด 4: Noise DosiMeter (PDF)
+  var df1RowsPdf = buildForm1PdfRows(s.dosiForm1.records);
+  var df2RowsPdf = buildForm2PdfRows(s.dosiForm2.records);
+  var dchkRowsPdf = buildChecklistPdfRows(s.dosiChecklist.records);
+
+  var df3RowsPdf = "";
+  if (s.dosiForm3.records.length === 0) {
+    df3RowsPdf = "<tr><td colspan='7' style='text-align:center; padding:8px; color:#6b7280;'>ไม่มีรายการทวนสอบ Pre/Post Noise DosiMeter ในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var kd = 0; kd < s.dosiForm3.records.length; kd++) {
+      var rd3 = s.dosiForm3.records[kd];
+      var bgd3 = rd3.isFail ? "#fee2e2" : (kd % 2 === 0 ? "#ffffff" : "#f9fafb");
+      var setupD = (rd3.calibrator || "-") + " | " + (rd3.freq || "1 kHz") + " | " + (rd3.weighting || "A/Slow");
+      df3RowsPdf += "<tr style='background-color:" + bgd3 + ";'>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + rd3.date + "<br>" + rd3.preTime + " - " + rd3.postTime + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'><b>" + escapeXml(rd3.model) + "</b> (" + escapeXml(rd3.serial) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:8px; text-align:center;'>" + escapeXml(setupD) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px; font-weight:bold;'>" + escapeXml(rd3.maxDevDb) + " (Drift: " + escapeXml(rd3.maxDriftDb) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-weight:bold; font-size:9px; color:" + (rd3.isFail ? "#b91c1c" : "#15803d") + ";'>" + escapeXml(rd3.result) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(rd3.calibratedBy) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(rd3.approvedBy) + "</td>" +
+      "</tr>";
+    }
+  }
+
   return "<!DOCTYPE html><html><head><meta charset='UTF-8'>" +
     "<style>" +
       "@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');" +
@@ -2531,17 +3016,17 @@ function buildWeeklyHtmlReport(s) {
       ".header { text-align:center; border-bottom:2px solid #1e40af; padding-bottom:8px; margin-bottom:12px; }" +
       ".header h1 { font-size:15px; margin:0 0 4px 0; color:#1e40af; font-weight:bold; }" +
       ".cat-banner { font-size:12px; font-weight:bold; color:#ffffff; background:#1e3a8a; padding:5px 10px; border-radius:4px; margin:14px 0 8px 0; }" +
-      ".cat-banner.sound { background:#0f766e; } .cat-banner.heat { background:#c2410c; }" +
+      ".cat-banner.sound { background:#0f766e; } .cat-banner.heat { background:#c2410c; } .cat-banner.dosi { background:#6d28d9; }" +
       ".section-title { font-size:10.5px; font-weight:bold; color:#1e3a8a; margin:10px 0 5px 0; border-left:3px solid #2563eb; padding-left:6px; }" +
-      ".section-title.sound { color:#0f766e; border-left-color:#0d9488; } .section-title.heat { color:#c2410c; border-left-color:#ea580c; }" +
+      ".section-title.sound { color:#0f766e; border-left-color:#0d9488; } .section-title.heat { color:#c2410c; border-left-color:#ea580c; } .section-title.dosi { color:#6d28d9; border-left-color:#7c3aed; }" +
       "table { width:100%; border-collapse:collapse; margin-bottom:8px; }" +
       "th { background-color:#1e40af; color:#ffffff; padding:5px 4px; font-size:9px; border:1px solid #1e3a8a; text-align:center; }" +
-      "table.sound th { background-color:#0f766e; border-color:#115e59; } table.heat th { background-color:#c2410c; border-color:#9a3412; }" +
+      "table.sound th { background-color:#0f766e; border-color:#115e59; } table.heat th { background-color:#c2410c; border-color:#9a3412; } table.dosi th { background-color:#6d28d9; border-color:#5b21b6; }" +
       "td { padding:4px; font-size:9px; }" +
     "</style></head><body>" +
     "<div class='header'>" +
       "<div style='font-size:10px; font-weight:bold; color:#64748b; margin-bottom:2px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
-      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่อง Flue Gas Analyzer, เครื่องวัดเสียง และเครื่องวัดความร้อน ประจำสัปดาห์</h1>" +
+      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่อง Flue Gas Analyzer, เครื่องวัดเสียง, เครื่องวัดความร้อน และ Noise DosiMeter ประจำสัปดาห์</h1>" +
       "<div style='font-size:10px; color:#475569;'>รอบวันที่: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + " &nbsp;|&nbsp; " +
       "กิจกรรมทั้งหมด: " + s.totalActivities + " รายการ &nbsp;|&nbsp; " +
       "<span style='color:" + (s.totalIssues > 0 ? "#b91c1c" : "#15803d") + "; font-weight:bold;'>" +
@@ -2590,6 +3075,20 @@ function buildWeeklyHtmlReport(s) {
 
     "<div class='section-title heat'>3.4 ตรวจสอบสภาพเครื่องวัดความร้อนประจำสัปดาห์ (Checklist 5 รายการ) (" + s.heatChecklist.records.length + " รายการ)</div>" +
     "<table class='heat'><thead><tr><th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:55px;'>Wet Bulb</th><th style='width:55px;'>Globe</th><th style='width:50px;'>แบต</th><th style='width:55px;'>Dry Bulb</th><th style='width:55px;'>ตัวเครื่อง</th><th>หมายเหตุ</th></tr></thead><tbody>" + hchkRowsPdf + "</tbody></table>" +
+
+    // PART IV: NOISE DOSIMETER
+    "<div class='cat-banner dosi'>หมวดที่ 4: เครื่องวัดเสียงสะสม (Noise DosiMeter - IEC 61252)</div>" +
+    "<div class='section-title dosi'>4.1 แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ (" + s.dosiForm1.records.length + " รายการ)</div>" +
+    "<table class='dosi'><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการตรวจสภาพ / สอบเทียบ</th><th style='width:60px;'>Correction</th><th style='width:75px;'>Tolerance</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + df1RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title dosi'>4.2 แบบฟอร์มที่ 2: ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซม (" + s.dosiForm2.records.length + " รายการ)</div>" +
+    "<table class='dosi'><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการเสียหาย / ความผิดปกติ / ซ่อมแซม</th><th style='width:90px;'>ผู้ดำเนินการ</th><th style='width:110px;'>หมายเหตุ</th></tr></thead><tbody>" + df2RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title dosi'>4.3 แบบฟอร์มที่ 3: Noise DosiMeter Pre/Post Calibration Check (114.0 dB / 94.0 dB ±1.0 dB) (" + s.dosiForm3.records.length + " รายการ)</div>" +
+    "<table class='dosi'><thead><tr><th style='width:80px;'>วัน/เวลา</th><th style='width:130px;'>รุ่น / S/N</th><th style='width:130px;'>Reader / Setup</th><th style='width:85px;'>Max Dev / Drift</th><th style='width:45px;'>ผล</th><th style='width:75px;'>ผู้ทวนสอบ</th><th style='width:75px;'>ผู้อนุมัติ</th></tr></thead><tbody>" + df3RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title dosi'>4.4 ตรวจสอบสภาพ Noise DosiMeter ประจำสัปดาห์ (Checklist 5 รายการ) (" + s.dosiChecklist.records.length + " รายการ)</div>" +
+    "<table class='dosi'><thead><tr><th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:55px;'>ตัวเครื่อง</th><th style='width:55px;'>ไมค์/โฟม</th><th style='width:50px;'>แบต</th><th style='width:55px;'>ขั้วชาร์จ</th><th style='width:55px;'>Reader</th><th>หมายเหตุ</th></tr></thead><tbody>" + dchkRowsPdf + "</tbody></table>" +
 
     "<table style='width:100%; margin-top:25px; border:none;'>" +
       "<tr style='border:none;'>" +

@@ -138,7 +138,7 @@
                     <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold bg-indigo-500/20 border border-indigo-400/30 rounded-full text-indigo-200 mb-2.5 backdrop-blur-sm">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span>แผนกปฏิบัติการภาคสนาม | ETC 1992</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30 font-mono">v3.1 (Multi-Equipment)</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30 font-mono">v3.2 (Multi-Equipment)</span>
                     </div>
                     <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-heading">
                         ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ
@@ -151,7 +151,7 @@
                     <div class="font-bold text-white font-heading flex items-center md:justify-end gap-1.5">
                         <span class="text-indigo-400">⚡</span> <span id="headerEqTitle">Field Equipment Hub</span>
                     </div>
-                    <div class="text-slate-300" id="headerEqSummary">Flue Gas • Sound Level • Heat Stress</div>
+                    <div class="text-slate-300" id="headerEqSummary">Flue Gas • Sound Level • Heat Stress • Noise DosiMeter</div>
                     <div class="mt-1 inline-flex items-center md:justify-end gap-1.5 text-[11px] text-emerald-300">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -182,7 +182,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-2">
                         ประเภทเครื่องมือภาคสนาม (Equipment Category) <span class="text-red-500">*</span>
                     </label>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         <button type="button" id="catBtn_FLUE_GAS" onclick="switchEquipmentCategory('FLUE_GAS')"
                                 class="flex items-center justify-between p-3.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950 shadow-sm transition-all text-left">
                             <div class="flex items-center gap-2.5">
@@ -217,6 +217,18 @@
                                 </div>
                             </div>
                             <span id="catBadge_HEAT" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">เลือกใช้</span>
+                        </button>
+
+                        <button type="button" id="catBtn_DOSIMETER" onclick="switchEquipmentCategory('DOSIMETER')"
+                                class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-violet-400 text-slate-700 transition-all text-left">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-9 h-9 rounded-xl bg-violet-600 text-white flex items-center justify-center text-base shadow-sm shrink-0">🎧</span>
+                                <div>
+                                    <div class="font-bold text-sm font-heading">Noise DosiMeter</div>
+                                    <div class="text-[11px] text-slate-500">TES / 3M / Cirrus (33 เครื่อง)</div>
+                                </div>
+                            </div>
+                            <span id="catBadge_DOSIMETER" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">เลือกใช้</span>
                         </button>
                     </div>
                 </div>
@@ -838,6 +850,15 @@
                                placeholder="เช่น 0.5 (ISO 7243)"
                                class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none font-mono font-semibold placeholder:text-slate-400 placeholder:italic">
                     </div>
+                    <div id="f3_dosiTolCol" class="hidden">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_dosi_tolerance">
+                            เกณฑ์ยอมรับ Deviation (± dB)
+                        </label>
+                        <input type="number" id="f3_dosi_tolerance" value="1.0" step="0.1" min="0"
+                               oninput="recalculateDosimeterTable()"
+                               placeholder="เช่น 1.0 (IEC 61252)"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none font-mono font-semibold placeholder:text-slate-400 placeholder:italic">
+                    </div>
                 </div>
 
                 <!-- ส่วนฟอร์ม 3 เฉพาะ Flue Gas Analyzer -->
@@ -1160,6 +1181,155 @@
                     </div>
                 </div>
 
+                <!-- ส่วนฟอร์ม 3 เฉพาะเครื่องวัดเสียงสะสม (Noise DosiMeter Verification - IEC 61252) -->
+                <div id="f3_dosiSection" class="hidden space-y-5">
+                    <div class="bg-violet-50/70 p-4 rounded-2xl border border-violet-200/80 space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-violet-900 flex items-center gap-1.5">
+                            <span>🎧</span> Reader Unit / Acoustic Calibrator &amp; Dosimeter Setup
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_dosi_calibratorSelect">
+                                    เลือก Reader Unit / Calibrator มาตรฐาน <span class="text-red-500">*</span>
+                                </label>
+                                <select id="f3_dosi_calibratorSelect" onchange="onDosiReaderSelectChange()"
+                                        class="w-full px-3 py-2 text-sm font-semibold border border-violet-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                                    <option value="Cirrus RC:110A S/N 73967">Cirrus RC:110A — S/N: 73967 (IEC 60942 (Class 2))</option>
+                                    <option value="Cirrus RC:110A S/N 87366">Cirrus RC:110A — S/N: 87366 (IEC 60942 (Class 2))</option>
+                                    <option value="Cirrus RC:110A S/N 92433">Cirrus RC:110A — S/N: 92433 (IEC 60942 (Class 2))</option>
+                                    <option value="Cirrus RC:110A S/N 98650 (S66021639)">Cirrus RC:110A — S/N: 98650 [S66021639] (IEC 60942 (Class 2))</option>
+                                    <option value="CUSTOM">-- ระบุเครื่อง Acoustic Calibrator อื่นเอง --</option>
+                                </select>
+                                <input type="text" id="f3_dosi_calibrator" required
+                                       placeholder="ระบุชื่อรุ่นและ S/N ของ Reader Unit / Acoustic Calibrator (114 dB / 94 dB)"
+                                       class="mt-1.5 w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500 outline-none placeholder:text-slate-400 placeholder:italic">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_dosi_freq">
+                                    ความถี่ทดสอบ (Frequency)
+                                </label>
+                                <select id="f3_dosi_freq" onchange="toggleDosiCustomFreq()"
+                                        class="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                                    <option value="1 kHz" selected>1 kHz (1000 Hz)</option>
+                                    <option value="250 Hz">250 Hz</option>
+                                    <option value="CUSTOM">ระบุความถี่อื่น...</option>
+                                </select>
+                                <input type="text" id="f3_dosi_freqCustom" placeholder="ระบุความถี่ เช่น 500 Hz"
+                                       class="hidden mt-1.5 w-full px-3 py-1.5 text-xs border border-violet-300 rounded-lg bg-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_dosi_weighting">
+                                    Weighting Setup
+                                </label>
+                                <select id="f3_dosi_weighting"
+                                        class="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                                    <option value="A-Weighting / Slow" selected>A-Weighting / Slow (OSHA/กรมสวัสดิฯ)</option>
+                                    <option value="A-Weighting / Fast">A-Weighting / Fast</option>
+                                    <option value="C-Weighting / Slow">C-Weighting / Slow</option>
+                                    <option value="A & C / Slow">A &amp; C Weighting / Slow</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ตารางทวนสอบ Pre/Post Calibration Check (114.0 dB หลัก / 94.0 dB เสริม) -->
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+                        <div class="bg-slate-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-lg bg-violet-500/25 border border-violet-400/40 text-violet-200 text-xs font-mono font-bold">IEC 61252</span>
+                                <span class="font-bold text-sm font-heading">Noise DosiMeter Pre / Post Calibration Verification Table</span>
+                            </div>
+                            <span class="text-xs text-slate-300 font-mono">เกณฑ์ยอมรับ: ±<span class="dosi-tol-label">1.0</span> dB</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-3 py-2.5 font-bold text-center w-28">จุดทดสอบ</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Calibrator Std (dB)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Pre-Cal (ก่อนวัด)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Post-Cal (หลังวัด)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Pre Error (dB)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Post Error (dB)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Drift |Post-Pre|</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200">
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-bold text-center text-violet-900 bg-violet-50/50 font-mono">114.0 dB<br><span class="text-[10px] font-normal text-violet-700">(จุดหลัก)</span></td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="dosi_std_1" value="114.0" step="0.1" oninput="recalculateDosimeterTable()"
+                                                   class="w-20 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-violet-500">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="dosi_pre_1" step="0.1" placeholder="เช่น 114.0" oninput="recalculateDosimeterTable()"
+                                                   class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-slate-300">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="dosi_post_1" step="0.1" placeholder="เช่น 114.1" oninput="recalculateDosimeterTable()"
+                                                   class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-slate-300">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="text" id="dosi_preErr_1" readonly tabindex="-1"
+                                                   class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold text-slate-700 outline-none">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="text" id="dosi_postErr_1" readonly tabindex="-1"
+                                                   class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold text-slate-700 outline-none">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="text" id="dosi_drift_1" readonly tabindex="-1"
+                                                   class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold text-slate-700 outline-none">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <span id="dosi_badge_1" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-slate-50/40">
+                                        <td class="px-3 py-2.5 font-bold text-center text-slate-700 font-mono">94.0 dB<br><span class="text-[10px] font-normal text-slate-400">(ถ้ามี)</span></td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="dosi_std_2" value="94.0" step="0.1" oninput="recalculateDosimeterTable()"
+                                                   class="w-20 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-violet-500">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="dosi_pre_2" step="0.1" placeholder="เช่น 94.0" oninput="recalculateDosimeterTable()"
+                                                   class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-slate-300">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="dosi_post_2" step="0.1" placeholder="เช่น 94.0" oninput="recalculateDosimeterTable()"
+                                                   class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-slate-300">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="text" id="dosi_preErr_2" readonly tabindex="-1"
+                                                   class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold text-slate-700 outline-none">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="text" id="dosi_postErr_2" readonly tabindex="-1"
+                                                   class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold text-slate-700 outline-none">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="text" id="dosi_drift_2" readonly tabindex="-1"
+                                                   class="w-20 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold text-slate-700 outline-none">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <span id="dosi_badge_2" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_dosi_notes">
+                            ชื่อโครงการ / ผู้สวมใส่ / สถานที่ตรวจวัด / หมายเหตุเพิ่มเติม
+                        </label>
+                        <input type="text" id="f3_dosi_notes" placeholder="เช่น ตรวจวัดเสียงสะสมในพื้นที่ผลิต 8 ชั่วโมง..."
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none placeholder:text-slate-400 placeholder:italic">
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_calibratedBy">
@@ -1251,6 +1421,21 @@
                     </div>
                 </div>
 
+                <div id="f3_dosiBannerGroup" class="hidden space-y-2.5 pt-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-500 font-heading">สถานะจุดทวนสอบ DosiMeter:</span>
+                        <div id="chip_dosi_114" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> 114.0 dB: รอกรอก</div>
+                        <div id="chip_dosi_94" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> 94.0 dB: รอกรอก</div>
+                    </div>
+                    <div id="f3_dosi_liveResultBanner" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5 text-slate-600 text-xs font-semibold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <span>กรอกค่า Pre-Cal และ/หรือ Post-Cal (dB) เพื่อประเมินผล Noise DosiMeter Verification</span>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono">เกณฑ์ยอมรับ: ±<span class="dosi-tol-label">1.0</span> dB</div>
+                    </div>
+                </div>
+
                 <div class="flex flex-col sm:flex-row gap-3 pt-2">
                     <button type="submit" id="submitBtn3"
                             class="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 active:scale-[0.99]">
@@ -1290,6 +1475,7 @@
                                 <option value="FLUE_GAS">🔥 Flue Gas (Testo)</option>
                                 <option value="SOUND">🔊 Sound Level Meter</option>
                                 <option value="HEAT">🌡️ Heat Stress (WBGT)</option>
+                                <option value="DOSIMETER">🎧 Noise DosiMeter</option>
                             </select>
                         </div>
                         <div>
@@ -1521,6 +1707,9 @@
         const messageModal = document.getElementById('messageModal');
 
         const HEAT_CATALOG = [{"no": "1", "serial": "TPH 060001", "brand": "TSI", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "2", "serial": "TPI 050069", "brand": "Quest technologies", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "3", "serial": "TPI 050070", "brand": "Quest technologies", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "4", "serial": "TPL 060039", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "5", "serial": "TPL 060040", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "6", "serial": "TPL 090016", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "7", "serial": "TPL 090017", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "8", "serial": "TPQ 030023", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "9", "serial": "TPQ 030024", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "10", "serial": "TEU 080011", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "11", "serial": "TEU 080012", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "12", "serial": "TEU 080013", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "13", "serial": "TEU 080014", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "14", "serial": "TEU 080015", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "15", "serial": "22004316", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "16", "serial": "22004318", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "17", "serial": "22004319", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "18", "serial": "22004320", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}];
+
+        const DOSIMETER_CATALOG = [{"no": "1", "serial": "070204292", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S50020405"}, {"no": "2", "serial": "070204327", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S50020406"}, {"no": "3", "serial": "091103792", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S53020553"}, {"no": "", "serial": "100605010", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S53020554"}, {"no": "", "serial": "100605019", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S53020555"}, {"no": "4", "serial": "NXL060044", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S55010044/16"}, {"no": "5", "serial": "NXL060045", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S55010044/17"}, {"no": "6", "serial": "NXL060046", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "โหลดข้อมูลดิบผลการตรวจวัดไม่ได้", "code": "S55010044/18"}, {"no": "7", "serial": "NXL060047", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S55010044/19"}, {"no": "8", "serial": "NXL060048", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S55010044/20"}, {"no": "9", "serial": "NXQ070006", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "โหลดข้อมูลดิบผลการตรวจวัดไม่ได้", "code": "S59021052"}, {"no": "10", "serial": "NXQ070007", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S59021053"}, {"no": "11", "serial": "NXQ070008", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "โหลดข้อมูลดิบผลการตรวจวัดไม่ได้", "code": "S59021054"}, {"no": "12", "serial": "CA8879", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "13", "serial": "CA8886", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "14", "serial": "CA8887", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "15", "serial": "CA8888", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "16", "serial": "CA8889", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "17", "serial": "CB0640", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "18", "serial": "CB0641", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "รอซ่อม / ส่งซ่อม", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "19", "serial": "CB0642", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "20", "serial": "CB0643", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "21", "serial": "CB0644", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "22", "serial": "CB0954", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "23", "serial": "CB0955", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "24", "serial": "CB0956", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "25", "serial": "CB0957", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "26", "serial": "CB0958", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "27", "serial": "CB1365", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021634"}, {"no": "28", "serial": "CB1497", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021635"}, {"no": "29", "serial": "CB1498", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021636"}, {"no": "30", "serial": "CB1499", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021637"}, {"no": "31", "serial": "CB1500", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021638"}];
+        const DOSIMETER_READERS = [{"no": "1", "serial": "73967", "brand": "Cirrus", "model": "RC:110A", "standard": "IEC 60942 (Class 2)", "status": "พร้อมใช้งาน", "code": ""}, {"no": "2", "serial": "87366", "brand": "Cirrus", "model": "RC:110A", "standard": "IEC 60942 (Class 2)", "status": "พร้อมใช้งาน", "code": ""}, {"no": "3", "serial": "92433", "brand": "Cirrus", "model": "RC:110A", "standard": "IEC 60942 (Class 2)", "status": "พร้อมใช้งาน", "code": ""}, {"no": "4", "serial": "98650", "brand": "Cirrus", "model": "RC:110A", "standard": "IEC 60942 (Class 2)", "status": "พร้อมใช้งาน", "code": "S66021639"}];
 
         const FLUE_GAS_CATALOG = [
             { brand: 'Testo', model: '327-1', serial: '01563443', code: '' },
@@ -1808,21 +1997,30 @@
                 'สภาพหัววัดกระเปาะแห้ง (Dry Bulb) และแผงกันรังสี',
                 'สภาพตัวเครื่อง จอแสดงผล ปุ่มกด และหน่วยความจำ',
                 'แบตเตอรี่และระบบจ่ายไฟ (Battery / Charger)'
+            ],
+            DOSIMETER: [
+                'สภาพตัวเครื่อง จอแสดงผล ปุ่มกด และคลิปหนีบ (Shoulder Clip)',
+                'สภาพไมโครโฟน สายคล้อง และฟองน้ำกันลม (Windscreen)',
+                'แบตเตอรี่ ระบบชาร์จ และนาฬิกาบันทึกเวลา (Real-time Clock)',
+                'หน่วยความจำและการดาวน์โหลดข้อมูลผ่าน Reader Unit / ซอฟต์แวร์',
+                'การตอบสนองสัญญาณเสียงอ้างอิงเบื้องต้น (114 dB / 94 dB Check)'
             ]
         };
 
         function switchEquipmentCategory(cat) {
-            currentEquipmentCategory = (cat === 'SOUND') ? 'SOUND' : (cat === 'HEAT' ? 'HEAT' : 'FLUE_GAS');
+            currentEquipmentCategory = (cat === 'SOUND') ? 'SOUND' : (cat === 'HEAT' ? 'HEAT' : (cat === 'DOSIMETER' ? 'DOSIMETER' : 'FLUE_GAS'));
             const isSound = currentEquipmentCategory === 'SOUND';
             const isHeat = currentEquipmentCategory === 'HEAT';
+            const isDosi = currentEquipmentCategory === 'DOSIMETER';
             const isGas = currentEquipmentCategory === 'FLUE_GAS';
 
             const catThemes = {
-                FLUE_GAS: { border: 'border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950', badge: 'bg-indigo-600 text-white' },
-                SOUND:    { border: 'border-2 border-teal-600 bg-teal-50/90 text-teal-950', badge: 'bg-teal-600 text-white' },
-                HEAT:     { border: 'border-2 border-orange-600 bg-orange-50/90 text-orange-950', badge: 'bg-orange-600 text-white' }
+                FLUE_GAS:  { border: 'border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950', badge: 'bg-indigo-600 text-white' },
+                SOUND:     { border: 'border-2 border-teal-600 bg-teal-50/90 text-teal-950', badge: 'bg-teal-600 text-white' },
+                HEAT:      { border: 'border-2 border-orange-600 bg-orange-50/90 text-orange-950', badge: 'bg-orange-600 text-white' },
+                DOSIMETER: { border: 'border-2 border-violet-600 bg-violet-50/90 text-violet-950', badge: 'bg-violet-600 text-white' }
             };
-            ['FLUE_GAS', 'SOUND', 'HEAT'].forEach(k => {
+            ['FLUE_GAS', 'SOUND', 'HEAT', 'DOSIMETER'].forEach(k => {
                 const btn = document.getElementById(`catBtn_${k}`);
                 const bdg = document.getElementById(`catBadge_${k}`);
                 if (!btn || !bdg) return;
@@ -1845,14 +2043,26 @@
                     sInput.value = '';
                     sInput.placeholder = isHeat
                         ? 'พิมพ์ S/N หรือรุ่นเครื่องวัดความร้อน เช่น TEU, QUESTemp 34, HD32.2...'
-                        : 'พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่นเครื่องวัดเสียง...';
+                        : (isDosi ? 'พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่น Noise DosiMeter เช่น CB1365, NXL, TES 1355...' : 'พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่นเครื่องวัดเสียง...');
                 }
-                const stFilter = document.getElementById('soundStatusFilter')?.parentElement;
-                if (stFilter) stFilter.classList.toggle('hidden', !isSound);
+                const stSel = document.getElementById('soundStatusFilter');
+                if (stSel) {
+                    if (isDosi) {
+                        stSel.options[0].text = 'เฉพาะพร้อมใช้งาน (22 เครื่อง)';
+                        stSel.options[1].text = 'พร้อมใช้งาน + รอซ่อม (23 เครื่อง)';
+                        stSel.options[2].text = 'ทั้งหมดในทะเบียน (33 เครื่อง)';
+                    } else {
+                        stSel.options[0].text = 'เฉพาะพร้อมใช้งาน (59 เครื่อง)';
+                        stSel.options[1].text = 'พร้อมใช้งาน + รอซ่อม (63 เครื่อง)';
+                        stSel.options[2].text = 'ทั้งหมดในทะเบียน (80 เครื่อง)';
+                    }
+                }
+                const stFilter = stSel?.parentElement;
+                if (stFilter) stFilter.classList.toggle('hidden', !isSound && !isDosi);
             }
             document.getElementById('soundMetaBanner')?.classList.toggle('hidden', isGas);
 
-            if (isSound || isHeat) {
+            if (isSound || isHeat || isDosi) {
                 renderCategoryPresetOptions();
             } else {
                 renderFlueGasPresetOptions();
@@ -1864,7 +2074,12 @@
                 if (el) el.textContent = txt;
             });
 
-            if (isHeat) {
+            if (isDosi) {
+                document.getElementById('f1_description').value = f1SubType.value === 'weekly_check'
+                    ? 'ตรวจสภาพและบำรุงรักษาเครื่อง Noise DosiMeter ประจำสัปดาห์ (ตัวเครื่อง, ไมโครโฟน, แบต, Reader Unit)'
+                    : 'สอบเทียบเครื่องวัดเสียงสะสม (Noise DosiMeter Calibration)';
+                document.getElementById('f1_tolerance').value = f1SubType.value === 'weekly_check' ? 'สภาพพร้อมใช้งาน' : '± 1.0 dB';
+            } else if (isHeat) {
                 document.getElementById('f1_description').value = f1SubType.value === 'weekly_check'
                     ? 'ตรวจสภาพและบำรุงรักษาเครื่องวัดความร้อนประจำสัปดาห์ (Wet Bulb, Globe, Dry Bulb, ตัวเครื่อง, แบต)'
                     : 'สอบเทียบเครื่องวัดความร้อน (Heat Stress / WBGT Calibration)';
@@ -1886,7 +2101,13 @@
             const f3Title = document.getElementById('f3_headerTitle');
             const f3Sub = document.getElementById('f3_headerSubtitle');
             const f3Banner = document.getElementById('f3_headerBanner');
-            if (isHeat) {
+            if (isDosi) {
+                if (tab3Title) tab3Title.textContent = 'Dosimeter Check';
+                if (tab3Sub) tab3Sub.textContent = 'Pre/Post Check (114 / 94 dB)';
+                if (f3Title) f3Title.textContent = 'แบบฟอร์มที่ 3: Noise DosiMeter Verification (Pre / Post Calibration Check)';
+                if (f3Sub) f3Sub.textContent = 'ทวนสอบก่อน-หลังตรวจวัดเสียงสะสม ที่ระดับ 114.0 dB (หลัก) / 94.0 dB (เสริม) มาตรฐาน IEC 61252 (±1.0 dB)';
+                if (f3Banner) f3Banner.className = 'bg-violet-50 border border-violet-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+            } else if (isHeat) {
                 if (tab3Title) tab3Title.textContent = 'Heat Stress Check';
                 if (tab3Sub) tab3Sub.textContent = 'ทวนสอบ Ta, Tw, Tg (±0.5 °C)';
                 if (f3Title) f3Title.textContent = 'แบบฟอร์มที่ 3: Heat Stress (WBGT) Verification';
@@ -1906,27 +2127,37 @@
                 if (f3Banner) f3Banner.className = 'bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
             }
 
+            const usesPrePostTime = isSound || isDosi;
             document.getElementById('f3_gasSection')?.classList.toggle('hidden', !isGas);
             document.getElementById('f3_soundSection')?.classList.toggle('hidden', !isSound);
             document.getElementById('f3_heatSection')?.classList.toggle('hidden', !isHeat);
+            document.getElementById('f3_dosiSection')?.classList.toggle('hidden', !isDosi);
             document.getElementById('f3_gasBannerGroup')?.classList.toggle('hidden', !isGas);
             document.getElementById('f3_soundBannerGroup')?.classList.toggle('hidden', !isSound);
             document.getElementById('f3_heatBannerGroup')?.classList.toggle('hidden', !isHeat);
+            document.getElementById('f3_dosiBannerGroup')?.classList.toggle('hidden', !isDosi);
 
-            document.getElementById('f3_gasTimeCol')?.classList.toggle('hidden', isSound);
-            document.getElementById('f3_soundTimeCols')?.classList.toggle('hidden', !isSound);
+            document.getElementById('f3_gasTimeCol')?.classList.toggle('hidden', usesPrePostTime);
+            document.getElementById('f3_soundTimeCols')?.classList.toggle('hidden', !usesPrePostTime);
             document.getElementById('f3_gasTolCol')?.classList.toggle('hidden', !isGas);
             document.getElementById('f3_soundTolCol')?.classList.toggle('hidden', !isSound);
             document.getElementById('f3_heatTolCol')?.classList.toggle('hidden', !isHeat);
+            document.getElementById('f3_dosiTolCol')?.classList.toggle('hidden', !isDosi);
 
             const f3TimeEl = document.getElementById('f3_time');
             const f3PreEl = document.getElementById('f3_snd_preTime');
             const f3CalEl = document.getElementById('f3_snd_calibrator');
             const f3HeatRefEl = document.getElementById('f3_heat_refDevice');
-            if (f3TimeEl) f3TimeEl.required = !isSound;
-            if (f3PreEl) f3PreEl.required = isSound;
+            const f3DosiCalEl = document.getElementById('f3_dosi_calibrator');
+            if (f3TimeEl) f3TimeEl.required = !usesPrePostTime;
+            if (f3PreEl) f3PreEl.required = usesPrePostTime;
             if (f3CalEl) f3CalEl.required = isSound;
             if (f3HeatRefEl) f3HeatRefEl.required = isHeat;
+            if (f3DosiCalEl) f3DosiCalEl.required = isDosi;
+
+            if (isDosi && f3DosiCalEl && !f3DosiCalEl.value.trim()) {
+                onDosiReaderSelectChange();
+            }
 
             const qCat = document.getElementById('q_category');
             if (qCat && qCat.value !== currentEquipmentCategory) {
@@ -1937,6 +2168,7 @@
             applyEquipmentPreset();
             if (isSound) recalculateSoundTable();
             if (isHeat) recalculateHeatTable();
+            if (isDosi) recalculateDosimeterTable();
             updateEquipmentDashboard();
         }
 
@@ -1954,6 +2186,36 @@
 
         function renderCategoryPresetOptions(preferredSerial) {
             const searchTxt = (document.getElementById('soundSearchInput')?.value || '').trim().toLowerCase();
+
+            if (currentEquipmentCategory === 'DOSIMETER') {
+                const statusFilter = document.getElementById('soundStatusFilter')?.value || 'ACTIVE';
+                const filtered = DOSIMETER_CATALOG.filter(it => {
+                    if (statusFilter === 'ACTIVE' && it.status !== 'พร้อมใช้งาน') return false;
+                    if (statusFilter === 'ACTIVE_REPAIR' && it.status === 'ชำรุด / ยกเลิกใช้งาน') return false;
+                    if (searchTxt) {
+                        const hay = `${it.serial} ${it.code} ${it.brand} ${it.model} ${it.standard}`.toLowerCase();
+                        if (!hay.includes(searchTxt)) return false;
+                    }
+                    return true;
+                });
+                let htmlOpts = filtered.map((it, idx) => {
+                    const statusTag = it.status === 'พร้อมใช้งาน' ? '✓' : (it.status.includes('รอซ่อม') ? '⚠️ รอซ่อม' : '⛔ ยกเลิก');
+                    return `<option value="DOSIMETER|${it.serial}">[${it.code || '-'}] ${it.brand} ${it.model} — S/N: ${it.serial} (${statusTag})</option>`;
+                }).join('');
+                htmlOpts = filtered.length === 0
+                    ? '<option value="CUSTOM">-- ไม่พบรายการที่ค้นหา (กดเพื่อกรอกเอง) --</option>'
+                    : htmlOpts + '<option value="CUSTOM">-- ระบุเอง / เครื่องมืออื่น --</option>';
+
+                const prevVal = equipmentPreset.value;
+                equipmentPreset.innerHTML = htmlOpts;
+                if (preferredSerial && Array.from(equipmentPreset.options).some(o => o.value === `DOSIMETER|${preferredSerial}`)) {
+                    equipmentPreset.value = `DOSIMETER|${preferredSerial}`;
+                } else if (Array.from(equipmentPreset.options).some(o => o.value === prevVal)) {
+                    equipmentPreset.value = prevVal;
+                }
+                applyEquipmentPreset();
+                return;
+            }
 
             if (currentEquipmentCategory === 'HEAT') {
                 const filtered = HEAT_CATALOG.filter(it => {
@@ -2023,12 +2285,54 @@
             if (val === 'CUSTOM') {
                 eqModel.readOnly = false;
                 eqSerial.readOnly = false;
-                eqName.value = currentEquipmentCategory === 'HEAT' ? 'Heat Stress Monitor' : (currentEquipmentCategory === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer');
+                eqName.value = currentEquipmentCategory === 'DOSIMETER' ? 'Noise DosiMeter' : (currentEquipmentCategory === 'HEAT' ? 'Heat Stress Monitor' : (currentEquipmentCategory === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer'));
                 eqModel.value = '';
                 eqSerial.value = '';
                 eqCode.value = '';
                 document.getElementById('soundMetaBanner')?.classList.add('hidden');
                 eqModel.focus();
+                return;
+            }
+
+            if (val.startsWith('DOSIMETER|')) {
+                const sn = val.split('|')[1];
+                const item = DOSIMETER_CATALOG.find(x => x.serial === sn);
+                if (item) {
+                    eqName.value = 'Noise DosiMeter';
+                    eqModel.value = `${item.brand} ${item.model}`.trim();
+                    eqSerial.value = item.serial;
+                    eqCode.value = localStorage.getItem(`etc_eqcode_${item.serial}`) || item.code || '';
+
+                    const banner = document.getElementById('soundMetaBanner');
+                    const clsBadge = document.getElementById('soundMetaClassBadge');
+                    const stBadge = document.getElementById('soundMetaStatusBadge');
+                    const notesEl = document.getElementById('soundMetaNotes');
+                    if (banner && clsBadge && stBadge && notesEl) {
+                        banner.classList.remove('hidden');
+                        clsBadge.textContent = item.standard || 'IEC 61252';
+                        clsBadge.className = 'px-2.5 py-0.5 rounded-full font-bold bg-violet-100 text-violet-900 border border-violet-200';
+                        notesEl.textContent = item.notes ? `หมายเหตุทะเบียน: ${item.notes}` : '';
+                        if (item.status === 'พร้อมใช้งาน') {
+                            banner.className = 'rounded-xl p-3 border border-emerald-200 bg-emerald-50/50 text-xs flex flex-wrap items-center justify-between gap-2';
+                            stBadge.textContent = '✓ พร้อมใช้งาน';
+                            stBadge.className = 'px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+                        } else if (item.status.includes('รอซ่อม')) {
+                            banner.className = 'rounded-xl p-3 border border-amber-300 bg-amber-50 text-xs flex flex-wrap items-center justify-between gap-2';
+                            stBadge.textContent = '⚠️ รอซ่อม / ส่งซ่อม';
+                            stBadge.className = 'px-2.5 py-0.5 rounded-full font-bold bg-amber-200 text-amber-900 border border-amber-400';
+                        } else {
+                            banner.className = 'rounded-xl p-3 border-2 border-rose-300 bg-rose-50 text-xs flex flex-wrap items-center justify-between gap-2';
+                            stBadge.textContent = '⛔ ชำรุด / ยกเลิกใช้งาน (ห้ามนำออกวัด)';
+                            stBadge.className = 'px-2.5 py-0.5 rounded-full font-bold bg-rose-600 text-white';
+                        }
+                    }
+
+                    const qSerial = document.getElementById('q_serial');
+                    if (qSerial && Array.from(qSerial.options).some(o => o.value === item.serial)) {
+                        qSerial.value = item.serial;
+                    }
+                }
+                updateEquipmentDashboard();
                 return;
             }
 
@@ -2789,6 +3093,193 @@
             return { heatData, maxAbsErr, hasMeasured, wbgtCheck: wbgtSummary };
         }
 
+        function onDosiReaderSelectChange() {
+            const sel = document.getElementById('f3_dosi_calibratorSelect');
+            const inp = document.getElementById('f3_dosi_calibrator');
+            if (!sel || !inp) return;
+            if (sel.value === 'CUSTOM') {
+                inp.value = localStorage.getItem('etc_last_dosi_calibrator_custom') || '';
+                inp.readOnly = false;
+                inp.focus();
+            } else {
+                inp.value = sel.value;
+            }
+        }
+
+        function toggleDosiCustomFreq() {
+            const sel = document.getElementById('f3_dosi_freq');
+            const cust = document.getElementById('f3_dosi_freqCustom');
+            if (!sel || !cust) return;
+            const isCustom = sel.value === 'CUSTOM';
+            cust.classList.toggle('hidden', !isCustom);
+            cust.required = isCustom;
+        }
+
+        function getSelectedDosiFreq() {
+            const sel = document.getElementById('f3_dosi_freq');
+            if (!sel) return '1 kHz';
+            if (sel.value === 'CUSTOM') {
+                return document.getElementById('f3_dosi_freqCustom')?.value.trim() || '1 kHz';
+            }
+            return sel.value;
+        }
+
+        function recalculateDosimeterTable() {
+            const tol = parseFloat(document.getElementById('f3_dosi_tolerance')?.value || '1.0') || 1.0;
+            document.querySelectorAll('.dosi-tol-label').forEach(el => {
+                el.textContent = tol.toFixed(1);
+            });
+
+            let anyExceed = false;
+            let hasAny = false;
+            let maxAbsErrAll = 0;
+
+            [1, 2].forEach(idx => {
+                const std = parseFloat(document.getElementById(`dosi_std_${idx}`)?.value);
+                const preVal = document.getElementById(`dosi_pre_${idx}`)?.value;
+                const postVal = document.getElementById(`dosi_post_${idx}`)?.value;
+                const pre = parseFloat(preVal);
+                const post = parseFloat(postVal);
+
+                const preErrEl = document.getElementById(`dosi_preErr_${idx}`);
+                const postErrEl = document.getElementById(`dosi_postErr_${idx}`);
+                const driftEl = document.getElementById(`dosi_drift_${idx}`);
+                const badgeEl = document.getElementById(`dosi_badge_${idx}`);
+                const chipEl = document.getElementById(idx === 1 ? 'chip_dosi_114' : 'chip_dosi_94');
+                const ptLabel = !isNaN(std) ? `${std.toFixed(1)} dB` : (idx === 1 ? '114.0 dB' : '94.0 dB');
+
+                let rowFail = false;
+                let rowMeasured = false;
+                let rowMaxAbs = 0;
+
+                if (!isNaN(std) && !isNaN(pre)) {
+                    const pe = pre - std;
+                    if (preErrEl) preErrEl.value = (pe >= 0 ? '+' : '') + pe.toFixed(2);
+                    rowMeasured = true;
+                    hasAny = true;
+                    const absPe = Math.abs(pe);
+                    if (absPe > rowMaxAbs) rowMaxAbs = absPe;
+                    if (absPe > maxAbsErrAll) maxAbsErrAll = absPe;
+                    if (absPe > tol) { rowFail = true; anyExceed = true; }
+                } else if (preErrEl) {
+                    preErrEl.value = '';
+                }
+
+                if (!isNaN(std) && !isNaN(post)) {
+                    const poe = post - std;
+                    if (postErrEl) postErrEl.value = (poe >= 0 ? '+' : '') + poe.toFixed(2);
+                    rowMeasured = true;
+                    hasAny = true;
+                    const absPoe = Math.abs(poe);
+                    if (absPoe > rowMaxAbs) rowMaxAbs = absPoe;
+                    if (absPoe > maxAbsErrAll) maxAbsErrAll = absPoe;
+                    if (absPoe > tol) { rowFail = true; anyExceed = true; }
+                } else if (postErrEl) {
+                    postErrEl.value = '';
+                }
+
+                if (!isNaN(pre) && !isNaN(post)) {
+                    const dr = Math.abs(post - pre);
+                    if (driftEl) driftEl.value = dr.toFixed(2);
+                    if (dr > tol) { rowFail = true; anyExceed = true; }
+                } else if (driftEl) {
+                    driftEl.value = '';
+                }
+
+                if (badgeEl) {
+                    if (!rowMeasured) {
+                        badgeEl.className = 'px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap';
+                        badgeEl.textContent = '--';
+                    } else if (rowFail) {
+                        badgeEl.className = 'px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 border border-rose-300 font-bold whitespace-nowrap';
+                        badgeEl.textContent = '❌ เกินเกณฑ์';
+                    } else {
+                        badgeEl.className = 'px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold whitespace-nowrap';
+                        badgeEl.textContent = '✓ ผ่านเกณฑ์';
+                    }
+                }
+
+                if (chipEl) {
+                    if (!rowMeasured) {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400"></span> ${ptLabel}: รอกรอก`;
+                    } else if (rowFail) {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold border border-rose-300 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> ${ptLabel}: FAIL (±${rowMaxAbs.toFixed(2)} dB)`;
+                    } else {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-300 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${ptLabel}: PASS (±${rowMaxAbs.toFixed(2)} dB)`;
+                    }
+                }
+            });
+
+            if (currentEquipmentCategory === 'DOSIMETER') {
+                const overallEl = document.getElementById('f3_overallResult');
+                if (overallEl) overallEl.value = anyExceed ? 'ไม่ผ่าน' : 'ผ่าน';
+            }
+
+            const banner = document.getElementById('f3_dosi_liveResultBanner');
+            if (banner) {
+                if (!hasAny) {
+                    banner.className = 'bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                    banner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-slate-600 text-xs font-semibold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <span>กรอกค่า Pre-Cal และ/หรือ Post-Cal (dB) เพื่อประเมินผล Noise DosiMeter Verification</span>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono">เกณฑ์ยอมรับ: ±<span class="dosi-tol-label">${tol.toFixed(1)}</span> dB</div>`;
+                } else if (anyExceed) {
+                    banner.className = 'bg-rose-50 border-2 border-rose-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs';
+                    banner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-rose-800 text-sm font-bold font-heading">
+                            <span class="w-3.5 h-3.5 rounded-full bg-rose-500"></span>
+                            <span>⚠️ ผลการทวนสอบ: ไม่ผ่านเกณฑ์ (Max Deviation: ±${maxAbsErrAll.toFixed(2)} dB เกิน ±${tol.toFixed(1)} dB)</span>
+                        </div>
+                        <div class="text-xs text-rose-700 font-mono font-bold">FAIL</div>`;
+                } else {
+                    banner.className = 'bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs';
+                    banner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-emerald-800 text-sm font-bold font-heading">
+                            <span class="w-3.5 h-3.5 rounded-full bg-emerald-500"></span>
+                            <span>✅ ผลการทวนสอบ: ผ่านเกณฑ์ IEC 61252 (Max Deviation: ±${maxAbsErrAll.toFixed(2)} dB ภายใน ±${tol.toFixed(1)} dB)</span>
+                        </div>
+                        <div class="text-xs text-emerald-700 font-mono font-bold">PASS</div>`;
+                }
+            }
+            updateEquipmentDashboard();
+        }
+
+        function collectDosimeterVerificationData() {
+            const dosiData = [];
+            let maxDev = 0;
+            let maxDrift = 0;
+            let hasMeasured = false;
+            const points = [];
+
+            [1, 2].forEach(idx => {
+                const std = document.getElementById(`dosi_std_${idx}`)?.value || '';
+                const pre = document.getElementById(`dosi_pre_${idx}`)?.value || '';
+                const post = document.getElementById(`dosi_post_${idx}`)?.value || '';
+                const preErr = document.getElementById(`dosi_preErr_${idx}`)?.value || '';
+                const postErr = document.getElementById(`dosi_postErr_${idx}`)?.value || '';
+                const drift = document.getElementById(`dosi_drift_${idx}`)?.value || '';
+
+                if (pre !== '' || post !== '') {
+                    hasMeasured = true;
+                    points.push(`${std} dB`);
+                    const pe = parseFloat(preErr);
+                    const poe = parseFloat(postErr);
+                    const dr = parseFloat(drift);
+                    if (!isNaN(pe) && Math.abs(pe) > maxDev) maxDev = Math.abs(pe);
+                    if (!isNaN(poe) && Math.abs(poe) > maxDev) maxDev = Math.abs(poe);
+                    if (!isNaN(dr) && dr > maxDrift) maxDrift = dr;
+                }
+                dosiData.push({ point: idx, std, pre, post, preErr, postErr, drift });
+            });
+
+            return { dosiData, maxDev, maxDrift, hasMeasured, calPointsSummary: points.join(' & ') || '114.0 dB' };
+        }
+
         document.getElementById('formTab3').addEventListener('submit', async (e) => {
             e.preventDefault();
             const f = e.target;
@@ -2801,6 +3292,46 @@
             const appBy = document.getElementById('f3_approvedBy').value.trim();
             localStorage.setItem('etc_operator', calBy);
             if (appBy) localStorage.setItem('etc_supervisor', appBy);
+
+            if (currentEquipmentCategory === 'DOSIMETER') {
+                const { dosiData, maxDev, maxDrift, hasMeasured, calPointsSummary } = collectDosimeterVerificationData();
+                if (!hasMeasured) {
+                    showModal('error', 'ยังไม่ได้กรอกค่าทวนสอบ DosiMeter', 'กรุณากรอกค่า Pre-Cal หรือ Post-Cal อย่างน้อย 1 จุด (114.0 dB หรือ 94.0 dB) ครับ');
+                    return;
+                }
+                const calibrator = document.getElementById('f3_dosi_calibrator').value.trim();
+                if (document.getElementById('f3_dosi_calibratorSelect')?.value === 'CUSTOM') {
+                    localStorage.setItem('etc_last_dosi_calibrator_custom', calibrator);
+                }
+                const tolDb = document.getElementById('f3_dosi_tolerance').value || '1.0';
+                const sn = eqSerial.value.trim();
+                const masterItem = DOSIMETER_CATALOG.find(x => x.serial === sn) || {};
+
+                const payload = {
+                    category: 'DOSIMETER',
+                    formType: 'FORM_3_DOSIMETER_VERIFICATION',
+                    date: document.getElementById('f3_date').value,
+                    preTime: document.getElementById('f3_snd_preTime').value || '-',
+                    postTime: document.getElementById('f3_snd_postTime').value || '-',
+                    nextDate: document.getElementById('f3_nextDate').value,
+                    standard: masterItem.standard || 'IEC 61252',
+                    calibrator: calibrator,
+                    freq: getSelectedDosiFreq(),
+                    weighting: document.getElementById('f3_dosi_weighting').value,
+                    toleranceDb: `±${tolDb} dB`,
+                    maxDevDb: `±${maxDev.toFixed(2)} dB`,
+                    maxDriftDb: `${maxDrift.toFixed(2)} dB`,
+                    calPointsSummary: calPointsSummary,
+                    result: document.getElementById('f3_overallResult').value,
+                    calibratedBy: calBy,
+                    approvedBy: appBy,
+                    notes: document.getElementById('f3_dosi_notes').value.trim(),
+                    syncToForm1: document.getElementById('f3_syncToForm1').checked,
+                    dosiData: dosiData
+                };
+                await postToGoogleSheet(payload, 'submitBtn3', '<span>💾 บันทึกผล Verification ลงฐานข้อมูล Google Sheet</span>');
+                return;
+            }
 
             if (currentEquipmentCategory === 'HEAT') {
                 const { heatData, maxAbsErr, hasMeasured, wbgtCheck } = collectHeatVerificationData();
@@ -2912,6 +3443,32 @@
                 serial: eqSerial.value,
                 code: eqCode.value
             };
+            if (currentEquipmentCategory === 'DOSIMETER') {
+                const { dosiData, maxDev, maxDrift } = collectDosimeterVerificationData();
+                const sn = eqSerial.value.trim();
+                const masterItem = DOSIMETER_CATALOG.find(x => x.serial === sn) || {};
+                const rec = {
+                    date: formatCellDate(document.getElementById('f3_date').value) || '....................',
+                    preTime: document.getElementById('f3_snd_preTime').value || '..........',
+                    postTime: document.getElementById('f3_snd_postTime').value || '..........',
+                    eqModel: eqModel.value || '....................',
+                    serial: eqSerial.value || '....................',
+                    eqCode: eqCode.value || '-',
+                    standard: masterItem.standard || 'IEC 61252',
+                    calibrator: document.getElementById('f3_dosi_calibrator').value || '........................................',
+                    freq: getSelectedDosiFreq(),
+                    weighting: document.getElementById('f3_dosi_weighting').value,
+                    toleranceDb: `±${document.getElementById('f3_dosi_tolerance').value || '1.0'} dB`,
+                    maxDevDb: `±${maxDev.toFixed(2)} dB`,
+                    maxDriftDb: `${maxDrift.toFixed(2)} dB`,
+                    result: document.getElementById('f3_overallResult').value || 'ผ่าน',
+                    calibratedBy: document.getElementById('f3_calibratedBy').value || '........................................',
+                    approvedBy: document.getElementById('f3_approvedBy').value || '........................................',
+                    notes: document.getElementById('f3_dosi_notes').value || '-',
+                    dosiData: dosiData
+                };
+                return buildOfficialForm3DosimeterHtml(rec, eqObj);
+            }
             if (currentEquipmentCategory === 'HEAT') {
                 const { heatData, maxAbsErr, wbgtCheck } = collectHeatVerificationData();
                 const sn = eqSerial.value.trim();
@@ -3037,7 +3594,14 @@
             const qFormSel = document.getElementById('q_targetForm');
             if (!qSerial) return;
 
-            if (category === 'HEAT') {
+            if (category === 'DOSIMETER') {
+                qSerial.innerHTML = DOSIMETER_CATALOG.map(it =>
+                    `<option value="${it.serial}">${it.serial} (${it.brand} ${it.model}${it.code ? ' | ' + it.code : ''})</option>`
+                ).join('');
+                if (qFormSel && qFormSel.options[2]) {
+                    qFormSel.options[2].text = 'แบบฟอร์มที่ 3: Dosimeter Calibration Check';
+                }
+            } else if (category === 'HEAT') {
                 qSerial.innerHTML = HEAT_CATALOG.map(it =>
                     `<option value="${it.serial}">${it.serial} (${it.brand} ${it.model})</option>`
                 ).join('');
@@ -3128,8 +3692,8 @@
                     pickerSelect.innerHTML = res.records.map((r, idx) => {
                         const metric = qCat === 'HEAT'
                             ? `Max Err: ${r.maxErrorC || '-'}`
-                            : (qCat === 'SOUND' ? `Max Dev: ${r.maxDevDb || '-'}` : `Max Error: ${r.maxErrorPct || '-'}`);
-                        const tm = qCat === 'SOUND' ? `${r.preTime || '-'}` : `${r.time || '-'}`;
+                            : ((qCat === 'SOUND' || qCat === 'DOSIMETER') ? `Max Dev: ${r.maxDevDb || '-'}` : `Max Error: ${r.maxErrorPct || '-'}`);
+                        const tm = (qCat === 'SOUND' || qCat === 'DOSIMETER') ? `${r.preTime || '-'}` : `${r.time || '-'}`;
                         return `<option value="${idx}" ${idx === res.records.length - 1 ? 'selected' : ''}>ครั้งที่ ${r.seq}: วันที่ ${r.date} เวลา ${tm} (ผล: ${r.result} | ${metric})</option>`;
                     }).join('');
                 } else {
@@ -3634,6 +4198,109 @@
                 </div>`;
         }
 
+        // สร้าง HTML แบบฟอร์มที่ 3 สำหรับ Noise DosiMeter (Pre/Post Calibration Check - ยังไม่มีรหัส FM-LAB)
+        function buildOfficialForm3DosimeterHtml(rec, eq) {
+            eq = (eq && typeof eq === 'object') ? eq : { name: 'Noise DosiMeter', model: '', serial: '', code: '-' };
+            eq.code = eq.code || '-';
+            const data = rec || {
+                date: '....................',
+                preTime: '..........',
+                postTime: '..........',
+                standard: 'IEC 61252',
+                calibrator: '........................................',
+                freq: '1 kHz',
+                weighting: 'A-Weighting / Slow',
+                toleranceDb: '±1.0 dB',
+                maxDevDb: '-',
+                maxDriftDb: '-',
+                result: '-',
+                calibratedBy: '........................................',
+                approvedBy: '........................................',
+                notes: '-',
+                dosiData: [
+                    { std: '114.0', pre: '', post: '', preErr: '', postErr: '', drift: '' },
+                    { std: '94.0', pre: '', post: '', preErr: '', postErr: '', drift: '' }
+                ]
+            };
+            const rows = Array.isArray(data.dosiData) && data.dosiData.length > 0
+                ? data.dosiData
+                : [{ std: '114.0', pre: '', post: '', preErr: '', postErr: '', drift: '' }, { std: '94.0', pre: '', post: '', preErr: '', postErr: '', drift: '' }];
+
+            const trs = rows.map(r => `
+                <tr>
+                    <td style="text-align:center; height:26px; font-weight:bold;">${escapeHtml(r.std || '')} dB</td>
+                    <td style="text-align:center;">${escapeHtml(r.pre || '-')}</td>
+                    <td style="text-align:center;">${escapeHtml(r.post || '-')}</td>
+                    <td style="text-align:center;">${escapeHtml(r.preErr || '-')}</td>
+                    <td style="text-align:center;">${escapeHtml(r.postErr || '-')}</td>
+                    <td style="text-align:center;">${escapeHtml(r.drift || '-')}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <div style="font-family:'Sarabun', sans-serif; color:#000; max-width:760px; margin:0 auto;">
+                    <div style="text-align:center; font-size:17px; font-weight:bold; text-decoration:underline;">
+                        Noise DosiMeter Verification (Pre / Post Calibration Check)
+                    </div>
+                    <div style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:12px;">
+                        แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด
+                    </div>
+                    <table style="width:100%; font-size:12.5px; margin-bottom:10px; border-collapse:collapse;">
+                        <tr>
+                            <td style="padding:3px 0; width:52%;"><b>Calibrated Date :</b> ${escapeHtml(data.date || '....................')}</td>
+                            <td style="padding:3px 0; width:48%;"><b>Pre / Post Time :</b> ${escapeHtml(data.preTime || '-')} / ${escapeHtml(data.postTime || '-')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Noise DosiMeter Model :</b> ${escapeHtml(data.eqModel || eq.model || '')} (${escapeHtml(data.standard || 'IEC 61252')})</td>
+                            <td style="padding:3px 0;"><b>Serial No. / Code :</b> ${escapeHtml(data.serial || eq.serial || '')} (${escapeHtml(data.eqCode || eq.code || '-')})</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Reader Unit / Calibrator :</b> ${escapeHtml(data.calibrator || '-')}</td>
+                            <td style="padding:3px 0;"><b>Reference Frequency :</b> ${escapeHtml(data.freq || '1 kHz')} &nbsp;|&nbsp; <b>Tolerance :</b> ${escapeHtml(data.toleranceDb || '±1.0 dB')}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:3px 0;"><b>Weighting Setup :</b> ${escapeHtml(data.weighting || 'A-Weighting / Slow')}</td>
+                        </tr>
+                    </table>
+
+                    <table class="official-form-table" border="1" cellspacing="0" cellpadding="5" style="margin-top:8px;">
+                        <thead>
+                            <tr>
+                                <th style="width:18%;">Reference Level</th>
+                                <th style="width:17%;">Pre-Cal (dB)</th>
+                                <th style="width:17%;">Post-Cal (dB)</th>
+                                <th style="width:16%;">Pre Error (dB)</th>
+                                <th style="width:16%;">Post Error (dB)</th>
+                                <th style="width:16%;">Drift |Post-Pre|</th>
+                            </tr>
+                        </thead>
+                        <tbody>${trs}</tbody>
+                    </table>
+
+                    <table style="width:100%; font-size:12.5px; margin-top:10px;">
+                        <tr>
+                            <td style="padding:3px 0;"><b>Verification Summary :</b> Result = <b>${escapeHtml(data.result || 'ผ่าน')}</b> &nbsp;|&nbsp; Max Deviation = ${escapeHtml(data.maxDevDb || '-')} &nbsp;|&nbsp; Max Drift = ${escapeHtml(data.maxDriftDb || '-')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Project / Notes :</b> ${escapeHtml(data.notes || '-')}</td>
+                        </tr>
+                    </table>
+
+                    <table style="width:100%; margin-top:34px; font-size:13px; text-align:center;">
+                        <tr>
+                            <td style="width:50%;">
+                                <div>Calibrated By .......................................................</div>
+                                <div style="margin-top:6px;">( ${escapeHtml(data.calibratedBy || '........................................')} )</div>
+                            </td>
+                            <td style="width:50%;">
+                                <div>Approve By .......................................................</div>
+                                <div style="margin-top:6px;">( ${escapeHtml(data.approvedBy || '........................................')} )</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>`;
+        }
+
         function getCurrentRenderedHistoricalHtml() {
             if (!currentHistoricalData) {
                 return '<div style="text-align:center; padding:30px; color:#64748b;">ไม่มีข้อมูลที่จะแสดงผล</div>';
@@ -3642,7 +4309,7 @@
             const targetForm = currentHistoricalData.targetForm || 'FORM_1';
             const equipment = (currentHistoricalData.equipment && typeof currentHistoricalData.equipment === 'object')
                 ? currentHistoricalData.equipment
-                : { name: cat === 'HEAT' ? 'Heat Stress Monitor' : (cat === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer'), model: '', serial: '', code: '-' };
+                : { name: cat === 'DOSIMETER' ? 'Noise DosiMeter' : (cat === 'HEAT' ? 'Heat Stress Monitor' : (cat === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer')), model: '', serial: '', code: '-' };
             equipment.code = equipment.code || '-';
             const records = Array.isArray(currentHistoricalData.records) ? currentHistoricalData.records : [];
             if (targetForm === 'FORM_1') {
@@ -3653,6 +4320,7 @@
                 const selectEl = document.getElementById('q_form3RecordSelect');
                 const idx = selectEl ? parseInt(selectEl.value, 10) : NaN;
                 const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records.length > 0 ? records[records.length - 1] : null);
+                if (cat === 'DOSIMETER') return buildOfficialForm3DosimeterHtml(chosen, equipment);
                 if (cat === 'HEAT') return buildOfficialForm3HeatHtml(chosen, equipment);
                 if (cat === 'SOUND') return buildOfficialForm3SoundHtml(chosen, equipment);
                 return buildOfficialForm3Html(chosen, equipment);
@@ -3742,6 +4410,22 @@
                     csvRows.push([r.seq, r.date, r.damageDetail, r.operator, r.supervisor, r.notes]);
                 });
                 csvRows.push(['', '', '', '', '', 'FM-LAB-026 / 1 / 30-08-56']);
+            } else if (currentHistoricalData.category === 'DOSIMETER') {
+                const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
+                const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records[records.length - 1] || {});
+                csvRows.push(['Noise DosiMeter Verification (Pre / Post Calibration Check)']);
+                csvRows.push(['Calibrated Date', chosen.date || '', 'Pre / Post Time', `${chosen.preTime || '-'} / ${chosen.postTime || '-'}`]);
+                csvRows.push(['Model', chosen.eqModel || equipment.model, 'Serial No.', `'${equipment.serial}`, 'Asset Code', equipment.code || '-']);
+                csvRows.push(['Reader Unit / Calibrator', chosen.calibrator || '-', 'Frequency', chosen.freq || '1 kHz', 'Tolerance', chosen.toleranceDb || '±1.0 dB']);
+                csvRows.push(['Weighting Setup', chosen.weighting || 'A-Weighting / Slow']);
+                csvRows.push([]);
+                csvRows.push(['Reference Level (dB)', 'Pre-Cal (dB)', 'Post-Cal (dB)', 'Pre Error (dB)', 'Post Error (dB)', 'Drift |Post-Pre|']);
+                (chosen.dosiData || []).forEach(r => {
+                    csvRows.push([r.std || '', r.pre || '', r.post || '', r.preErr || '', r.postErr || '', r.drift || '']);
+                });
+                csvRows.push([]);
+                csvRows.push(['Result', chosen.result || '', 'Max Deviation', chosen.maxDevDb || '', 'Max Drift', chosen.maxDriftDb || '']);
+                csvRows.push(['Calibrated By', chosen.calibratedBy || '', 'Approve By', chosen.approvedBy || '']);
             } else if (currentHistoricalData.category === 'HEAT') {
                 const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
                 const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records[records.length - 1] || {});
@@ -3953,7 +4637,24 @@
             const driftEl = document.getElementById('kpi_max_drift');
             const driftBadge = document.getElementById('kpi_drift_badge');
             const driftTolLabel = document.getElementById('kpi_drift_tol_label');
-            if (currentEquipmentCategory === 'HEAT') {
+            if (currentEquipmentCategory === 'DOSIMETER') {
+                const { maxDev } = collectDosimeterVerificationData();
+                const tolDb = parseFloat(document.getElementById('f3_dosi_tolerance')?.value || '1.0') || 1.0;
+                if (driftTolLabel) driftTolLabel.textContent = `เกณฑ์ยอมรับ ±${tolDb.toFixed(1)} dB`;
+                if (driftEl && driftBadge) {
+                    driftEl.textContent = `${maxDev.toFixed(2)} dB`;
+                    if (maxDev === 0) {
+                        driftBadge.textContent = 'พร้อมวัดผล';
+                        driftBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200';
+                    } else if (maxDev <= tolDb) {
+                        driftBadge.textContent = '✓ ผ่านเกณฑ์ dB';
+                        driftBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
+                    } else {
+                        driftBadge.textContent = `❌ เกิน ±${tolDb.toFixed(1)} dB`;
+                        driftBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200';
+                    }
+                }
+            } else if (currentEquipmentCategory === 'HEAT') {
                 const { maxAbsErr } = collectHeatVerificationData();
                 const tolC = parseFloat(document.getElementById('f3_heat_tolerance')?.value || '0.5') || 0.5;
                 if (driftTolLabel) driftTolLabel.textContent = `เกณฑ์ยอมรับ ±${tolC.toFixed(1)} °C`;
@@ -4032,7 +4733,10 @@
             const activeCat = (currentHistoricalData && currentHistoricalData.category) || document.getElementById('q_category')?.value || 'FLUE_GAS';
             const badgeEl = document.getElementById('trendTolBadge');
             const filterRow = document.getElementById('chartGasFilter');
-            if (activeCat === 'HEAT') {
+            if (activeCat === 'DOSIMETER') {
+                if (badgeEl) badgeEl.textContent = 'Noise DosiMeter IEC 61252 (±1.0 dB)';
+                if (filterRow) filterRow.classList.add('hidden');
+            } else if (activeCat === 'HEAT') {
                 if (badgeEl) badgeEl.textContent = 'Heat Stress ISO 7243 (±0.5 °C)';
                 if (filterRow) filterRow.classList.add('hidden');
             } else if (activeCat === 'SOUND') {
@@ -4052,6 +4756,61 @@
                 container.innerHTML = `
                     <div class="text-xs text-slate-400 py-10 flex flex-col items-center gap-2">
                         <span>📊 ยังไม่มีข้อมูลการทวนสอบในระบบ หรือ กดปุ่ม <b>"🔍 ดึงข้อมูลจาก Google Sheet"</b> เพื่อแสดงแนวโน้ม</span>
+                    </div>`;
+                return;
+            }
+
+            if (activeCat === 'DOSIMETER') {
+                const width = 760, height = 230, padLeft = 50, padRight = 35, padTop = 25, padBottom = 35;
+                const plotW = width - padLeft - padRight, plotH = height - padTop - padBottom;
+                const minY = -1.5, maxY = 1.5;
+                const toY = val => padTop + plotH * (1 - (val - minY) / (maxY - minY));
+                const n = recs.length;
+                const toX = idx => n === 1 ? padLeft + plotW / 2 : padLeft + (idx / (n - 1)) * plotW;
+
+                const gridHtml = `
+                    <line x1="${padLeft}" y1="${toY(1.0)}" x2="${width - padRight}" y2="${toY(1.0)}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.2" opacity="0.7"/>
+                    <text x="${width - padRight + 4}" y="${toY(1.0) + 3}" fill="#dc2626" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold">+1.0 dB</text>
+                    <line x1="${padLeft}" y1="${toY(0)}" x2="${width - padRight}" y2="${toY(0)}" stroke="#94a3b8" stroke-width="1.2"/>
+                    <text x="${padLeft - 6}" y="${toY(0) + 3}" fill="#64748b" font-size="9" font-family="'JetBrains Mono', monospace" text-anchor="end">0 dB</text>
+                    <line x1="${padLeft}" y1="${toY(-1.0)}" x2="${width - padRight}" y2="${toY(-1.0)}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.2" opacity="0.7"/>
+                    <text x="${width - padRight + 4}" y="${toY(-1.0) + 3}" fill="#dc2626" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold">-1.0 dB</text>
+                `;
+
+                const prePts = [], postPts = [];
+                recs.forEach((r, idx) => {
+                    const row0 = (Array.isArray(r.dosiData) && r.dosiData[0]) ? r.dosiData[0] : {};
+                    const pe = parseFloat(row0.preErr) || 0;
+                    const poe = parseFloat(row0.postErr) || 0;
+                    prePts.push({ x: toX(idx), y: toY(Math.max(minY, Math.min(maxY, pe))), val: pe, date: r.date, seq: r.seq });
+                    postPts.push({ x: toX(idx), y: toY(Math.max(minY, Math.min(maxY, poe))), val: poe, date: r.date, seq: r.seq });
+                });
+
+                let seriesHtml = '';
+                [{ pts: prePts, color: '#7c3aed', name: 'Pre-Cal Error' }, { pts: postPts, color: '#2563eb', name: 'Post-Cal Error' }].forEach(s => {
+                    if (s.pts.length > 1) {
+                        const d = s.pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+                        seriesHtml += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linecap="round"/>`;
+                    }
+                    s.pts.forEach(p => {
+                        seriesHtml += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="${s.color}" stroke="#fff" stroke-width="2"><title>${s.name} (ครั้งที่ ${p.seq}, ${p.date}): ${p.val >= 0 ? '+' : ''}${p.val.toFixed(2)} dB</title></circle>`;
+                    });
+                });
+
+                const xLabelsHtml = recs.map((r, idx) =>
+                    `<text x="${toX(idx).toFixed(1)}" y="${height - 10}" fill="#64748b" font-size="10" text-anchor="middle">${escapeHtml(r.date || `รอบ ${r.seq}`)}</text>`
+                ).join('');
+
+                container.innerHTML = `
+                    <div class="w-full flex flex-col items-center">
+                        <svg viewBox="0 0 ${width} ${height}" class="w-full max-w-[800px] h-auto select-none">
+                            ${gridHtml}${seriesHtml}${xLabelsHtml}
+                        </svg>
+                        <div class="flex flex-wrap items-center justify-center gap-4 mt-2 text-[11px]">
+                            <div class="flex items-center gap-1.5 font-bold"><span class="w-3 h-3 rounded-full bg-violet-600"></span><span>Pre-Cal Error (dB)</span></div>
+                            <div class="flex items-center gap-1.5 font-bold"><span class="w-3 h-3 rounded-full bg-blue-600"></span><span>Post-Cal Error (dB)</span></div>
+                            <div class="text-[10px] text-red-500 font-mono font-semibold">-- เส้นประแดง = เกณฑ์ยอมรับ ±1.0 dB (IEC 61252)</div>
+                        </div>
                     </div>`;
                 return;
             }
@@ -4355,6 +5114,21 @@
             if (lastOp) document.getElementById('f3_calibratedBy').value = lastOp;
             if (lastSup) document.getElementById('f3_approvedBy').value = lastSup;
 
+            if (currentEquipmentCategory === 'DOSIMETER') {
+                document.getElementById('f3_snd_preTime').value = nowTime;
+                document.getElementById('f3_snd_postTime').value = nowTime;
+                onDosiReaderSelectChange();
+                document.getElementById('f3_dosi_freq').value = '1 kHz';
+                toggleDosiCustomFreq();
+                document.getElementById('f3_dosi_weighting').value = 'A-Weighting / Slow';
+                document.getElementById('dosi_std_1').value = '114.0';
+                document.getElementById('dosi_pre_1').value = '114.0';
+                document.getElementById('dosi_post_1').value = '114.0';
+                recalculateDosimeterTable();
+                updateEquipmentDashboard();
+                return;
+            }
+
             if (currentEquipmentCategory === 'HEAT') {
                 document.getElementById('f3_time').value = nowTime;
                 const refEl = document.getElementById('f3_heat_refDevice');
@@ -4444,7 +5218,10 @@
             const urlParams = new URLSearchParams(window.location.search);
             const paramCat = (urlParams.get('cat') || '').toUpperCase();
             const paramSn = (urlParams.get('sn') || '').trim();
-            if (paramCat === 'HEAT' || (paramSn && HEAT_CATALOG.some(x => x.serial === paramSn))) {
+            if (paramCat === 'DOSIMETER' || (paramSn && DOSIMETER_CATALOG.some(x => x.serial === paramSn))) {
+                switchEquipmentCategory('DOSIMETER');
+                if (paramSn) renderCategoryPresetOptions(paramSn);
+            } else if (paramCat === 'HEAT' || (paramSn && HEAT_CATALOG.some(x => x.serial === paramSn))) {
                 switchEquipmentCategory('HEAT');
                 if (paramSn) renderCategoryPresetOptions(paramSn);
             } else if (paramCat === 'SOUND' || (paramSn && SOUND_CATALOG.some(x => x.serial === paramSn))) {
