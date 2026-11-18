@@ -30,6 +30,11 @@ const CONFIG = {
   DB_DOSIMETER_FORM2_SHEET: "DB_Dosimeter_Repair_History",
   DB_DOSIMETER_FORM3_SHEET: "DB_Dosimeter_Verification",
 
+  // ชื่อ Sheet ฐานข้อมูลเครื่อง Acoustic Calibrators
+  DB_CALIBRATOR_FORM1_SHEET: "DB_Calibrator_Maintenance_Cal",
+  DB_CALIBRATOR_FORM2_SHEET: "DB_Calibrator_Repair_History",
+  DB_CALIBRATOR_FORM3_SHEET: "DB_Calibrator_Verification",
+
   // ชื่อ Sheet แบบฟอร์มมาตรฐานพร้อมพิมพ์ (Form Template Sheets)
   FORM1_TEMPLATE_SHEET: "Form1_สอบเทียบและบำรุงรักษา",
   FORM2_TEMPLATE_SHEET: "Form2_ประวัติเครื่องมือ",
@@ -43,6 +48,9 @@ const CONFIG = {
   DOSIMETER_FORM1_TEMPLATE_SHEET: "Form1_Dosimeter_สอบเทียบและบำรุงรักษา",
   DOSIMETER_FORM2_TEMPLATE_SHEET: "Form2_Dosimeter_ประวัติเครื่องมือ",
   DOSIMETER_FORM3_TEMPLATE_SHEET: "Form3_Dosimeter_Verification",
+  CALIBRATOR_FORM1_TEMPLATE_SHEET: "Form1_Calibrator_สอบเทียบและบำรุงรักษา",
+  CALIBRATOR_FORM2_TEMPLATE_SHEET: "Form2_Calibrator_ประวัติเครื่องมือ",
+  CALIBRATOR_FORM3_TEMPLATE_SHEET: "Form3_Calibrator_Verification",
 
   // อีเมลผู้รับรายงานสรุปประจำสัปดาห์ (คั่นด้วย , หากมีหลายอีเมล)
   EMAIL_RECIPIENTS: "thongchai_b@etc1992.com",
@@ -224,6 +232,35 @@ function getHeatSerialList() {
   return Object.keys(HEAT_EQUIPMENT_MASTER);
 }
 
+// ทะเบียนเครื่องกำเนิดเสียงมาตรฐาน (Acoustic Calibrators - ข้อมูลจริง 10 เครื่องจากทะเบียน Sampling)
+const CALIBRATOR_EQUIPMENT_MASTER = {
+  "34302326": {"name": "Acoustic Calibrator", "brand": "RION", "model": "RION NC75", "code": "", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": ""},
+  "34802645": {"name": "Acoustic Calibrator", "brand": "RION", "model": "RION NC75", "code": "", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": ""},
+  "92863": {"name": "Acoustic Calibrator", "brand": "Cirrus", "model": "Cirrus CR:517", "code": "", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": ""},
+  "34234715": {"name": "Acoustic Calibrator", "brand": "RION", "model": "RION NC75", "code": "", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": ""},
+  "34234716": {"name": "Acoustic Calibrator", "brand": "RION", "model": "RION NC75", "code": "", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": ""},
+  "34745929": {"name": "Acoustic Calibrator", "brand": "RION", "model": "RION NC-75", "code": "S67021837", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": ""},
+  "34946010": {"name": "Acoustic Calibrator", "brand": "RION", "model": "RION NC-75", "code": "S67021838", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": "ผู้ใช้งาน: นายอพิวัตร คลังเพชร"},
+  "34946011": {"name": "Acoustic Calibrator", "brand": "RION", "model": "RION NC-75", "code": "", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": "ไม่มีรหัสทรัพย์สิน แถมจากซื้อเครื่อง | ผู้ใช้งาน: นายเสกสรรค์ ปลื้มวงษ์"},
+  "34946012": {"name": "Acoustic Calibrator", "brand": "RION", "model": "RION NC-75", "code": "", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": "ไม่มีรหัสทรัพย์สิน แถมจากซื้อเครื่อง | ผู้ใช้งาน: นายคมกฤษ ครรธสอน | กำหนดส่งสอบเทียบ: 01 กันยายน 2570"},
+  "34946013": {"name": "Acoustic Calibrator", "brand": "RION", "model": "RION NC-75", "code": "", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "notes": "ไม่มีรหัสทรัพย์สิน แถมจากซื้อเครื่อง | ผู้ใช้งาน: นายสุทธา สองธนินัย | กำหนดส่งสอบเทียบ: 01 ตุลาคม 2570"}
+};
+
+function getCalibratorSerialList() {
+  var active = [];
+  var others = [];
+  var keys = Object.keys(CALIBRATOR_EQUIPMENT_MASTER);
+  for (var i = 0; i < keys.length; i++) {
+    var sn = keys[i];
+    if (CALIBRATOR_EQUIPMENT_MASTER[sn].status === "พร้อมใช้งาน") {
+      active.push(sn);
+    } else {
+      others.push(sn);
+    }
+  }
+  return active.concat(others);
+}
+
 function resolveCategoryConfig(category) {
   var cat = String(category || "").toUpperCase();
   if (cat === "SOUND") {
@@ -250,6 +287,19 @@ function resolveCategoryConfig(category) {
       tpl3: CONFIG.DOSIMETER_FORM3_TEMPLATE_SHEET,
       defaultName: "Noise DosiMeter",
       defaultSerial: "CB1365"
+    };
+  }
+  if (cat === "CALIBRATOR") {
+    return {
+      category: "CALIBRATOR",
+      db1: CONFIG.DB_CALIBRATOR_FORM1_SHEET,
+      db2: CONFIG.DB_CALIBRATOR_FORM2_SHEET,
+      db3: CONFIG.DB_CALIBRATOR_FORM3_SHEET,
+      tpl1: CONFIG.CALIBRATOR_FORM1_TEMPLATE_SHEET,
+      tpl2: CONFIG.CALIBRATOR_FORM2_TEMPLATE_SHEET,
+      tpl3: CONFIG.CALIBRATOR_FORM3_TEMPLATE_SHEET,
+      defaultName: "Acoustic Calibrator",
+      defaultSerial: "34302326"
     };
   }
   if (cat === "HEAT") {
@@ -303,6 +353,7 @@ function onOpen() {
     .addItem("🔊 สร้าง/รีเฟรชหน้าแบบฟอร์มเครื่องวัดเสียง (Sound)", "initializeSoundSheetsAndForms")
     .addItem("🌡️ สร้าง/รีเฟรชหน้าแบบฟอร์มเครื่องวัดความร้อน (Heat Stress)", "initializeHeatSheetsAndForms")
     .addItem("🎧 สร้าง/รีเฟรชหน้าแบบฟอร์ม Noise DosiMeter", "initializeDosimeterSheetsAndForms")
+    .addItem("🎙️ สร้าง/รีเฟรชหน้าแบบฟอร์ม Acoustic Calibrator", "initializeCalibratorSheetsAndForms")
     .addItem("📄 ดึงข้อมูลตาม S/N และช่วงวันที่ที่ระบุในแบบฟอร์ม", "refreshAllFormViews")
     .addItem("📥 ดาวน์โหลดหน้าแบบฟอร์มปัจจุบัน (PDF / Excel)", "showDownloadDialogForActiveSheet")
     .addSeparator()
@@ -391,6 +442,20 @@ function onEdit(e) {
     var dSn3 = String(sheet.getRange("F3").getValue()).trim();
     var dSelectedRec = a1 === "F4" ? String(sheet.getRange("F4").getValue()).trim() : "";
     populateDosimeterForm3BySerialAndRecord(dSn3, dSelectedRec);
+  }
+  // Calibrator Form 1
+  else if (sheetName === CONFIG.CALIBRATOR_FORM1_TEMPLATE_SHEET && (a1 === "I4" || a1 === "I5" || a1 === "K5")) {
+    populateForm1BySerial(String(sheet.getRange("I4").getValue()).trim(), sheet.getRange("I5").getValue(), sheet.getRange("K5").getValue(), "CALIBRATOR");
+  }
+  // Calibrator Form 2
+  else if (sheetName === CONFIG.CALIBRATOR_FORM2_TEMPLATE_SHEET && (a1 === "E5" || a1 === "B6" || a1 === "E6")) {
+    populateForm2BySerial(String(sheet.getRange("E5").getValue()).trim(), sheet.getRange("B6").getValue(), sheet.getRange("E6").getValue(), "CALIBRATOR");
+  }
+  // Calibrator Form 3
+  else if (sheetName === CONFIG.CALIBRATOR_FORM3_TEMPLATE_SHEET && (a1 === "F3" || a1 === "F4")) {
+    var cSn3 = String(sheet.getRange("F3").getValue()).trim();
+    var cSelectedRec = a1 === "F4" ? String(sheet.getRange("F4").getValue()).trim() : "";
+    populateCalibratorForm3BySerialAndRecord(cSn3, cSelectedRec);
   }
 }
 
@@ -597,6 +662,34 @@ function doPost(e) {
       }
     }
 
+    // =========================================================================
+    // กรณีที่ 3E: บันทึก Acoustic Calibrator Cross-Check Verification
+    // =========================================================================
+    else if (data.formType === "FORM_3_CALIBRATOR_VERIFICATION") {
+      recordCalibratorForm3Data(data, eq);
+      populateCalibratorForm3BySerialAndRecord(eq.serial, "");
+      summaryMessages.push("✓ บันทึกลงฐานข้อมูลและแบบฟอร์มทวนสอบ Acoustic Calibrator เรียบร้อย");
+
+      if (data.syncToForm1) {
+        recordForm1Data({
+          subType: "verification",
+          date: data.date,
+          nextDate: data.nextDate || "",
+          description: "ทวนสอบ Acoustic Calibrator (" + (data.calPointsSummary || "94.0 & 114.0 dB") + ", " + (data.freq || "1 kHz") + ")",
+          correction: "Max Dev: " + (data.maxDevDb || "-"),
+          uncertainty: data.freqMeas || "1000 Hz",
+          tolerance: data.toleranceDb || "±0.25 dB",
+          result: data.result || "ผ่าน",
+          agency: "ภายในแผนกปฏิบัติการภาคสนาม (ETC)",
+          operator: data.calibratedBy || "",
+          supervisor: data.approvedBy || "",
+          notes: "Ref SLM: " + (data.refSlm || "-") + (data.notes ? " | " + data.notes : "")
+        }, eq, CONFIG.DB_CALIBRATOR_FORM1_SHEET);
+        populateForm1BySerial(eq.serial, "", "", "CALIBRATOR");
+        summaryMessages.push("✓ ส่งผลสรุปเข้าแบบฟอร์มที่ 1 (Acoustic Calibrator) อัตโนมัติ");
+      }
+    }
+
     return createJsonResponse({
       status: "success",
       message: "Data recorded successfully",
@@ -718,7 +811,49 @@ function queryHistoricalData(params) {
     }
   }
 
-  // ดึงข้อมูลแบบฟอร์มที่ 3 (แยก Flue Gas vs Sound vs Heat Stress vs Dosimeter)
+  // ดึงข้อมูลแบบฟอร์มที่ 3 (แยก Flue Gas vs Sound vs Heat vs Dosimeter vs Calibrator)
+  else if (targetForm === "FORM_3" && catCfg.category === "CALIBRATOR") {
+    var seqC = 1;
+    for (var cIdx = 1; cIdx < allData.length; cIdx++) {
+      var rc = allData[cIdx];
+      var rowSnC = String(rc[3] || "").replace(/^'/, "").trim();
+      if (cleanSerial && cleanSerial !== "ALL" && rowSnC !== cleanSerial) continue;
+
+      var recDateC = parseDateValue(rc[1]);
+      if (startDt && recDateC && recDateC < startDt) continue;
+      if (endDt && recDateC && recDateC > endDt) continue;
+
+      var parsedCal = [];
+      try {
+        parsedCal = JSON.parse(rc[14] || "[]");
+      } catch (errC) {
+        parsedCal = [];
+      }
+
+      records.push({
+        seq: seqC++,
+        rowIndex: cIdx + 1,
+        date: formatCellDate(rc[1]),
+        rawDate: formatIsoDate(rc[1]),
+        time: formatCellTime(rc[2]),
+        serial: rowSnC,
+        eqModel: rc[4] || eqInfo.model,
+        eqCode: rc[5] || eqInfo.code,
+        standard: rc[6] || eqInfo.standard || "IEC 60942 (Class 1)",
+        refSlm: rc[7] || "-",
+        freq: rc[8] || "1 kHz",
+        weighting: rc[9] || "A-Weighting / Fast",
+        toleranceDb: rc[10] || "±0.25 dB",
+        calibratedBy: rc[11] || "",
+        approvedBy: rc[12] || "",
+        result: rc[13] || "ผ่าน",
+        calData: parsedCal,
+        maxDevDb: rc[15] || "-",
+        freqMeas: rc[16] || "-",
+        notes: rc[17] || ""
+      });
+    }
+  }
   else if (targetForm === "FORM_3" && catCfg.category === "DOSIMETER") {
     var seqD = 1;
     for (var dIdx = 1; dIdx < allData.length; dIdx++) {
@@ -1120,6 +1255,46 @@ function recordDosimeterForm3Data(data, eq) {
   ]);
 }
 
+function recordCalibratorForm3Data(data, eq) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(CONFIG.DB_CALIBRATOR_FORM3_SHEET);
+  if (!sheet) sheet = ss.insertSheet(CONFIG.DB_CALIBRATOR_FORM3_SHEET);
+
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "Timestamp", "Verification Date", "Verification Time", "Serial No.",
+      "Model", "Equipment Code", "Standard", "Ref Class 1 SLM",
+      "Frequency", "Weighting", "Tolerance (±dB)", "Calibrated By", "Approve By", "Result",
+      "CalibratorData_JSON", "Max Deviation (dB)", "Checked Frequency", "Notes"
+    ];
+    sheet.appendRow(headers);
+    styleDbHeader(sheet, headers.length, "#0e7490");
+  }
+
+  var snClean = String(eq.serial || "").trim();
+  var masterMeta = CALIBRATOR_EQUIPMENT_MASTER[snClean] || {};
+  sheet.appendRow([
+    new Date(),
+    data.date || "",
+    data.time || "",
+    "'" + snClean,
+    eq.model || masterMeta.model || "",
+    eq.code || masterMeta.code || "",
+    data.standard || masterMeta.standard || "IEC 60942 (Class 1)",
+    data.refSlm || "-",
+    data.freq || "1 kHz",
+    data.weighting || "A-Weighting / Fast",
+    data.toleranceDb || "±0.25 dB",
+    data.calibratedBy || "",
+    data.approvedBy || "",
+    data.result || "ผ่าน",
+    JSON.stringify(data.calData || []),
+    data.maxDevDb || "-",
+    data.freqMeas || "-",
+    data.notes || ""
+  ]);
+}
+
 function recordLegacyChecklist(data, eq, category) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(CONFIG.LEGACY_SHEET);
@@ -1187,6 +1362,12 @@ function initializeDosimeterSheetsAndForms() {
   populateDosimeterForm3BySerialAndRecord("CB1365", "");
 }
 
+function initializeCalibratorSheetsAndForms() {
+  populateForm1BySerial("34302326", "", "", "CALIBRATOR");
+  populateForm2BySerial("34302326", "", "", "CALIBRATOR");
+  populateCalibratorForm3BySerialAndRecord("34302326", "");
+}
+
 function refreshAllFormViews() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -1249,6 +1430,19 @@ function refreshAllFormViews() {
   if (ds3) {
     populateDosimeterForm3BySerialAndRecord(String(ds3.getRange("F3").getValue()).trim() || "CB1365", String(ds3.getRange("F4").getValue()).trim());
   }
+
+  var cs1 = ss.getSheetByName(CONFIG.CALIBRATOR_FORM1_TEMPLATE_SHEET);
+  if (cs1) {
+    populateForm1BySerial(String(cs1.getRange("I4").getValue()).trim() || "34302326", cs1.getRange("I5").getValue(), cs1.getRange("K5").getValue(), "CALIBRATOR");
+  }
+  var cs2 = ss.getSheetByName(CONFIG.CALIBRATOR_FORM2_TEMPLATE_SHEET);
+  if (cs2) {
+    populateForm2BySerial(String(cs2.getRange("E5").getValue()).trim() || "34302326", cs2.getRange("B6").getValue(), cs2.getRange("E6").getValue(), "CALIBRATOR");
+  }
+  var cs3 = ss.getSheetByName(CONFIG.CALIBRATOR_FORM3_TEMPLATE_SHEET);
+  if (cs3) {
+    populateCalibratorForm3BySerialAndRecord(String(cs3.getRange("F3").getValue()).trim() || "34302326", String(cs3.getRange("F4").getValue()).trim());
+  }
 }
 
 /**
@@ -1290,7 +1484,7 @@ function populateForm1BySerial(targetSerial, startDateVal, endDateVal, category)
 
   var snList1 = catCfg.category === "SOUND"
     ? getSoundSerialList()
-    : (catCfg.category === "HEAT" ? getHeatSerialList() : (catCfg.category === "DOSIMETER" ? getDosimeterSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"]));
+    : (catCfg.category === "HEAT" ? getHeatSerialList() : (catCfg.category === "DOSIMETER" ? getDosimeterSerialList() : (catCfg.category === "CALIBRATOR" ? getCalibratorSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"])));
   var snRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(snList1, true)
     .setAllowInvalid(true)
@@ -1428,7 +1622,7 @@ function populateForm2BySerial(targetSerial, startDateVal, endDateVal, category)
 
   var snList2 = catCfg.category === "SOUND"
     ? getSoundSerialList()
-    : (catCfg.category === "HEAT" ? getHeatSerialList() : (catCfg.category === "DOSIMETER" ? getDosimeterSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"]));
+    : (catCfg.category === "HEAT" ? getHeatSerialList() : (catCfg.category === "DOSIMETER" ? getDosimeterSerialList() : (catCfg.category === "CALIBRATOR" ? getCalibratorSerialList() : ["01563443", "01807527", "01859560", "60378478", "63455616", "63455658"])));
   var snRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(snList2, true)
     .setAllowInvalid(true)
@@ -2060,6 +2254,131 @@ function renderDosimeterForm3Sheet(data, eq, recordOptions, currentLabel) {
   sheet.setColumnWidth(6, 175);
 }
 
+/**
+ * 3E. แบบฟอร์มที่ 3 (Acoustic Calibrator): Cross-Check Output (94.0 dB / 114.0 dB @ 1 kHz)
+ * (ตามข้อกำหนด: ยังไม่ต้องใส่รหัส FM-LAB)
+ */
+function populateCalibratorForm3BySerialAndRecord(targetSerial, selectedRecordLabel) {
+  var cleanSerial = String(targetSerial || "34302326").replace(/^'/, "").trim();
+  var query = queryHistoricalData({
+    category: "CALIBRATOR",
+    targetForm: "FORM_3",
+    serial: cleanSerial
+  });
+  var eqInfo = query.equipment;
+  var records = query.records;
+
+  var recordOptions = [];
+  var chosenRecord = null;
+  for (var i = records.length - 1; i >= 0; i--) {
+    var r = records[i];
+    var label = "#" + r.seq + " | " + r.date + " " + (r.time || "-") + " (" + r.result + ")";
+    recordOptions.push(label);
+    if (selectedRecordLabel && label === selectedRecordLabel) {
+      chosenRecord = r;
+    }
+  }
+  if (!chosenRecord && records.length > 0) {
+    chosenRecord = records[records.length - 1];
+    selectedRecordLabel = recordOptions[0];
+  }
+
+  var payload = chosenRecord || {
+    date: "-",
+    time: "-",
+    refSlm: "-",
+    freq: "1 kHz",
+    weighting: "A-Weighting / Fast",
+    toleranceDb: "±0.25 dB",
+    maxDevDb: "-",
+    freqMeas: "-",
+    calibratedBy: "........................................",
+    approvedBy: "........................................",
+    notes: "-",
+    calData: [
+      { std: "94.0", measured: "", hz: "", err: "", status: "-" },
+      { std: "114.0", measured: "", hz: "", err: "", status: "-" }
+    ]
+  };
+  renderCalibratorForm3Sheet(payload, eqInfo, recordOptions, selectedRecordLabel || "ล่าสุด");
+}
+
+function renderCalibratorForm3Sheet(data, eq, recordOptions, currentLabel) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(CONFIG.CALIBRATOR_FORM3_TEMPLATE_SHEET);
+  if (!sheet) sheet = ss.insertSheet(CONFIG.CALIBRATOR_FORM3_TEMPLATE_SHEET);
+
+  var cleanSerial = String(eq.serial || "34302326").replace(/^'/, "").trim();
+  sheet.clear();
+
+  sheet.getRange("A1:F1").merge().setValue("Acoustic Calibrator Verification (Cross-Check with Class 1 SLM)")
+       .setFontSize(13).setFontWeight("bold").setHorizontalAlignment("center");
+  sheet.getRange("A2:F2").merge().setValue("แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด")
+       .setFontSize(10).setFontWeight("bold").setHorizontalAlignment("center");
+
+  sheet.getRange("A3").setValue("Verification Date :").setFontWeight("bold");
+  sheet.getRange("B3").setValue(data.date || "-");
+  sheet.getRange("C3").setValue("Verification Time :").setFontWeight("bold");
+  sheet.getRange("D3").setValue(data.time || "-");
+
+  sheet.getRange("A4").setValue("Calibrator Model :").setFontWeight("bold");
+  sheet.getRange("B4").setValue((eq.model || "") + " [" + (eq.standard || "IEC 60942 (Class 1)") + "]");
+  sheet.getRange("C4").setValue("Serial No. / Code :").setFontWeight("bold");
+  sheet.getRange("D4").setValue("'" + cleanSerial + (eq.code ? " (" + eq.code + ")" : ""));
+
+  sheet.getRange("A5").setValue("Ref Class 1 SLM :").setFontWeight("bold");
+  sheet.getRange("B5").setValue(data.refSlm || "-");
+  sheet.getRange("C5").setValue("Freq / Tolerance :").setFontWeight("bold");
+  sheet.getRange("D5").setValue((data.freq || "1 kHz") + " | " + (data.toleranceDb || "±0.25 dB"));
+
+  sheet.getRange("A6").setValue("SLM Weighting Setup :").setFontWeight("bold");
+  sheet.getRange("B6:D6").merge().setValue(data.weighting || "A-Weighting / Fast");
+
+  sheet.getRange("E2:F2").merge().setValue("🔍 ค้นหาใบ Verification Calibrator")
+       .setFontWeight("bold").setBackground("#cffafe").setHorizontalAlignment("center");
+  sheet.getRange("E3").setValue("1. เลือก S/N:").setFontWeight("bold").setFontSize(9);
+  var snRule = SpreadsheetApp.newDataValidation().requireValueInList(getCalibratorSerialList(), true).setAllowInvalid(true).build();
+  sheet.getRange("F3").setValue("'" + cleanSerial).setDataValidation(snRule).setBackground("#fef9c3").setFontWeight("bold");
+  sheet.getRange("E4").setValue("2. เลือกครั้งที่ทวนสอบ:").setFontWeight("bold").setFontSize(9);
+  sheet.getRange("F4").setValue(currentLabel).setBackground("#fef9c3").setFontSize(9);
+  if (recordOptions && recordOptions.length > 0) {
+    sheet.getRange("F4").setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(recordOptions, true).setAllowInvalid(true).build());
+  } else {
+    sheet.getRange("F4").clearDataValidations();
+  }
+
+  var headers = ["Target Level (dB)", "Ref SLM Measured (dB)", "Frequency Check (Hz)", "Deviation Error (dB)", "Status", "Tolerance"];
+  sheet.getRange(8, 1, 1, 6).setValues([headers])
+       .setBackground("#e2e8f0").setFontWeight("bold").setHorizontalAlignment("center")
+       .setBorder(true, true, true, true, true, true);
+
+  var rows = Array.isArray(data.calData) ? data.calData : [];
+  var tableRows = [];
+  for (var i = 0; i < 2; i++) {
+    var pt = rows[i] || {};
+    tableRows.push([pt.std || (i === 0 ? "94.0" : "114.0"), pt.measured || "", pt.hz || "", pt.err || "", pt.status || "-", data.toleranceDb || "±0.25 dB"]);
+  }
+  sheet.getRange(9, 1, 2, 6).setValues(tableRows).setHorizontalAlignment("center")
+       .setBorder(true, true, true, true, true, true);
+
+  sheet.getRange("A12").setValue("Result :").setFontWeight("bold");
+  sheet.getRange("B12:C12").merge().setValue((data.result || "ผ่าน") + " (Max Dev: " + (data.maxDevDb || "-") + ")");
+  sheet.getRange("D12").setValue("Notes :").setFontWeight("bold");
+  sheet.getRange("E12:F12").merge().setValue(data.notes || "-");
+
+  sheet.getRange("A14:C14").merge().setValue("Calibrated By .......................................................").setHorizontalAlignment("center");
+  sheet.getRange("D14:F14").merge().setValue("Approve By .......................................................").setHorizontalAlignment("center");
+  sheet.getRange("A15:C15").merge().setValue("( " + (data.calibratedBy || "........................................") + " )").setHorizontalAlignment("center");
+  sheet.getRange("D15:F15").merge().setValue("( " + (data.approvedBy || "........................................") + " )").setHorizontalAlignment("center");
+
+  sheet.setColumnWidth(1, 175);
+  sheet.setColumnWidth(2, 185);
+  sheet.setColumnWidth(3, 165);
+  sheet.setColumnWidth(4, 150);
+  sheet.setColumnWidth(5, 130);
+  sheet.setColumnWidth(6, 170);
+}
+
 function showDownloadDialogForActiveSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getActiveSheet();
@@ -2067,9 +2386,9 @@ function showDownloadDialogForActiveSheet() {
   var sheetId = sheet.getSheetId();
   var sheetName = sheet.getName();
 
-  var isLandscape = (sheetName === CONFIG.FORM1_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM1_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM1_TEMPLATE_SHEET || sheetName === CONFIG.DOSIMETER_FORM1_TEMPLATE_SHEET);
+  var isLandscape = (sheetName === CONFIG.FORM1_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM1_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM1_TEMPLATE_SHEET || sheetName === CONFIG.DOSIMETER_FORM1_TEMPLATE_SHEET || sheetName === CONFIG.CALIBRATOR_FORM1_TEMPLATE_SHEET);
   var exportRange = "";
-  if (sheetName === CONFIG.FORM3_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM3_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM3_TEMPLATE_SHEET || sheetName === CONFIG.DOSIMETER_FORM3_TEMPLATE_SHEET) {
+  if (sheetName === CONFIG.FORM3_TEMPLATE_SHEET || sheetName === CONFIG.SOUND_FORM3_TEMPLATE_SHEET || sheetName === CONFIG.HEAT_FORM3_TEMPLATE_SHEET || sheetName === CONFIG.DOSIMETER_FORM3_TEMPLATE_SHEET || sheetName === CONFIG.CALIBRATOR_FORM3_TEMPLATE_SHEET) {
     exportRange = "&r1=0&c1=0&r2=26&c2=4"; // พิมพ์เฉพาะคอลัมน์ A-D ของใบ Verification
   }
 
@@ -2100,12 +2419,23 @@ function showDownloadDialogForActiveSheet() {
 function getEquipmentInfoBySerial(serial, dbSheetName, category) {
   var clean = String(serial || "").replace(/^'/, "").trim();
   var catUpper = String(category || "").toUpperCase();
-  var isDosi = catUpper === "DOSIMETER" || Boolean(DOSIMETER_EQUIPMENT_MASTER[clean]);
-  var isHeat = catUpper === "HEAT" || (!isDosi && Boolean(HEAT_EQUIPMENT_MASTER[clean]));
-  var isSound = catUpper === "SOUND" || (!isDosi && !isHeat && Boolean(SOUND_EQUIPMENT_MASTER[clean]));
+  var isCal = catUpper === "CALIBRATOR" || Boolean(CALIBRATOR_EQUIPMENT_MASTER[clean]);
+  var isDosi = catUpper === "DOSIMETER" || (!isCal && Boolean(DOSIMETER_EQUIPMENT_MASTER[clean]));
+  var isHeat = catUpper === "HEAT" || (!isCal && !isDosi && Boolean(HEAT_EQUIPMENT_MASTER[clean]));
+  var isSound = catUpper === "SOUND" || (!isCal && !isDosi && !isHeat && Boolean(SOUND_EQUIPMENT_MASTER[clean]));
   var info;
 
-  if (isDosi && DOSIMETER_EQUIPMENT_MASTER[clean]) {
+  if (isCal && CALIBRATOR_EQUIPMENT_MASTER[clean]) {
+    var cm = CALIBRATOR_EQUIPMENT_MASTER[clean];
+    info = {
+      name: cm.name,
+      model: cm.model,
+      code: cm.code,
+      serial: clean,
+      standard: cm.standard,
+      status: cm.status
+    };
+  } else if (isDosi && DOSIMETER_EQUIPMENT_MASTER[clean]) {
     var dm = DOSIMETER_EQUIPMENT_MASTER[clean];
     info = {
       name: dm.name,
@@ -2459,16 +2789,62 @@ function sendWeeklyDashboardReport() {
   }
 
   // =========================================================================
-  // Checklist 5 รายการ (แยก Flue Gas vs Sound)
+  // หมวด 5: Acoustic Calibrator (IEC 60942 Class 1)
+  // =========================================================================
+  var calForm1 = readWeeklyForm1Records(ss, CONFIG.DB_CALIBRATOR_FORM1_SHEET, cutoffDate, "Acoustic Calibrator");
+  var calForm2 = readWeeklyForm2Records(ss, CONFIG.DB_CALIBRATOR_FORM2_SHEET, cutoffDate, "Acoustic Calibrator");
+
+  var calForm3Records = [];
+  var calForm3FailCount = 0;
+  var maxCalDevAll = 0;
+  var sheetCal3 = ss.getSheetByName(CONFIG.DB_CALIBRATOR_FORM3_SHEET);
+  if (sheetCal3 && sheetCal3.getLastRow() > 1) {
+    var dataC3 = sheetCal3.getDataRange().getValues();
+    for (var kc = 1; kc < dataC3.length; kc++) {
+      var rc3 = dataC3[kc];
+      var dc3 = parseDateValue(rc3[1]);
+      if (!dc3 || dc3 < cutoffDate) continue;
+      var isFailC3 = String(rc3[13] || "").indexOf("ไม่ผ่าน") !== -1;
+      if (isFailC3) calForm3FailCount++;
+      var devCNum = parseFloat(String(rc3[15] || "").replace(/[^0-9.\-]/g, ""));
+      if (!isNaN(devCNum) && Math.abs(devCNum) > maxCalDevAll) {
+        maxCalDevAll = Math.abs(devCNum);
+      }
+      calForm3Records.push({
+        date: formatDateDisplay(dc3),
+        time: formatCellTime(rc3[2]),
+        serial: String(rc3[3] || "").replace(/^'/, ""),
+        model: rc3[4] || "Acoustic Calibrator",
+        code: rc3[5] || "-",
+        standard: rc3[6] || "IEC 60942 (Class 1)",
+        refSlm: rc3[7] || "-",
+        freq: rc3[8] || "1 kHz",
+        weighting: rc3[9] || "A-Weighting / Fast",
+        toleranceDb: rc3[10] || "±0.25 dB",
+        calibratedBy: rc3[11] || "-",
+        approvedBy: rc3[12] || "-",
+        result: rc3[13] || "ผ่าน",
+        isFail: isFailC3,
+        maxDevDb: rc3[15] || "-",
+        freqMeas: rc3[16] || "-",
+        notes: rc3[17] || "-"
+      });
+    }
+  }
+
+  // =========================================================================
+  // Checklist 5 รายการ (แยกทั้ง 5 หมวดเครื่องมือ)
   // =========================================================================
   var checklistGas = [];
   var checklistSound = [];
   var checklistHeat = [];
   var checklistDosi = [];
+  var checklistCal = [];
   var checklistIssueGas = 0;
   var checklistIssueSound = 0;
   var checklistIssueHeat = 0;
   var checklistIssueDosi = 0;
+  var checklistIssueCal = 0;
   var sheetLegacy = ss.getSheetByName(CONFIG.LEGACY_SHEET);
   if (sheetLegacy && sheetLegacy.getLastRow() > 1) {
     var dataLegacy = sheetLegacy.getDataRange().getValues();
@@ -2482,9 +2858,10 @@ function sendWeeklyDashboardReport() {
       });
       var snL = String(rL[4] || "-").replace(/^'/, "").trim();
       var catL = String(rL[11] || "").toUpperCase();
-      var isDosiChk = catL === "DOSIMETER" || Boolean(DOSIMETER_EQUIPMENT_MASTER[snL]);
-      var isHeatChk = !isDosiChk && (catL === "HEAT" || Boolean(HEAT_EQUIPMENT_MASTER[snL]));
-      var isSoundChk = !isDosiChk && !isHeatChk && (catL === "SOUND" || Boolean(SOUND_EQUIPMENT_MASTER[snL]));
+      var isCalChk = catL === "CALIBRATOR" || Boolean(CALIBRATOR_EQUIPMENT_MASTER[snL]);
+      var isDosiChk = !isCalChk && (catL === "DOSIMETER" || Boolean(DOSIMETER_EQUIPMENT_MASTER[snL]));
+      var isHeatChk = !isCalChk && !isDosiChk && (catL === "HEAT" || Boolean(HEAT_EQUIPMENT_MASTER[snL]));
+      var isSoundChk = !isCalChk && !isDosiChk && !isHeatChk && (catL === "SOUND" || Boolean(SOUND_EQUIPMENT_MASTER[snL]));
       var chkItem = {
         date: formatDateDisplay(dL),
         technician: rL[2] || "-",
@@ -2498,7 +2875,10 @@ function sendWeeklyDashboardReport() {
         notes: rL[10] || "-",
         hasIssue: hasIssueL
       };
-      if (isDosiChk) {
+      if (isCalChk) {
+        if (hasIssueL) checklistIssueCal++;
+        checklistCal.push(chkItem);
+      } else if (isDosiChk) {
         if (hasIssueL) checklistIssueDosi++;
         checklistDosi.push(chkItem);
       } else if (isHeatChk) {
@@ -2514,18 +2894,20 @@ function sendWeeklyDashboardReport() {
     }
   }
 
-  // รวมสถิติทั้ง 4 หมวดเครื่องมือ
+  // รวมสถิติทั้ง 5 หมวดเครื่องมือ
   var totalGasIssues = gasForm1.fails + gasForm2.records.length + form3FailCount + checklistIssueGas;
   var totalSoundIssues = soundForm1.fails + soundForm2.records.length + soundForm3FailCount + checklistIssueSound;
   var totalHeatIssues = heatForm1.fails + heatForm2.records.length + heatForm3FailCount + checklistIssueHeat;
   var totalDosiIssues = dosiForm1.fails + dosiForm2.records.length + dosiForm3FailCount + checklistIssueDosi;
-  var totalIssues = totalGasIssues + totalSoundIssues + totalHeatIssues + totalDosiIssues;
+  var totalCalIssues = calForm1.fails + calForm2.records.length + calForm3FailCount + checklistIssueCal;
+  var totalIssues = totalGasIssues + totalSoundIssues + totalHeatIssues + totalDosiIssues + totalCalIssues;
 
   var totalGasActivities = gasForm1.records.length + gasForm2.records.length + form3Records.length + checklistGas.length;
   var totalSoundActivities = soundForm1.records.length + soundForm2.records.length + soundForm3Records.length + checklistSound.length;
   var totalHeatActivities = heatForm1.records.length + heatForm2.records.length + heatForm3Records.length + checklistHeat.length;
   var totalDosiActivities = dosiForm1.records.length + dosiForm2.records.length + dosiForm3Records.length + checklistDosi.length;
-  var totalActivities = totalGasActivities + totalSoundActivities + totalHeatActivities + totalDosiActivities;
+  var totalCalActivities = calForm1.records.length + calForm2.records.length + calForm3Records.length + checklistCal.length;
+  var totalActivities = totalGasActivities + totalSoundActivities + totalHeatActivities + totalDosiActivities + totalCalActivities;
 
   var summaryData = {
     cutoffDate: cutoffDate,
@@ -2547,7 +2929,11 @@ function sendWeeklyDashboardReport() {
     dosiForm1: dosiForm1,
     dosiForm2: dosiForm2,
     dosiForm3: { records: dosiForm3Records, fails: dosiForm3FailCount, maxDevDb: maxDosiDevAll },
-    dosiChecklist: { records: checklistDosi, issues: checklistIssueDosi }
+    dosiChecklist: { records: checklistDosi, issues: checklistIssueDosi },
+    calForm1: calForm1,
+    calForm2: calForm2,
+    calForm3: { records: calForm3Records, fails: calForm3FailCount, maxDevDb: maxCalDevAll },
+    calChecklist: { records: checklistCal, issues: checklistIssueCal }
   };
 
   // สร้างเนื้อหา PDF และแปลงเป็น Blob
@@ -2557,7 +2943,7 @@ function sendWeeklyDashboardReport() {
     .getAs(MimeType.PDF);
 
   // หัวข้ออีเมล
-  var emailSubject = "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่องมือภาคสนาม (Flue Gas, Sound, Heat, Dosimeter) ประจำสัปดาห์ (ระหว่างวันที่ " +
+  var emailSubject = "รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่องมือภาคสนาม (Flue Gas, Sound, Heat, Dosimeter, Calibrator) ประจำสัปดาห์ (ระหว่างวันที่ " +
     formatDateDisplay(cutoffDate) + " - " + formatDateDisplay(today) + ")";
 
   // เนื้อหาอีเมล HTML
@@ -2686,6 +3072,26 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
     }
   }
 
+  var cf1Rows = buildForm1EmailRows(s.calForm1.records, "ไม่มีรายการสอบเทียบ/บำรุงรักษา Acoustic Calibrator ในรอบสัปดาห์นี้");
+  var cf2Rows = buildForm2EmailRows(s.calForm2.records, "✓ ไม่พบประวัติความเสียหายหรือส่งซ่อม Acoustic Calibrator ในรอบสัปดาห์นี้");
+
+  var cf3Rows = "";
+  if (s.calForm3.records.length === 0) {
+    cf3Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการทวนสอบ Acoustic Calibrator Cross-Check ในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var kc = 0; kc < s.calForm3.records.length; kc++) {
+      var rc3 = s.calForm3.records[kc];
+      var resC3Color = rc3.isFail ? "#dc2626" : "#16a34a";
+      cf3Rows += "<tr style='border-bottom:1px solid #e5e7eb; font-size:12px;'>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + rc3.date + "<br><small style='color:#6b7280;'>" + rc3.time + "</small></td>" +
+        "<td style='padding:8px 6px;'><b>" + escapeXml(rc3.model) + "</b><br><small style='color:#6b7280;'>S/N: " + escapeXml(rc3.serial) + "</small></td>" +
+        "<td style='padding:8px 6px; text-align:center; font-family:monospace;'>" + escapeXml(rc3.maxDevDb) + "<br><small style='color:#6b7280;'>Ref SLM: " + escapeXml(rc3.refSlm) + "</small></td>" +
+        "<td style='padding:8px 6px; text-align:center; font-weight:bold; color:" + resC3Color + ";'>" + escapeXml(rc3.result) + "</td>" +
+        "<td style='padding:8px 6px; text-align:center;'>" + escapeXml(rc3.calibratedBy) + "</td>" +
+      "</tr>";
+    }
+  }
+
   var sf3Rows = "";
   if (s.soundForm3.records.length === 0) {
     sf3Rows = "<tr><td colspan='5' style='text-align:center; padding:10px; color:#6b7280; font-size:12px;'>ไม่มีรายการทวนสอบ Pre/Post เครื่องวัดเสียงในรอบสัปดาห์นี้</td></tr>";
@@ -2707,14 +3113,14 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
     "<div style='background:linear-gradient(135deg, #0f172a 0%, #1e40af 100%); color:#ffffff; padding:24px 20px; text-align:center;'>" +
       "<div style='font-size:12px; letter-spacing:1px; text-transform:uppercase; opacity:0.9; margin-bottom:4px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
       "<h2 style='margin:0 0 8px 0; font-size:19px; font-weight:bold;'>รายงานสรุปงานบำรุงรักษาและทวนสอบเครื่องมือภาคสนาม</h2>" +
-      "<div style='font-size:13px; opacity:0.95;'>Flue Gas • Sound • Heat • Noise DosiMeter | รอบสัปดาห์: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + "</div>" +
+      "<div style='font-size:13px; opacity:0.95;'>Flue Gas • Sound • Heat • DosiMeter • Calibrator | รอบสัปดาห์: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + "</div>" +
       "<div style='margin-top:14px;'>" + statusBadge + "</div>" +
     "</div>" +
 
     "<div style='padding:20px;'>" +
       "<p style='margin:0 0 16px 0; font-size:14px; color:#374151; line-height:1.7;'>" +
         "เรียนทุกท่าน<br>" +
-        "สรุปผลการดำเนินงานเกี่ยวกับการบำรุงรักษาเครื่อง Flue Gas Analyzer, เครื่องวัดระดับเสียง (Sound Level Meter), เครื่องวัดความร้อน (Heat Stress Monitor) และเครื่อง Noise DosiMeter ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ<br>" +
+        "สรุปผลการดำเนินงานเกี่ยวกับการบำรุงรักษาเครื่อง Flue Gas Analyzer, เครื่องวัดระดับเสียง (Sound Level Meter), เครื่องวัดความร้อน (Heat Stress Monitor), Noise DosiMeter และ Acoustic Calibrator ในรอบ 7 วันที่ผ่านมา ดังนี้ครับ<br>" +
         "(รายละเอียดเพิ่มเติมดังเอกสารแนบ)<br>" +
         "ขอบคุณครับ" +
       "</p>" +
@@ -2758,6 +3164,17 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
               "• แจ้งซ่อม (F2): <b>" + s.dosiForm2.records.length + "</b><br>" +
               "• Pre/Post Check (F3): <b>" + s.dosiForm3.records.length + "</b> (Max: " + (s.dosiForm3.maxDevDb > 0 ? s.dosiForm3.maxDevDb.toFixed(2) + " dB" : "-") + ")<br>" +
               "• Checklist 5 ระบบ: <b>" + s.dosiChecklist.records.length + "</b> (แก้ไข " + s.dosiChecklist.issues + ")" +
+            "</div>" +
+          "</td>" +
+        "</tr>" +
+        "<tr>" +
+          "<td colspan='2' style='background:#ecfeff; border:1px solid #a5f3fc; border-radius:12px; padding:12px;'>" +
+            "<div style='font-size:12px; font-weight:bold; color:#0e7490;'>🎙️ หมวดที่ 5: Acoustic Calibrator (IEC 60942 Class 1)</div>" +
+            "<div style='font-size:12px; color:#1e293b; margin-top:6px; line-height:1.6;'>" +
+              "• สอบเทียบ/ตรวจสภาพ (F1): <b>" + s.calForm1.records.length + "</b> (ไม่ผ่าน " + s.calForm1.fails + ") &nbsp;|&nbsp; " +
+              "• แจ้งซ่อม (F2): <b>" + s.calForm2.records.length + "</b> &nbsp;|&nbsp; " +
+              "• Cross-Check Verification (F3): <b>" + s.calForm3.records.length + "</b> (Max: " + (s.calForm3.maxDevDb > 0 ? s.calForm3.maxDevDb.toFixed(2) + " dB" : "-") + ") &nbsp;|&nbsp; " +
+              "• Checklist 5 ระบบ: <b>" + s.calChecklist.records.length + "</b> (แก้ไข " + s.calChecklist.issues + ")" +
             "</div>" +
           "</td>" +
         "</tr>" +
@@ -2823,13 +3240,28 @@ function buildWeeklyEmailHtmlBody(s, sheetUrl) {
         "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Dev / Drift</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th></tr></thead><tbody>" + df3Rows + "</tbody></table>" +
       "</div>" +
 
+      // --- ส่วนที่ 5: Acoustic Calibrator ---
+      "<div style='font-size:14px; font-weight:bold; color:#0e7490; margin:22px 0 8px 0; border-bottom:2px solid #a5f3fc; padding-bottom:4px;'>🎙️ หมวด Acoustic Calibrator (IEC 60942 Class 1)</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#ecfeff; padding:8px 12px; font-weight:bold; font-size:12px; color:#155e75; border-bottom:1px solid #e5e7eb;'>📋 แบบฟอร์มที่ 1: การสอบเทียบและบำรุงรักษา (Acoustic Calibrator)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายการ</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ตรวจ</th></tr></thead><tbody>" + cf1Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid " + (s.calForm2.records.length > 0 ? "#fed7aa" : "#e5e7eb") + "; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:" + (s.calForm2.records.length > 0 ? "#ffedd5" : "#ecfeff") + "; padding:8px 12px; font-weight:bold; font-size:12px; color:#155e75; border-bottom:1px solid #e5e7eb;'>🛠️ แบบฟอร์มที่ 2: ประวัติความเสียหาย / ซ่อมแซม (Acoustic Calibrator)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วันที่</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px;'>รายละเอียด</th><th style='padding:6px; text-align:center;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + cf2Rows + "</tbody></table>" +
+      "</div>" +
+      "<div style='margin-top:10px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;'>" +
+        "<div style='background:#ecfeff; padding:8px 12px; font-weight:bold; font-size:12px; color:#155e75; border-bottom:1px solid #e5e7eb;'>🎙️ แบบฟอร์มที่ 3: Acoustic Calibrator Cross-Check (94 / 114 dB ±0.25 dB)</div>" +
+        "<table style='width:100%; border-collapse:collapse;'><thead><tr style='background:#f1f5f9; font-size:11px; color:#475569;'><th style='padding:6px; text-align:center;'>วัน/เวลา</th><th style='padding:6px;'>รุ่น / S/N</th><th style='padding:6px; text-align:center;'>Max Dev / Ref SLM</th><th style='padding:6px; text-align:center;'>ผล</th><th style='padding:6px; text-align:center;'>ผู้ทวนสอบ</th></tr></thead><tbody>" + cf3Rows + "</tbody></table>" +
+      "</div>" +
+
       "<div style='margin-top:24px; text-align:center;'>" +
         "<a href='" + sheetUrl + "' style='display:inline-block; background:#1e40af; color:#ffffff; text-decoration:none; padding:10px 20px; border-radius:8px; font-size:13px; font-weight:bold; margin-right:8px;'>📊 เปิดดู Google Sheets ฐานข้อมูล</a>" +
         "<a href='" + CONFIG.WEBAPP_URL + "' style='display:inline-block; background:#0f172a; color:#ffffff; text-decoration:none; padding:10px 20px; border-radius:8px; font-size:13px; font-weight:bold;'>🌐 เปิดหน้าเว็บแอปบันทึกข้อมูล</a>" +
       "</div>" +
 
       "<div style='margin-top:20px; padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; font-size:12px; color:#64748b; text-align:center;'>" +
-        "📎 เอกสารรายงานสรุปฉบับเต็มครอบคลุมทั้ง <b>Flue Gas Analyzer</b> และ <b>Sound Level Meter</b> ถูกแนบมาเป็นไฟล์ PDF ท้ายอีเมลฉบับนี้ครับ" +
+        "📎 เอกสารรายงานสรุปฉบับเต็มครอบคลุมเครื่องมือภาคสนามครบทั้ง 5 หมวดหมู่ ถูกแนบมาเป็นไฟล์ PDF ท้ายอีเมลฉบับนี้ครับ" +
       "</div>" +
     "</div>" +
 
@@ -3009,6 +3441,31 @@ function buildWeeklyHtmlReport(s) {
     }
   }
 
+  // หมวด 5: Acoustic Calibrator (PDF)
+  var cf1RowsPdf = buildForm1PdfRows(s.calForm1.records);
+  var cf2RowsPdf = buildForm2PdfRows(s.calForm2.records);
+  var cchkRowsPdf = buildChecklistPdfRows(s.calChecklist.records);
+
+  var cf3RowsPdf = "";
+  if (s.calForm3.records.length === 0) {
+    cf3RowsPdf = "<tr><td colspan='7' style='text-align:center; padding:8px; color:#6b7280;'>ไม่มีรายการทวนสอบ Acoustic Calibrator ในรอบสัปดาห์นี้</td></tr>";
+  } else {
+    for (var kc = 0; kc < s.calForm3.records.length; kc++) {
+      var rc3 = s.calForm3.records[kc];
+      var bgc3 = rc3.isFail ? "#fee2e2" : (kc % 2 === 0 ? "#ffffff" : "#f9fafb");
+      var setupC = (rc3.refSlm || "-") + " | " + (rc3.freq || "1 kHz") + " | " + (rc3.weighting || "A/Fast");
+      cf3RowsPdf += "<tr style='background-color:" + bgc3 + ";'>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px;'>" + rc3.date + " " + rc3.time + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px;'><b>" + escapeXml(rc3.model) + "</b> (" + escapeXml(rc3.serial) + ")</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:8px; text-align:center;'>" + escapeXml(setupC) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-size:9px; font-weight:bold;'>" + escapeXml(rc3.maxDevDb) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; text-align:center; font-weight:bold; font-size:9px; color:" + (rc3.isFail ? "#b91c1c" : "#15803d") + ";'>" + escapeXml(rc3.result) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(rc3.calibratedBy) + "</td>" +
+        "<td style='padding:5px; border:1px solid #cbd5e1; font-size:9px; text-align:center;'>" + escapeXml(rc3.approvedBy) + "</td>" +
+      "</tr>";
+    }
+  }
+
   return "<!DOCTYPE html><html><head><meta charset='UTF-8'>" +
     "<style>" +
       "@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');" +
@@ -3016,17 +3473,17 @@ function buildWeeklyHtmlReport(s) {
       ".header { text-align:center; border-bottom:2px solid #1e40af; padding-bottom:8px; margin-bottom:12px; }" +
       ".header h1 { font-size:15px; margin:0 0 4px 0; color:#1e40af; font-weight:bold; }" +
       ".cat-banner { font-size:12px; font-weight:bold; color:#ffffff; background:#1e3a8a; padding:5px 10px; border-radius:4px; margin:14px 0 8px 0; }" +
-      ".cat-banner.sound { background:#0f766e; } .cat-banner.heat { background:#c2410c; } .cat-banner.dosi { background:#6d28d9; }" +
+      ".cat-banner.sound { background:#0f766e; } .cat-banner.heat { background:#c2410c; } .cat-banner.dosi { background:#6d28d9; } .cat-banner.cal { background:#0e7490; }" +
       ".section-title { font-size:10.5px; font-weight:bold; color:#1e3a8a; margin:10px 0 5px 0; border-left:3px solid #2563eb; padding-left:6px; }" +
-      ".section-title.sound { color:#0f766e; border-left-color:#0d9488; } .section-title.heat { color:#c2410c; border-left-color:#ea580c; } .section-title.dosi { color:#6d28d9; border-left-color:#7c3aed; }" +
+      ".section-title.sound { color:#0f766e; border-left-color:#0d9488; } .section-title.heat { color:#c2410c; border-left-color:#ea580c; } .section-title.dosi { color:#6d28d9; border-left-color:#7c3aed; } .section-title.cal { color:#0e7490; border-left-color:#0891b2; }" +
       "table { width:100%; border-collapse:collapse; margin-bottom:8px; }" +
       "th { background-color:#1e40af; color:#ffffff; padding:5px 4px; font-size:9px; border:1px solid #1e3a8a; text-align:center; }" +
-      "table.sound th { background-color:#0f766e; border-color:#115e59; } table.heat th { background-color:#c2410c; border-color:#9a3412; } table.dosi th { background-color:#6d28d9; border-color:#5b21b6; }" +
+      "table.sound th { background-color:#0f766e; border-color:#115e59; } table.heat th { background-color:#c2410c; border-color:#9a3412; } table.dosi th { background-color:#6d28d9; border-color:#5b21b6; } table.cal th { background-color:#0e7490; border-color:#155e75; }" +
       "td { padding:4px; font-size:9px; }" +
     "</style></head><body>" +
     "<div class='header'>" +
       "<div style='font-size:10px; font-weight:bold; color:#64748b; margin-bottom:2px;'>แผนกปฏิบัติการภาคสนาม | บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด</div>" +
-      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่อง Flue Gas Analyzer, เครื่องวัดเสียง, เครื่องวัดความร้อน และ Noise DosiMeter ประจำสัปดาห์</h1>" +
+      "<h1>รายงานสรุปการสอบเทียบ บำรุงรักษา และทวนสอบเครื่อง Flue Gas Analyzer, เครื่องวัดเสียง, ความร้อน, Noise DosiMeter และ Acoustic Calibrator ประจำสัปดาห์</h1>" +
       "<div style='font-size:10px; color:#475569;'>รอบวันที่: " + formatDateDisplay(s.cutoffDate) + " ถึง " + formatDateDisplay(s.today) + " &nbsp;|&nbsp; " +
       "กิจกรรมทั้งหมด: " + s.totalActivities + " รายการ &nbsp;|&nbsp; " +
       "<span style='color:" + (s.totalIssues > 0 ? "#b91c1c" : "#15803d") + "; font-weight:bold;'>" +
@@ -3089,6 +3546,20 @@ function buildWeeklyHtmlReport(s) {
 
     "<div class='section-title dosi'>4.4 ตรวจสอบสภาพ Noise DosiMeter ประจำสัปดาห์ (Checklist 5 รายการ) (" + s.dosiChecklist.records.length + " รายการ)</div>" +
     "<table class='dosi'><thead><tr><th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:55px;'>ตัวเครื่อง</th><th style='width:55px;'>ไมค์/โฟม</th><th style='width:50px;'>แบต</th><th style='width:55px;'>ขั้วชาร์จ</th><th style='width:55px;'>Reader</th><th>หมายเหตุ</th></tr></thead><tbody>" + dchkRowsPdf + "</tbody></table>" +
+
+    // PART V: ACOUSTIC CALIBRATOR
+    "<div class='cat-banner cal'>หมวดที่ 5: เครื่องกำเนิดเสียงมาตรฐาน (Acoustic Calibrator - IEC 60942 Class 1)</div>" +
+    "<div class='section-title cal'>5.1 แบบฟอร์มที่ 1: บันทึกการสอบเทียบและบำรุงรักษาเครื่องมือ (" + s.calForm1.records.length + " รายการ)</div>" +
+    "<table class='cal'><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการตรวจสภาพ / สอบเทียบ</th><th style='width:60px;'>Correction</th><th style='width:75px;'>Tolerance</th><th style='width:45px;'>ผล</th><th style='width:80px;'>ผู้ดำเนินการ</th></tr></thead><tbody>" + cf1RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title cal'>5.2 แบบฟอร์มที่ 2: ประวัติความเสียหาย ความผิดปกติ หรือการซ่อมแซม (" + s.calForm2.records.length + " รายการ)</div>" +
+    "<table class='cal'><thead><tr><th style='width:65px;'>วันที่</th><th style='width:140px;'>รุ่น / S/N</th><th>รายการเสียหาย / ความผิดปกติ / ซ่อมแซม</th><th style='width:90px;'>ผู้ดำเนินการ</th><th style='width:110px;'>หมายเหตุ</th></tr></thead><tbody>" + cf2RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title cal'>5.3 แบบฟอร์มที่ 3: Acoustic Calibrator Cross-Check Verification (94 / 114 dB ±0.25 dB) (" + s.calForm3.records.length + " รายการ)</div>" +
+    "<table class='cal'><thead><tr><th style='width:80px;'>วัน/เวลา</th><th style='width:130px;'>รุ่น / S/N</th><th style='width:130px;'>Ref SLM / Setup</th><th style='width:75px;'>Max Dev</th><th style='width:45px;'>ผล</th><th style='width:75px;'>ผู้ทวนสอบ</th><th style='width:75px;'>ผู้อนุมัติ</th></tr></thead><tbody>" + cf3RowsPdf + "</tbody></table>" +
+
+    "<div class='section-title cal'>5.4 ตรวจสอบสภาพ Acoustic Calibrator ประจำสัปดาห์ (Checklist 5 รายการ) (" + s.calChecklist.records.length + " รายการ)</div>" +
+    "<table class='cal'><thead><tr><th style='width:60px;'>วันที่</th><th style='width:80px;'>ผู้ตรวจ</th><th style='width:120px;'>รุ่น / S/N</th><th style='width:55px;'>สวิตช์/ไฟ</th><th style='width:55px;'>ช่องไมค์</th><th style='width:50px;'>แบต</th><th style='width:55px;'>ความสะอาด</th><th style='width:55px;'>เสียงอ้างอิง</th><th>หมายเหตุ</th></tr></thead><tbody>" + cchkRowsPdf + "</tbody></table>" +
 
     "<table style='width:100%; margin-top:25px; border:none;'>" +
       "<tr style='border:none;'>" +

@@ -138,7 +138,7 @@
                     <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold bg-indigo-500/20 border border-indigo-400/30 rounded-full text-indigo-200 mb-2.5 backdrop-blur-sm">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span>แผนกปฏิบัติการภาคสนาม | ETC 1992</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30 font-mono">v3.2 (Multi-Equipment)</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30 font-mono">v3.3 (Multi-Equipment)</span>
                     </div>
                     <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white font-heading">
                         ระบบบันทึกการสอบเทียบ บำรุงรักษา และทวนสอบเครื่องมือ
@@ -151,7 +151,7 @@
                     <div class="font-bold text-white font-heading flex items-center md:justify-end gap-1.5">
                         <span class="text-indigo-400">⚡</span> <span id="headerEqTitle">Field Equipment Hub</span>
                     </div>
-                    <div class="text-slate-300" id="headerEqSummary">Flue Gas • Sound Level • Heat Stress • Noise DosiMeter</div>
+                    <div class="text-slate-300" id="headerEqSummary">Flue Gas • Sound Level • Heat Stress • Noise DosiMeter • Acoustic Calibrator</div>
                     <div class="mt-1 inline-flex items-center md:justify-end gap-1.5 text-[11px] text-emerald-300">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -182,7 +182,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-2">
                         ประเภทเครื่องมือภาคสนาม (Equipment Category) <span class="text-red-500">*</span>
                     </label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
                         <button type="button" id="catBtn_FLUE_GAS" onclick="switchEquipmentCategory('FLUE_GAS')"
                                 class="flex items-center justify-between p-3.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950 shadow-sm transition-all text-left">
                             <div class="flex items-center gap-2.5">
@@ -229,6 +229,18 @@
                                 </div>
                             </div>
                             <span id="catBadge_DOSIMETER" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">เลือกใช้</span>
+                        </button>
+
+                        <button type="button" id="catBtn_CALIBRATOR" onclick="switchEquipmentCategory('CALIBRATOR')"
+                                class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-cyan-400 text-slate-700 transition-all text-left">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-9 h-9 rounded-xl bg-cyan-600 text-white flex items-center justify-center text-base shadow-sm shrink-0">🎙️</span>
+                                <div>
+                                    <div class="font-bold text-sm font-heading">Acoustic Calibrator</div>
+                                    <div class="text-[11px] text-slate-500">RION NC-75 • Cirrus CR:517 (10 เครื่อง)</div>
+                                </div>
+                            </div>
+                            <span id="catBadge_CALIBRATOR" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">เลือกใช้</span>
                         </button>
                     </div>
                 </div>
@@ -859,6 +871,15 @@
                                placeholder="เช่น 1.0 (IEC 61252)"
                                class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none font-mono font-semibold placeholder:text-slate-400 placeholder:italic">
                     </div>
+                    <div id="f3_calTolCol" class="hidden">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_cal_tolerance">
+                            เกณฑ์ยอมรับ Class 1 (± dB)
+                        </label>
+                        <input type="number" id="f3_cal_tolerance" value="0.25" step="0.05" min="0"
+                               oninput="recalculateCalibratorTable()"
+                               placeholder="เช่น 0.25 (IEC 60942 Class 1)"
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none font-mono font-semibold placeholder:text-slate-400 placeholder:italic">
+                    </div>
                 </div>
 
                 <!-- ส่วนฟอร์ม 3 เฉพาะ Flue Gas Analyzer -->
@@ -904,12 +925,26 @@
                         </h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
                             <div class="sm:col-span-2 lg:col-span-1">
-                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_snd_calibrator">
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_snd_calibratorSelect">
                                     Acoustic Calibrator (ยี่ห้อ/รุ่น/S/N) <span class="text-red-500">*</span>
                                 </label>
+                                <select id="f3_snd_calibratorSelect" onchange="onSoundCalibratorSelectChange()"
+                                        class="w-full px-3 py-1.5 text-xs font-semibold border border-teal-300 rounded-lg bg-white focus:ring-2 focus:ring-teal-500 outline-none mb-1.5">
+                                    <option value="CUSTOM">-- ระบุเอง / ใช้ค่าที่พิมพ์ด้านล่าง --</option>
+                                    <option value="RION NC75 S/N 34302326">RION NC75 — S/N: 34302326 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC75 S/N 34802645">RION NC75 — S/N: 34802645 (IEC 60942 (Class 1))</option>
+                                    <option value="Cirrus CR:517 S/N 92863">Cirrus CR:517 — S/N: 92863 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC75 S/N 34234715">RION NC75 — S/N: 34234715 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC75 S/N 34234716">RION NC75 — S/N: 34234716 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34745929 (S67021837)">RION NC-75 — S/N: 34745929 [S67021837] (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34946010 (S67021838)">RION NC-75 — S/N: 34946010 [S67021838] (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34946011">RION NC-75 — S/N: 34946011 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34946012">RION NC-75 — S/N: 34946012 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34946013">RION NC-75 — S/N: 34946013 (IEC 60942 (Class 1))</option>
+                                </select>
                                 <input type="text" id="f3_snd_calibrator"
-                                       placeholder="เช่น RION NC-74 (S/N: ...)"
-                                       class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-teal-500 outline-none placeholder:text-slate-400 placeholder:italic">
+                                       placeholder="เช่น RION NC-75 (S/N: 34302326)"
+                                       class="w-full px-3 py-1.5 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-teal-500 outline-none placeholder:text-slate-400 placeholder:italic">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_snd_freq">
@@ -1194,10 +1229,24 @@
                                 </label>
                                 <select id="f3_dosi_calibratorSelect" onchange="onDosiReaderSelectChange()"
                                         class="w-full px-3 py-2 text-sm font-semibold border border-violet-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500 outline-none">
-                                    <option value="Cirrus RC:110A S/N 73967">Cirrus RC:110A — S/N: 73967 (IEC 60942 (Class 2))</option>
-                                    <option value="Cirrus RC:110A S/N 87366">Cirrus RC:110A — S/N: 87366 (IEC 60942 (Class 2))</option>
-                                    <option value="Cirrus RC:110A S/N 92433">Cirrus RC:110A — S/N: 92433 (IEC 60942 (Class 2))</option>
-                                    <option value="Cirrus RC:110A S/N 98650 (S66021639)">Cirrus RC:110A — S/N: 98650 [S66021639] (IEC 60942 (Class 2))</option>
+                                    <optgroup label="Reader Unit (Cirrus RC:110A)">
+                                        <option value="Cirrus RC:110A S/N 73967">Cirrus RC:110A — S/N: 73967 (IEC 60942 Class 2)</option>
+                                        <option value="Cirrus RC:110A S/N 87366">Cirrus RC:110A — S/N: 87366 (IEC 60942 Class 2)</option>
+                                        <option value="Cirrus RC:110A S/N 92433">Cirrus RC:110A — S/N: 92433 (IEC 60942 Class 2)</option>
+                                        <option value="Cirrus RC:110A S/N 98650 (S66021639)">Cirrus RC:110A — S/N: 98650 [S66021639] (IEC 60942 Class 2)</option>
+                                    </optgroup>
+                                    <optgroup label="Acoustic Calibrators (IEC 60942 Class 1)">
+                                    <option value="RION NC75 S/N 34302326">RION NC75 — S/N: 34302326 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC75 S/N 34802645">RION NC75 — S/N: 34802645 (IEC 60942 (Class 1))</option>
+                                    <option value="Cirrus CR:517 S/N 92863">Cirrus CR:517 — S/N: 92863 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC75 S/N 34234715">RION NC75 — S/N: 34234715 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC75 S/N 34234716">RION NC75 — S/N: 34234716 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34745929 (S67021837)">RION NC-75 — S/N: 34745929 [S67021837] (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34946010 (S67021838)">RION NC-75 — S/N: 34946010 [S67021838] (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34946011">RION NC-75 — S/N: 34946011 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34946012">RION NC-75 — S/N: 34946012 (IEC 60942 (Class 1))</option>
+                                    <option value="RION NC-75 S/N 34946013">RION NC-75 — S/N: 34946013 (IEC 60942 (Class 1))</option>
+                                    </optgroup>
                                     <option value="CUSTOM">-- ระบุเครื่อง Acoustic Calibrator อื่นเอง --</option>
                                 </select>
                                 <input type="text" id="f3_dosi_calibrator" required
@@ -1330,6 +1379,155 @@
                     </div>
                 </div>
 
+                <!-- ส่วนฟอร์ม 3 เฉพาะเครื่องกำเนิดเสียงมาตรฐาน (Acoustic Calibrator Cross-Check with Class 1 SLM) -->
+                <div id="f3_calSection" class="hidden space-y-5">
+                    <div class="bg-cyan-50/70 p-4 rounded-2xl border border-cyan-200/80 space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-900 flex items-center gap-1.5">
+                            <span>🎙️</span> Reference Class 1 Sound Level Meter &amp; Verification Setup
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_cal_refSlmSelect">
+                                    เครื่องวัดเสียงอ้างอิง Reference Class 1 SLM <span class="text-red-500">*</span>
+                                </label>
+                                <select id="f3_cal_refSlmSelect" onchange="onCalRefSlmSelectChange()"
+                                        class="w-full px-3 py-2 text-sm font-semibold border border-cyan-300 rounded-lg bg-white focus:ring-2 focus:ring-cyan-500 outline-none">
+                                    <option value="RION NL-52A S/N 01120943 (S66021678)">RION NL-52A — S/N: 01120943 [S66021678] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 01120944 (S66021679)">RION NL-52A — S/N: 01120944 [S66021679] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 01120945 (S66021680)">RION NL-52A — S/N: 01120945 [S66021680] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 01120946 (S66021681)">RION NL-52A — S/N: 01120946 [S66021681] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 01120948 (S66021683)">RION NL-52A — S/N: 01120948 [S66021683] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 01120949 (S66021684)">RION NL-52A — S/N: 01120949 [S66021684] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 01120950 (S66021685)">RION NL-52A — S/N: 01120950 [S66021685] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 01120952 (S66021686)">RION NL-52A — S/N: 01120952 [S66021686] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 01120953 (S66021687)">RION NL-52A — S/N: 01120953 [S66021687] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 00230985 (S66021688)">RION NL-52A — S/N: 00230985 [S66021688] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 00230986 (S66021689)">RION NL-52A — S/N: 00230986 [S66021689] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 00230987 (S66021690)">RION NL-52A — S/N: 00230987 [S66021690] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 00230988 (S66021691)">RION NL-52A — S/N: 00230988 [S66021691] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 00230989 (S66021692)">RION NL-52A — S/N: 00230989 [S66021692] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 00230992 (S66021694)">RION NL-52A — S/N: 00230992 [S66021694] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 00230993 (S66021695)">RION NL-52A — S/N: 00230993 [S66021695] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 00230994 (S66021696)">RION NL-52A — S/N: 00230994 [S66021696] (Class 1)</option>
+                                    <option value="RION NL-52A S/N 00230995 (S66021697)">RION NL-52A — S/N: 00230995 [S66021697] (Class 1)</option>
+                                    <option value="RION NL-53 S/N 00741217 (S67021833)">RION NL-53 — S/N: 00741217 [S67021833] (Class 1)</option>
+                                    <option value="RION NL-53 S/N 00741218 (S67021834)">RION NL-53 — S/N: 00741218 [S67021834] (Class 1)</option>
+                                    <option value="RION NL-53 S/N 00741219 (S67021835)">RION NL-53 — S/N: 00741219 [S67021835] (Class 1)</option>
+                                    <option value="RION NL-53 S/N 00741254 (S67021836)">RION NL-53 — S/N: 00741254 [S67021836] (Class 1)</option>
+                                    <option value="CUSTOM">-- ระบุ Reference Class 1 SLM อื่นเอง --</option>
+                                </select>
+                                <input type="text" id="f3_cal_refSlm" required
+                                       placeholder="ระบุรุ่นและ S/N ของ Class 1 Sound Level Meter ที่ใช้อ้างอิง"
+                                       class="mt-1.5 w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-cyan-500 outline-none placeholder:text-slate-400 placeholder:italic">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_cal_freq">
+                                    ความถี่อ้างอิง (Frequency)
+                                </label>
+                                <select id="f3_cal_freq" onchange="toggleCalCustomFreq()"
+                                        class="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-cyan-500 outline-none">
+                                    <option value="1 kHz" selected>1 kHz (1000 Hz)</option>
+                                    <option value="250 Hz">250 Hz</option>
+                                    <option value="CUSTOM">ระบุความถี่อื่น...</option>
+                                </select>
+                                <input type="text" id="f3_cal_freqCustom" placeholder="ระบุความถี่ เช่น 1000 Hz"
+                                       class="hidden mt-1.5 w-full px-3 py-1.5 text-xs border border-cyan-300 rounded-lg bg-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_cal_weighting">
+                                    SLM Weighting Setup
+                                </label>
+                                <select id="f3_cal_weighting"
+                                        class="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-cyan-500 outline-none">
+                                    <option value="A-Weighting / Fast" selected>A-Weighting / Fast</option>
+                                    <option value="Z-Weighting / Fast">Z-Weighting / Fast</option>
+                                    <option value="C-Weighting / Fast">C-Weighting / Fast</option>
+                                    <option value="A-Weighting / Slow">A-Weighting / Slow</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ตารางทวนสอบ Acoustic Calibrator Output (94.0 dB & 114.0 dB) เทียบกับ Class 1 SLM -->
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+                        <div class="bg-slate-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-lg bg-cyan-500/25 border border-cyan-400/40 text-cyan-200 text-xs font-mono font-bold">IEC 60942 Class 1</span>
+                                <span class="font-bold text-sm font-heading">Acoustic Calibrator Cross-Check Verification Table</span>
+                            </div>
+                            <span class="text-xs text-slate-300 font-mono">เกณฑ์ยอมรับ: ±<span class="cal-tol-label">0.25</span> dB</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-3 py-2.5 font-bold text-center w-28">จุดทดสอบ</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Nominal Level (dB)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Ref Class 1 SLM Read (dB)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Frequency Check (Hz)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">Deviation (dB)</th>
+                                        <th class="px-3 py-2.5 font-bold text-center">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200">
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-bold text-center text-cyan-900 bg-cyan-50/50 font-mono">94.0 dB<br><span class="text-[10px] font-normal text-cyan-700">(จุดหลัก)</span></td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="cal_std_1" value="94.0" step="0.1" oninput="recalculateCalibratorTable()"
+                                                   class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-cyan-500">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="cal_meas_1" step="0.01" placeholder="เช่น 94.00" oninput="recalculateCalibratorTable()"
+                                                   class="w-28 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-cyan-500 placeholder:text-slate-300">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="cal_hz_1" step="0.1" placeholder="เช่น 1000.0" oninput="recalculateCalibratorTable()"
+                                                   class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono bg-white outline-none focus:ring-2 focus:ring-cyan-500 placeholder:text-slate-300">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="text" id="cal_err_1" readonly tabindex="-1"
+                                                   class="w-24 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold text-slate-700 outline-none">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <span id="cal_badge_1" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-slate-50/40">
+                                        <td class="px-3 py-2.5 font-bold text-center text-cyan-900 font-mono">114.0 dB<br><span class="text-[10px] font-normal text-cyan-700">(ระดับสูง)</span></td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="cal_std_2" value="114.0" step="0.1" oninput="recalculateCalibratorTable()"
+                                                   class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-cyan-500">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="cal_meas_2" step="0.01" placeholder="เช่น 114.00" oninput="recalculateCalibratorTable()"
+                                                   class="w-28 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono font-semibold bg-white outline-none focus:ring-2 focus:ring-cyan-500 placeholder:text-slate-300">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="number" id="cal_hz_2" step="0.1" placeholder="เช่น 1000.0" oninput="recalculateCalibratorTable()"
+                                                   class="w-24 px-2 py-1.5 border border-slate-300 rounded-lg text-center font-mono bg-white outline-none focus:ring-2 focus:ring-cyan-500 placeholder:text-slate-300">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <input type="text" id="cal_err_2" readonly tabindex="-1"
+                                                   class="w-24 px-2 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-center font-mono font-semibold text-slate-700 outline-none">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <span id="cal_badge_2" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_cal_notes">
+                            สถานะแบตเตอรี่ / Coupler / สภาพแวดล้อมห้องทวนสอบ / หมายเหตุเพิ่มเติม
+                        </label>
+                        <input type="text" id="f3_cal_notes" placeholder="เช่น ไฟ Battery Good ปกติ ทวนสอบเทียบ RION NL-52A ห้องควบคุมอุณหภูมิ..."
+                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none placeholder:text-slate-400 placeholder:italic">
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1" for="f3_calibratedBy">
@@ -1436,6 +1634,21 @@
                     </div>
                 </div>
 
+                <div id="f3_calBannerGroup" class="hidden space-y-2.5 pt-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-500 font-heading">สถานะจุดทวนสอบ Calibrator:</span>
+                        <div id="chip_cal_94" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> 94.0 dB: รอกรอก</div>
+                        <div id="chip_cal_114" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> 114.0 dB: รอกรอก</div>
+                    </div>
+                    <div id="f3_cal_liveResultBanner" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5 text-slate-600 text-xs font-semibold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <span>กรอกค่าที่ Reference Class 1 SLM วัดได้ (94.0 dB / 114.0 dB) เพื่อประเมินผลตามเกณฑ์ IEC 60942 Class 1</span>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono">เกณฑ์ยอมรับ: ±<span class="cal-tol-label">0.25</span> dB</div>
+                    </div>
+                </div>
+
                 <div class="flex flex-col sm:flex-row gap-3 pt-2">
                     <button type="submit" id="submitBtn3"
                             class="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 active:scale-[0.99]">
@@ -1476,6 +1689,7 @@
                                 <option value="SOUND">🔊 Sound Level Meter</option>
                                 <option value="HEAT">🌡️ Heat Stress (WBGT)</option>
                                 <option value="DOSIMETER">🎧 Noise DosiMeter</option>
+                                <option value="CALIBRATOR">🎙️ Acoustic Calibrator</option>
                             </select>
                         </div>
                         <div>
@@ -1708,6 +1922,7 @@
 
         const HEAT_CATALOG = [{"no": "1", "serial": "TPH 060001", "brand": "TSI", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "2", "serial": "TPI 050069", "brand": "Quest technologies", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "3", "serial": "TPI 050070", "brand": "Quest technologies", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "4", "serial": "TPL 060039", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "5", "serial": "TPL 060040", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "6", "serial": "TPL 090016", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "7", "serial": "TPL 090017", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "8", "serial": "TPQ 030023", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "9", "serial": "TPQ 030024", "brand": "3 M", "model": "QUESTemp 32", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "10", "serial": "TEU 080011", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "11", "serial": "TEU 080012", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "12", "serial": "TEU 080013", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "13", "serial": "TEU 080014", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "14", "serial": "TEU 080015", "brand": "TSI", "model": "QUESTemp 34", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "15", "serial": "22004316", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "16", "serial": "22004318", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "17", "serial": "22004319", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}, {"no": "18", "serial": "22004320", "brand": "DeltaOHM", "model": "HD32.2", "standard": "ISO 7243", "status": "พร้อมใช้งาน", "notes": "", "code": ""}];
 
+        const CALIBRATOR_CATALOG = [{"no": "1", "serial": "34302326", "brand": "RION", "model": "NC75", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "", "notes": ""}, {"no": "2", "serial": "34802645", "brand": "RION", "model": "NC75", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "", "notes": ""}, {"no": "3", "serial": "92863", "brand": "Cirrus", "model": "CR:517", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "", "notes": ""}, {"no": "4", "serial": "34234715", "brand": "RION", "model": "NC75", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "", "notes": ""}, {"no": "5", "serial": "34234716", "brand": "RION", "model": "NC75", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "", "notes": ""}, {"no": "6", "serial": "34745929", "brand": "RION", "model": "NC-75", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "S67021837", "notes": ""}, {"no": "7", "serial": "34946010", "brand": "RION", "model": "NC-75", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "S67021838", "notes": "ผู้ใช้งาน: นายอพิวัตร คลังเพชร"}, {"no": "8", "serial": "34946011", "brand": "RION", "model": "NC-75", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "", "notes": "ไม่มีรหัสทรัพย์สิน แถมจากซื้อเครื่อง | ผู้ใช้งาน: นายเสกสรรค์ ปลื้มวงษ์"}, {"no": "9", "serial": "34946012", "brand": "RION", "model": "NC-75", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "", "notes": "ไม่มีรหัสทรัพย์สิน แถมจากซื้อเครื่อง | ผู้ใช้งาน: นายคมกฤษ ครรธสอน | กำหนดส่งสอบเทียบ: 01 กันยายน 2570"}, {"no": "10", "serial": "34946013", "brand": "RION", "model": "NC-75", "standard": "IEC 60942 (Class 1)", "status": "พร้อมใช้งาน", "code": "", "notes": "ไม่มีรหัสทรัพย์สิน แถมจากซื้อเครื่อง | ผู้ใช้งาน: นายสุทธา สองธนินัย | กำหนดส่งสอบเทียบ: 01 ตุลาคม 2570"}];
         const DOSIMETER_CATALOG = [{"no": "1", "serial": "070204292", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S50020405"}, {"no": "2", "serial": "070204327", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S50020406"}, {"no": "3", "serial": "091103792", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S53020553"}, {"no": "", "serial": "100605010", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S53020554"}, {"no": "", "serial": "100605019", "brand": "TES", "model": "1355", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S53020555"}, {"no": "4", "serial": "NXL060044", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S55010044/16"}, {"no": "5", "serial": "NXL060045", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S55010044/17"}, {"no": "6", "serial": "NXL060046", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "โหลดข้อมูลดิบผลการตรวจวัดไม่ได้", "code": "S55010044/18"}, {"no": "7", "serial": "NXL060047", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S55010044/19"}, {"no": "8", "serial": "NXL060048", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S55010044/20"}, {"no": "9", "serial": "NXQ070006", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "โหลดข้อมูลดิบผลการตรวจวัดไม่ได้", "code": "S59021052"}, {"no": "10", "serial": "NXQ070007", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "ชำรุด / ยกเลิกใช้งาน", "notes": "ยกเลิกทรัพย์สินแล้ว(MEMO-182/2568) รอซื้อทดแทน", "code": "S59021053"}, {"no": "11", "serial": "NXQ070008", "brand": "3M", "model": "NoisePro DLX", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "โหลดข้อมูลดิบผลการตรวจวัดไม่ได้", "code": "S59021054"}, {"no": "12", "serial": "CA8879", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "13", "serial": "CA8886", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "14", "serial": "CA8887", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "15", "serial": "CA8888", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "16", "serial": "CA8889", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "B58020007"}, {"no": "17", "serial": "CB0640", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "18", "serial": "CB0641", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "รอซ่อม / ส่งซ่อม", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "19", "serial": "CB0642", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "20", "serial": "CB0643", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "21", "serial": "CB0644", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S62021267"}, {"no": "22", "serial": "CB0954", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "23", "serial": "CB0955", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "24", "serial": "CB0956", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "25", "serial": "CB0957", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "26", "serial": "CB0958", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S63021404"}, {"no": "27", "serial": "CB1365", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021634"}, {"no": "28", "serial": "CB1497", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021635"}, {"no": "29", "serial": "CB1498", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021636"}, {"no": "30", "serial": "CB1499", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021637"}, {"no": "31", "serial": "CB1500", "brand": "Cirrus", "model": "CR:110A", "standard": "IEC 61252", "status": "พร้อมใช้งาน", "notes": "Loadข้อมูลผลการตรวจวัดได้", "code": "S66021638"}];
         const DOSIMETER_READERS = [{"no": "1", "serial": "73967", "brand": "Cirrus", "model": "RC:110A", "standard": "IEC 60942 (Class 2)", "status": "พร้อมใช้งาน", "code": ""}, {"no": "2", "serial": "87366", "brand": "Cirrus", "model": "RC:110A", "standard": "IEC 60942 (Class 2)", "status": "พร้อมใช้งาน", "code": ""}, {"no": "3", "serial": "92433", "brand": "Cirrus", "model": "RC:110A", "standard": "IEC 60942 (Class 2)", "status": "พร้อมใช้งาน", "code": ""}, {"no": "4", "serial": "98650", "brand": "Cirrus", "model": "RC:110A", "standard": "IEC 60942 (Class 2)", "status": "พร้อมใช้งาน", "code": "S66021639"}];
 
@@ -2004,23 +2219,32 @@
                 'แบตเตอรี่ ระบบชาร์จ และนาฬิกาบันทึกเวลา (Real-time Clock)',
                 'หน่วยความจำและการดาวน์โหลดข้อมูลผ่าน Reader Unit / ซอฟต์แวร์',
                 'การตอบสนองสัญญาณเสียงอ้างอิงเบื้องต้น (114 dB / 94 dB Check)'
+            ],
+            CALIBRATOR: [
+                'สภาพภายนอก ตัวเครื่อง สวิตช์ปรับระดับเสียง (94 / 114 dB) และไฟแสดงสถานะ',
+                'สภาพช่องเสียบไมโครโฟน (Coupler Cavity) และโอริง/อะแดปเตอร์',
+                'แรงดันแบตเตอรี่ และความเสถียรของไฟแสดง Battery Good',
+                'ความสะอาดช่องเสียงและความสมบูรณ์ของสติกเกอร์สอบเทียบ',
+                'การกำเนิดสัญญาณเสียงอ้างอิงเบื้องต้น (94 dB และ 114 dB @ 1 kHz)'
             ]
         };
 
         function switchEquipmentCategory(cat) {
-            currentEquipmentCategory = (cat === 'SOUND') ? 'SOUND' : (cat === 'HEAT' ? 'HEAT' : (cat === 'DOSIMETER' ? 'DOSIMETER' : 'FLUE_GAS'));
+            currentEquipmentCategory = (cat === 'SOUND') ? 'SOUND' : (cat === 'HEAT' ? 'HEAT' : (cat === 'DOSIMETER' ? 'DOSIMETER' : (cat === 'CALIBRATOR' ? 'CALIBRATOR' : 'FLUE_GAS')));
             const isSound = currentEquipmentCategory === 'SOUND';
             const isHeat = currentEquipmentCategory === 'HEAT';
             const isDosi = currentEquipmentCategory === 'DOSIMETER';
+            const isCal = currentEquipmentCategory === 'CALIBRATOR';
             const isGas = currentEquipmentCategory === 'FLUE_GAS';
 
             const catThemes = {
-                FLUE_GAS:  { border: 'border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950', badge: 'bg-indigo-600 text-white' },
-                SOUND:     { border: 'border-2 border-teal-600 bg-teal-50/90 text-teal-950', badge: 'bg-teal-600 text-white' },
-                HEAT:      { border: 'border-2 border-orange-600 bg-orange-50/90 text-orange-950', badge: 'bg-orange-600 text-white' },
-                DOSIMETER: { border: 'border-2 border-violet-600 bg-violet-50/90 text-violet-950', badge: 'bg-violet-600 text-white' }
+                FLUE_GAS:   { border: 'border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950', badge: 'bg-indigo-600 text-white' },
+                SOUND:      { border: 'border-2 border-teal-600 bg-teal-50/90 text-teal-950', badge: 'bg-teal-600 text-white' },
+                HEAT:       { border: 'border-2 border-orange-600 bg-orange-50/90 text-orange-950', badge: 'bg-orange-600 text-white' },
+                DOSIMETER:  { border: 'border-2 border-violet-600 bg-violet-50/90 text-violet-950', badge: 'bg-violet-600 text-white' },
+                CALIBRATOR: { border: 'border-2 border-cyan-600 bg-cyan-50/90 text-cyan-950', badge: 'bg-cyan-600 text-white' }
             };
-            ['FLUE_GAS', 'SOUND', 'HEAT', 'DOSIMETER'].forEach(k => {
+            ['FLUE_GAS', 'SOUND', 'HEAT', 'DOSIMETER', 'CALIBRATOR'].forEach(k => {
                 const btn = document.getElementById(`catBtn_${k}`);
                 const bdg = document.getElementById(`catBadge_${k}`);
                 if (!btn || !bdg) return;
@@ -2041,9 +2265,11 @@
                 const sInput = document.getElementById('soundSearchInput');
                 if (sInput) {
                     sInput.value = '';
-                    sInput.placeholder = isHeat
-                        ? 'พิมพ์ S/N หรือรุ่นเครื่องวัดความร้อน เช่น TEU, QUESTemp 34, HD32.2...'
-                        : (isDosi ? 'พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่น Noise DosiMeter เช่น CB1365, NXL, TES 1355...' : 'พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่นเครื่องวัดเสียง...');
+                    sInput.placeholder = isCal
+                        ? 'พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่น Acoustic Calibrator เช่น 34302326, NC75, CR:517...'
+                        : (isHeat
+                            ? 'พิมพ์ S/N หรือรุ่นเครื่องวัดความร้อน เช่น TEU, QUESTemp 34, HD32.2...'
+                            : (isDosi ? 'พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่น Noise DosiMeter เช่น CB1365, NXL, TES 1355...' : 'พิมพ์ S/N, รหัสทรัพย์สิน หรือรุ่นเครื่องวัดเสียง...'));
                 }
                 const stSel = document.getElementById('soundStatusFilter');
                 if (stSel) {
@@ -2062,7 +2288,7 @@
             }
             document.getElementById('soundMetaBanner')?.classList.toggle('hidden', isGas);
 
-            if (isSound || isHeat || isDosi) {
+            if (isSound || isHeat || isDosi || isCal) {
                 renderCategoryPresetOptions();
             } else {
                 renderFlueGasPresetOptions();
@@ -2074,7 +2300,12 @@
                 if (el) el.textContent = txt;
             });
 
-            if (isDosi) {
+            if (isCal) {
+                document.getElementById('f1_description').value = f1SubType.value === 'weekly_check'
+                    ? 'ตรวจสภาพและบำรุงรักษาเครื่อง Acoustic Calibrator ประจำสัปดาห์ (สวิตช์, ช่องไมค์, แบต, สัญญาณ 94/114 dB)'
+                    : 'สอบเทียบเครื่องกำเนิดเสียงมาตรฐาน (Acoustic Calibrator Calibration)';
+                document.getElementById('f1_tolerance').value = f1SubType.value === 'weekly_check' ? 'สภาพพร้อมใช้งาน' : '± 0.25 dB';
+            } else if (isDosi) {
                 document.getElementById('f1_description').value = f1SubType.value === 'weekly_check'
                     ? 'ตรวจสภาพและบำรุงรักษาเครื่อง Noise DosiMeter ประจำสัปดาห์ (ตัวเครื่อง, ไมโครโฟน, แบต, Reader Unit)'
                     : 'สอบเทียบเครื่องวัดเสียงสะสม (Noise DosiMeter Calibration)';
@@ -2101,7 +2332,13 @@
             const f3Title = document.getElementById('f3_headerTitle');
             const f3Sub = document.getElementById('f3_headerSubtitle');
             const f3Banner = document.getElementById('f3_headerBanner');
-            if (isDosi) {
+            if (isCal) {
+                if (tab3Title) tab3Title.textContent = 'Calibrator Cross-Check';
+                if (tab3Sub) tab3Sub.textContent = '94 / 114 dB vs Class 1 SLM (±0.25 dB)';
+                if (f3Title) f3Title.textContent = 'แบบฟอร์มที่ 3: Acoustic Calibrator Verification (Cross-Check with Class 1 SLM)';
+                if (f3Sub) f3Sub.textContent = 'ทวนสอบระดับเสียงอ้างอิง 94.0 dB และ 114.0 dB (@ 1 kHz) เทียบกับเครื่องวัดเสียง Class 1 ตามมาตรฐาน IEC 60942 Class 1 (±0.25 dB)';
+                if (f3Banner) f3Banner.className = 'bg-cyan-50 border border-cyan-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+            } else if (isDosi) {
                 if (tab3Title) tab3Title.textContent = 'Dosimeter Check';
                 if (tab3Sub) tab3Sub.textContent = 'Pre/Post Check (114 / 94 dB)';
                 if (f3Title) f3Title.textContent = 'แบบฟอร์มที่ 3: Noise DosiMeter Verification (Pre / Post Calibration Check)';
@@ -2132,10 +2369,12 @@
             document.getElementById('f3_soundSection')?.classList.toggle('hidden', !isSound);
             document.getElementById('f3_heatSection')?.classList.toggle('hidden', !isHeat);
             document.getElementById('f3_dosiSection')?.classList.toggle('hidden', !isDosi);
+            document.getElementById('f3_calSection')?.classList.toggle('hidden', !isCal);
             document.getElementById('f3_gasBannerGroup')?.classList.toggle('hidden', !isGas);
             document.getElementById('f3_soundBannerGroup')?.classList.toggle('hidden', !isSound);
             document.getElementById('f3_heatBannerGroup')?.classList.toggle('hidden', !isHeat);
             document.getElementById('f3_dosiBannerGroup')?.classList.toggle('hidden', !isDosi);
+            document.getElementById('f3_calBannerGroup')?.classList.toggle('hidden', !isCal);
 
             document.getElementById('f3_gasTimeCol')?.classList.toggle('hidden', usesPrePostTime);
             document.getElementById('f3_soundTimeCols')?.classList.toggle('hidden', !usesPrePostTime);
@@ -2143,20 +2382,26 @@
             document.getElementById('f3_soundTolCol')?.classList.toggle('hidden', !isSound);
             document.getElementById('f3_heatTolCol')?.classList.toggle('hidden', !isHeat);
             document.getElementById('f3_dosiTolCol')?.classList.toggle('hidden', !isDosi);
+            document.getElementById('f3_calTolCol')?.classList.toggle('hidden', !isCal);
 
             const f3TimeEl = document.getElementById('f3_time');
             const f3PreEl = document.getElementById('f3_snd_preTime');
             const f3CalEl = document.getElementById('f3_snd_calibrator');
             const f3HeatRefEl = document.getElementById('f3_heat_refDevice');
             const f3DosiCalEl = document.getElementById('f3_dosi_calibrator');
+            const f3CalRefSlmEl = document.getElementById('f3_cal_refSlm');
             if (f3TimeEl) f3TimeEl.required = !usesPrePostTime;
             if (f3PreEl) f3PreEl.required = usesPrePostTime;
             if (f3CalEl) f3CalEl.required = isSound;
             if (f3HeatRefEl) f3HeatRefEl.required = isHeat;
             if (f3DosiCalEl) f3DosiCalEl.required = isDosi;
+            if (f3CalRefSlmEl) f3CalRefSlmEl.required = isCal;
 
             if (isDosi && f3DosiCalEl && !f3DosiCalEl.value.trim()) {
                 onDosiReaderSelectChange();
+            }
+            if (isCal && f3CalRefSlmEl && !f3CalRefSlmEl.value.trim()) {
+                onCalRefSlmSelectChange();
             }
 
             const qCat = document.getElementById('q_category');
@@ -2169,6 +2414,7 @@
             if (isSound) recalculateSoundTable();
             if (isHeat) recalculateHeatTable();
             if (isDosi) recalculateDosimeterTable();
+            if (isCal) recalculateCalibratorTable();
             updateEquipmentDashboard();
         }
 
@@ -2186,6 +2432,32 @@
 
         function renderCategoryPresetOptions(preferredSerial) {
             const searchTxt = (document.getElementById('soundSearchInput')?.value || '').trim().toLowerCase();
+
+            if (currentEquipmentCategory === 'CALIBRATOR') {
+                const filtered = CALIBRATOR_CATALOG.filter(it => {
+                    if (searchTxt) {
+                        const hay = `${it.serial} ${it.code} ${it.brand} ${it.model} ${it.standard} ${it.notes}`.toLowerCase();
+                        if (!hay.includes(searchTxt)) return false;
+                    }
+                    return true;
+                });
+                let htmlOpts = filtered.map((it, idx) =>
+                    `<option value="CALIBRATOR|${it.serial}">${it.no || idx + 1}. ${it.brand} ${it.model} (${it.standard}) — S/N: ${it.serial}${it.code ? ' [' + it.code + ']' : ''} (✓)</option>`
+                ).join('');
+                htmlOpts = filtered.length === 0
+                    ? '<option value="CUSTOM">-- ไม่พบรายการที่ค้นหา (กดเพื่อกรอกเอง) --</option>'
+                    : htmlOpts + '<option value="CUSTOM">-- ระบุเอง / เครื่องมืออื่น --</option>';
+
+                const prevVal = equipmentPreset.value;
+                equipmentPreset.innerHTML = htmlOpts;
+                if (preferredSerial && Array.from(equipmentPreset.options).some(o => o.value === `CALIBRATOR|${preferredSerial}`)) {
+                    equipmentPreset.value = `CALIBRATOR|${preferredSerial}`;
+                } else if (Array.from(equipmentPreset.options).some(o => o.value === prevVal)) {
+                    equipmentPreset.value = prevVal;
+                }
+                applyEquipmentPreset();
+                return;
+            }
 
             if (currentEquipmentCategory === 'DOSIMETER') {
                 const statusFilter = document.getElementById('soundStatusFilter')?.value || 'ACTIVE';
@@ -2285,12 +2557,43 @@
             if (val === 'CUSTOM') {
                 eqModel.readOnly = false;
                 eqSerial.readOnly = false;
-                eqName.value = currentEquipmentCategory === 'DOSIMETER' ? 'Noise DosiMeter' : (currentEquipmentCategory === 'HEAT' ? 'Heat Stress Monitor' : (currentEquipmentCategory === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer'));
+                eqName.value = currentEquipmentCategory === 'CALIBRATOR' ? 'Acoustic Calibrator' : (currentEquipmentCategory === 'DOSIMETER' ? 'Noise DosiMeter' : (currentEquipmentCategory === 'HEAT' ? 'Heat Stress Monitor' : (currentEquipmentCategory === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer')));
                 eqModel.value = '';
                 eqSerial.value = '';
                 eqCode.value = '';
                 document.getElementById('soundMetaBanner')?.classList.add('hidden');
                 eqModel.focus();
+                return;
+            }
+
+            if (val.startsWith('CALIBRATOR|')) {
+                const sn = val.split('|')[1];
+                const item = CALIBRATOR_CATALOG.find(x => x.serial === sn);
+                if (item) {
+                    eqName.value = 'Acoustic Calibrator';
+                    eqModel.value = `${item.brand} ${item.model}`.trim();
+                    eqSerial.value = item.serial;
+                    eqCode.value = localStorage.getItem(`etc_eqcode_${item.serial}`) || item.code || '';
+
+                    const banner = document.getElementById('soundMetaBanner');
+                    const clsBadge = document.getElementById('soundMetaClassBadge');
+                    const stBadge = document.getElementById('soundMetaStatusBadge');
+                    const notesEl = document.getElementById('soundMetaNotes');
+                    if (banner && clsBadge && stBadge && notesEl) {
+                        banner.className = 'rounded-xl p-3 border border-cyan-200 bg-cyan-50/50 text-xs flex flex-wrap items-center justify-between gap-2';
+                        clsBadge.textContent = item.standard || 'IEC 60942 (Class 1)';
+                        clsBadge.className = 'px-2.5 py-0.5 rounded-full font-bold bg-cyan-100 text-cyan-900 border border-cyan-200';
+                        stBadge.textContent = `✓ ${item.status || 'พร้อมใช้งาน'}`;
+                        stBadge.className = 'px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+                        notesEl.textContent = item.notes || '';
+                    }
+
+                    const qSerial = document.getElementById('q_serial');
+                    if (qSerial && Array.from(qSerial.options).some(o => o.value === item.serial)) {
+                        qSerial.value = item.serial;
+                    }
+                }
+                updateEquipmentDashboard();
                 return;
             }
 
@@ -3280,6 +3583,172 @@
             return { dosiData, maxDev, maxDrift, hasMeasured, calPointsSummary: points.join(' & ') || '114.0 dB' };
         }
 
+        function onSoundCalibratorSelectChange() {
+            const sel = document.getElementById('f3_snd_calibratorSelect');
+            const inp = document.getElementById('f3_snd_calibrator');
+            if (!sel || !inp) return;
+            if (sel.value === 'CUSTOM') {
+                inp.value = localStorage.getItem('etc_last_sound_calibrator') || '';
+                inp.focus();
+            } else {
+                inp.value = sel.value;
+                localStorage.setItem('etc_last_sound_calibrator', sel.value);
+            }
+        }
+
+        function onCalRefSlmSelectChange() {
+            const sel = document.getElementById('f3_cal_refSlmSelect');
+            const inp = document.getElementById('f3_cal_refSlm');
+            if (!sel || !inp) return;
+            if (sel.value === 'CUSTOM') {
+                inp.value = localStorage.getItem('etc_last_cal_ref_slm_custom') || '';
+                inp.focus();
+            } else {
+                inp.value = sel.value;
+            }
+        }
+
+        function toggleCalCustomFreq() {
+            const sel = document.getElementById('f3_cal_freq');
+            const cust = document.getElementById('f3_cal_freqCustom');
+            if (!sel || !cust) return;
+            const isCustom = sel.value === 'CUSTOM';
+            cust.classList.toggle('hidden', !isCustom);
+            cust.required = isCustom;
+        }
+
+        function getSelectedCalFreq() {
+            const sel = document.getElementById('f3_cal_freq');
+            if (!sel) return '1 kHz';
+            if (sel.value === 'CUSTOM') {
+                return document.getElementById('f3_cal_freqCustom')?.value.trim() || '1 kHz';
+            }
+            return sel.value;
+        }
+
+        function recalculateCalibratorTable() {
+            const tol = parseFloat(document.getElementById('f3_cal_tolerance')?.value || '0.25') || 0.25;
+            document.querySelectorAll('.cal-tol-label').forEach(el => {
+                el.textContent = tol.toFixed(2);
+            });
+
+            let anyExceed = false;
+            let hasAny = false;
+            let maxAbsErrAll = 0;
+
+            [1, 2].forEach(idx => {
+                const std = parseFloat(document.getElementById(`cal_std_${idx}`)?.value);
+                const meas = parseFloat(document.getElementById(`cal_meas_${idx}`)?.value);
+                const errEl = document.getElementById(`cal_err_${idx}`);
+                const badgeEl = document.getElementById(`cal_badge_${idx}`);
+                const chipEl = document.getElementById(idx === 1 ? 'chip_cal_94' : 'chip_cal_114');
+                const ptLabel = !isNaN(std) ? `${std.toFixed(1)} dB` : (idx === 1 ? '94.0 dB' : '114.0 dB');
+
+                if (!isNaN(std) && !isNaN(meas)) {
+                    const diff = meas - std;
+                    const absD = Math.abs(diff);
+                    if (errEl) errEl.value = (diff >= 0 ? '+' : '') + diff.toFixed(2);
+                    hasAny = true;
+                    if (absD > maxAbsErrAll) maxAbsErrAll = absD;
+                    const exceed = absD > tol;
+                    if (exceed) anyExceed = true;
+                    if (badgeEl) {
+                        badgeEl.className = exceed
+                            ? 'px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 border border-rose-300 font-bold whitespace-nowrap'
+                            : 'px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold whitespace-nowrap';
+                        badgeEl.textContent = exceed ? '❌ เกินเกณฑ์' : '✓ ผ่านเกณฑ์';
+                    }
+                    if (chipEl) {
+                        chipEl.className = exceed
+                            ? 'px-2.5 py-1 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold border border-rose-300 flex items-center gap-1.5'
+                            : 'px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-300 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full ${exceed ? 'bg-rose-500' : 'bg-emerald-500'}"></span> ${ptLabel}: ${exceed ? 'FAIL' : 'PASS'} (${diff >= 0 ? '+' : ''}${diff.toFixed(2)} dB)`;
+                    }
+                } else {
+                    if (errEl) errEl.value = '';
+                    if (badgeEl) {
+                        badgeEl.className = 'px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 font-semibold whitespace-nowrap';
+                        badgeEl.textContent = '--';
+                    }
+                    if (chipEl) {
+                        chipEl.className = 'px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200 flex items-center gap-1.5';
+                        chipEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400"></span> ${ptLabel}: รอกรอก`;
+                    }
+                }
+            });
+
+            if (currentEquipmentCategory === 'CALIBRATOR') {
+                const overallEl = document.getElementById('f3_overallResult');
+                if (overallEl) overallEl.value = anyExceed ? 'ไม่ผ่าน' : 'ผ่าน';
+            }
+
+            const banner = document.getElementById('f3_cal_liveResultBanner');
+            if (banner) {
+                if (!hasAny) {
+                    banner.className = 'bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                    banner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-slate-600 text-xs font-semibold">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <span>กรอกค่าที่ Reference Class 1 SLM วัดได้ (94.0 dB / 114.0 dB) เพื่อประเมินผลตามเกณฑ์ IEC 60942 Class 1</span>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono">เกณฑ์ยอมรับ: ±<span class="cal-tol-label">${tol.toFixed(2)}</span> dB</div>`;
+                } else if (anyExceed) {
+                    banner.className = 'bg-rose-50 border-2 border-rose-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs';
+                    banner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-rose-800 text-sm font-bold font-heading">
+                            <span class="w-3.5 h-3.5 rounded-full bg-rose-500"></span>
+                            <span>⚠️ ผลการทวนสอบ: ไม่ผ่านเกณฑ์ (Max Deviation: ±${maxAbsErrAll.toFixed(2)} dB เกิน ±${tol.toFixed(2)} dB)</span>
+                        </div>
+                        <div class="text-xs text-rose-700 font-mono font-bold">FAIL</div>`;
+                } else {
+                    banner.className = 'bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs';
+                    banner.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-emerald-800 text-sm font-bold font-heading">
+                            <span class="w-3.5 h-3.5 rounded-full bg-emerald-500"></span>
+                            <span>✅ ผลการทวนสอบ: ผ่านเกณฑ์ IEC 60942 Class 1 (Max Deviation: ±${maxAbsErrAll.toFixed(2)} dB ภายใน ±${tol.toFixed(2)} dB)</span>
+                        </div>
+                        <div class="text-xs text-emerald-700 font-mono font-bold">PASS</div>`;
+                }
+            }
+            updateEquipmentDashboard();
+        }
+
+        function collectCalibratorVerificationData() {
+            const tol = parseFloat(document.getElementById('f3_cal_tolerance')?.value || '0.25') || 0.25;
+            const calData = [];
+            let maxDev = 0;
+            let hasMeasured = false;
+            const points = [];
+            const hzVals = [];
+
+            [1, 2].forEach(idx => {
+                const std = document.getElementById(`cal_std_${idx}`)?.value || '';
+                const meas = document.getElementById(`cal_meas_${idx}`)?.value || '';
+                const hz = document.getElementById(`cal_hz_${idx}`)?.value || '';
+                const err = document.getElementById(`cal_err_${idx}`)?.value || '';
+                let status = '-';
+                if (meas !== '') {
+                    hasMeasured = true;
+                    points.push(`${std} dB`);
+                    if (hz) hzVals.push(`${hz} Hz`);
+                    const absE = Math.abs(parseFloat(err));
+                    if (!isNaN(absE)) {
+                        if (absE > maxDev) maxDev = absE;
+                        status = absE > tol ? 'ไม่ผ่านเกณฑ์' : 'ผ่านเกณฑ์';
+                    }
+                }
+                calData.push({ point: idx, std, measured: meas, hz, err, status });
+            });
+
+            return {
+                calData,
+                maxDev,
+                hasMeasured,
+                calPointsSummary: points.join(' & ') || '94.0 & 114.0 dB',
+                freqMeas: hzVals.join(' / ') || getSelectedCalFreq()
+            };
+        }
+
         document.getElementById('formTab3').addEventListener('submit', async (e) => {
             e.preventDefault();
             const f = e.target;
@@ -3292,6 +3761,45 @@
             const appBy = document.getElementById('f3_approvedBy').value.trim();
             localStorage.setItem('etc_operator', calBy);
             if (appBy) localStorage.setItem('etc_supervisor', appBy);
+
+            if (currentEquipmentCategory === 'CALIBRATOR') {
+                const { calData, maxDev, hasMeasured, calPointsSummary, freqMeas } = collectCalibratorVerificationData();
+                if (!hasMeasured) {
+                    showModal('error', 'ยังไม่ได้กรอกค่าทวนสอบ Acoustic Calibrator', 'กรุณากรอกค่าที่ Reference Class 1 SLM วัดได้ อย่างน้อย 1 จุด (94.0 dB หรือ 114.0 dB) ครับ');
+                    return;
+                }
+                const refSlm = document.getElementById('f3_cal_refSlm').value.trim();
+                if (document.getElementById('f3_cal_refSlmSelect')?.value === 'CUSTOM') {
+                    localStorage.setItem('etc_last_cal_ref_slm_custom', refSlm);
+                }
+                const tolDb = document.getElementById('f3_cal_tolerance').value || '0.25';
+                const sn = eqSerial.value.trim();
+                const masterItem = CALIBRATOR_CATALOG.find(x => x.serial === sn) || {};
+
+                const payload = {
+                    category: 'CALIBRATOR',
+                    formType: 'FORM_3_CALIBRATOR_VERIFICATION',
+                    date: document.getElementById('f3_date').value,
+                    time: document.getElementById('f3_time').value,
+                    nextDate: document.getElementById('f3_nextDate').value,
+                    standard: masterItem.standard || 'IEC 60942 (Class 1)',
+                    refSlm: refSlm,
+                    freq: getSelectedCalFreq(),
+                    weighting: document.getElementById('f3_cal_weighting').value,
+                    toleranceDb: `±${tolDb} dB`,
+                    maxDevDb: `±${maxDev.toFixed(2)} dB`,
+                    freqMeas: freqMeas,
+                    calPointsSummary: calPointsSummary,
+                    result: document.getElementById('f3_overallResult').value,
+                    calibratedBy: calBy,
+                    approvedBy: appBy,
+                    notes: document.getElementById('f3_cal_notes').value.trim(),
+                    syncToForm1: document.getElementById('f3_syncToForm1').checked,
+                    calData: calData
+                };
+                await postToGoogleSheet(payload, 'submitBtn3', '<span>💾 บันทึกผล Verification ลงฐานข้อมูล Google Sheet</span>');
+                return;
+            }
 
             if (currentEquipmentCategory === 'DOSIMETER') {
                 const { dosiData, maxDev, maxDrift, hasMeasured, calPointsSummary } = collectDosimeterVerificationData();
@@ -3443,6 +3951,31 @@
                 serial: eqSerial.value,
                 code: eqCode.value
             };
+            if (currentEquipmentCategory === 'CALIBRATOR') {
+                const { calData, maxDev, freqMeas } = collectCalibratorVerificationData();
+                const sn = eqSerial.value.trim();
+                const masterItem = CALIBRATOR_CATALOG.find(x => x.serial === sn) || {};
+                const rec = {
+                    date: formatCellDate(document.getElementById('f3_date').value) || '....................',
+                    time: document.getElementById('f3_time').value || '..........',
+                    eqModel: eqModel.value || '....................',
+                    serial: eqSerial.value || '....................',
+                    eqCode: eqCode.value || '-',
+                    standard: masterItem.standard || 'IEC 60942 (Class 1)',
+                    refSlm: document.getElementById('f3_cal_refSlm').value || '........................................',
+                    freq: getSelectedCalFreq(),
+                    weighting: document.getElementById('f3_cal_weighting').value,
+                    toleranceDb: `±${document.getElementById('f3_cal_tolerance').value || '0.25'} dB`,
+                    maxDevDb: `±${maxDev.toFixed(2)} dB`,
+                    freqMeas: freqMeas,
+                    result: document.getElementById('f3_overallResult').value || 'ผ่าน',
+                    calibratedBy: document.getElementById('f3_calibratedBy').value || '........................................',
+                    approvedBy: document.getElementById('f3_approvedBy').value || '........................................',
+                    notes: document.getElementById('f3_cal_notes').value || '-',
+                    calData: calData
+                };
+                return buildOfficialForm3CalibratorHtml(rec, eqObj);
+            }
             if (currentEquipmentCategory === 'DOSIMETER') {
                 const { dosiData, maxDev, maxDrift } = collectDosimeterVerificationData();
                 const sn = eqSerial.value.trim();
@@ -3594,7 +4127,14 @@
             const qFormSel = document.getElementById('q_targetForm');
             if (!qSerial) return;
 
-            if (category === 'DOSIMETER') {
+            if (category === 'CALIBRATOR') {
+                qSerial.innerHTML = CALIBRATOR_CATALOG.map(it =>
+                    `<option value="${it.serial}">${it.serial} (${it.brand} ${it.model}${it.code ? ' | ' + it.code : ''})</option>`
+                ).join('');
+                if (qFormSel && qFormSel.options[2]) {
+                    qFormSel.options[2].text = 'แบบฟอร์มที่ 3: Acoustic Calibrator Verification';
+                }
+            } else if (category === 'DOSIMETER') {
                 qSerial.innerHTML = DOSIMETER_CATALOG.map(it =>
                     `<option value="${it.serial}">${it.serial} (${it.brand} ${it.model}${it.code ? ' | ' + it.code : ''})</option>`
                 ).join('');
@@ -3692,7 +4232,7 @@
                     pickerSelect.innerHTML = res.records.map((r, idx) => {
                         const metric = qCat === 'HEAT'
                             ? `Max Err: ${r.maxErrorC || '-'}`
-                            : ((qCat === 'SOUND' || qCat === 'DOSIMETER') ? `Max Dev: ${r.maxDevDb || '-'}` : `Max Error: ${r.maxErrorPct || '-'}`);
+                            : ((qCat === 'SOUND' || qCat === 'DOSIMETER' || qCat === 'CALIBRATOR') ? `Max Dev: ${r.maxDevDb || '-'}` : `Max Error: ${r.maxErrorPct || '-'}`);
                         const tm = (qCat === 'SOUND' || qCat === 'DOSIMETER') ? `${r.preTime || '-'}` : `${r.time || '-'}`;
                         return `<option value="${idx}" ${idx === res.records.length - 1 ? 'selected' : ''}>ครั้งที่ ${r.seq}: วันที่ ${r.date} เวลา ${tm} (ผล: ${r.result} | ${metric})</option>`;
                     }).join('');
@@ -4301,6 +4841,106 @@
                 </div>`;
         }
 
+        // สร้าง HTML แบบฟอร์มที่ 3 สำหรับ Acoustic Calibrator (Cross-Check with Class 1 SLM - ยังไม่มีรหัส FM-LAB)
+        function buildOfficialForm3CalibratorHtml(rec, eq) {
+            eq = (eq && typeof eq === 'object') ? eq : { name: 'Acoustic Calibrator', model: '', serial: '', code: '-' };
+            eq.code = eq.code || '-';
+            const data = rec || {
+                date: '....................',
+                time: '..........',
+                standard: 'IEC 60942 (Class 1)',
+                refSlm: '........................................',
+                freq: '1 kHz',
+                weighting: 'A-Weighting / Fast',
+                toleranceDb: '±0.25 dB',
+                maxDevDb: '-',
+                freqMeas: '-',
+                result: '-',
+                calibratedBy: '........................................',
+                approvedBy: '........................................',
+                notes: '-',
+                calData: [
+                    { std: '94.0', measured: '', hz: '', err: '', status: '-' },
+                    { std: '114.0', measured: '', hz: '', err: '', status: '-' }
+                ]
+            };
+            const rows = Array.isArray(data.calData) && data.calData.length > 0
+                ? data.calData
+                : [{ std: '94.0', measured: '', hz: '', err: '', status: '-' }, { std: '114.0', measured: '', hz: '', err: '', status: '-' }];
+
+            const trs = rows.map(r => `
+                <tr>
+                    <td style="text-align:center; height:26px; font-weight:bold;">${escapeHtml(r.std || '')} dB</td>
+                    <td style="text-align:center;">${escapeHtml(r.measured || '-')}</td>
+                    <td style="text-align:center;">${escapeHtml(r.hz || '-')}</td>
+                    <td style="text-align:center;">${escapeHtml(r.err || '-')}</td>
+                    <td style="text-align:center; font-weight:bold;">${escapeHtml(r.status || '-')}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <div style="font-family:'Sarabun', sans-serif; color:#000; max-width:760px; margin:0 auto;">
+                    <div style="text-align:center; font-size:17px; font-weight:bold; text-decoration:underline;">
+                        Acoustic Calibrator Verification (Cross-Check with Class 1 SLM)
+                    </div>
+                    <div style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:12px;">
+                        แผนกปฏิบัติการภาคสนาม บริษัท อีสเทิร์น ไทย คอนซัลติ้ง 1992 จำกัด
+                    </div>
+                    <table style="width:100%; font-size:12.5px; margin-bottom:10px; border-collapse:collapse;">
+                        <tr>
+                            <td style="padding:3px 0; width:52%;"><b>Verification Date :</b> ${escapeHtml(data.date || '....................')}</td>
+                            <td style="padding:3px 0; width:48%;"><b>Verification Time :</b> ${escapeHtml(data.time || '-')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Calibrator Model :</b> ${escapeHtml(data.eqModel || eq.model || '')} (${escapeHtml(data.standard || 'IEC 60942 Class 1')})</td>
+                            <td style="padding:3px 0;"><b>Serial No. / Code :</b> ${escapeHtml(data.serial || eq.serial || '')} (${escapeHtml(data.eqCode || eq.code || '-')})</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Ref Class 1 SLM :</b> ${escapeHtml(data.refSlm || '-')}</td>
+                            <td style="padding:3px 0;"><b>Frequency :</b> ${escapeHtml(data.freq || '1 kHz')} &nbsp;|&nbsp; <b>Tolerance :</b> ${escapeHtml(data.toleranceDb || '±0.25 dB')}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:3px 0;"><b>SLM Weighting Setup :</b> ${escapeHtml(data.weighting || 'A-Weighting / Fast')}</td>
+                        </tr>
+                    </table>
+
+                    <table class="official-form-table" border="1" cellspacing="0" cellpadding="5" style="margin-top:8px;">
+                        <thead>
+                            <tr>
+                                <th style="width:18%;">Nominal Level</th>
+                                <th style="width:22%;">Ref SLM Measured (dB)</th>
+                                <th style="width:20%;">Frequency Check (Hz)</th>
+                                <th style="width:20%;">Deviation Error (dB)</th>
+                                <th style="width:20%;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>${trs}</tbody>
+                    </table>
+
+                    <table style="width:100%; font-size:12.5px; margin-top:10px;">
+                        <tr>
+                            <td style="padding:3px 0;"><b>Verification Summary :</b> Result = <b>${escapeHtml(data.result || 'ผ่าน')}</b> &nbsp;|&nbsp; Max Deviation = ${escapeHtml(data.maxDevDb || '-')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 0;"><b>Notes :</b> ${escapeHtml(data.notes || '-')}</td>
+                        </tr>
+                    </table>
+
+                    <table style="width:100%; margin-top:34px; font-size:13px; text-align:center;">
+                        <tr>
+                            <td style="width:50%;">
+                                <div>Calibrated By .......................................................</div>
+                                <div style="margin-top:6px;">( ${escapeHtml(data.calibratedBy || '........................................')} )</div>
+                            </td>
+                            <td style="width:50%;">
+                                <div>Approve By .......................................................</div>
+                                <div style="margin-top:6px;">( ${escapeHtml(data.approvedBy || '........................................')} )</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>`;
+        }
+
         function getCurrentRenderedHistoricalHtml() {
             if (!currentHistoricalData) {
                 return '<div style="text-align:center; padding:30px; color:#64748b;">ไม่มีข้อมูลที่จะแสดงผล</div>';
@@ -4309,7 +4949,7 @@
             const targetForm = currentHistoricalData.targetForm || 'FORM_1';
             const equipment = (currentHistoricalData.equipment && typeof currentHistoricalData.equipment === 'object')
                 ? currentHistoricalData.equipment
-                : { name: cat === 'DOSIMETER' ? 'Noise DosiMeter' : (cat === 'HEAT' ? 'Heat Stress Monitor' : (cat === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer')), model: '', serial: '', code: '-' };
+                : { name: cat === 'CALIBRATOR' ? 'Acoustic Calibrator' : (cat === 'DOSIMETER' ? 'Noise DosiMeter' : (cat === 'HEAT' ? 'Heat Stress Monitor' : (cat === 'SOUND' ? 'Sound Level Meter' : 'Flue Gas Analyzer'))), model: '', serial: '', code: '-' };
             equipment.code = equipment.code || '-';
             const records = Array.isArray(currentHistoricalData.records) ? currentHistoricalData.records : [];
             if (targetForm === 'FORM_1') {
@@ -4320,6 +4960,7 @@
                 const selectEl = document.getElementById('q_form3RecordSelect');
                 const idx = selectEl ? parseInt(selectEl.value, 10) : NaN;
                 const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records.length > 0 ? records[records.length - 1] : null);
+                if (cat === 'CALIBRATOR') return buildOfficialForm3CalibratorHtml(chosen, equipment);
                 if (cat === 'DOSIMETER') return buildOfficialForm3DosimeterHtml(chosen, equipment);
                 if (cat === 'HEAT') return buildOfficialForm3HeatHtml(chosen, equipment);
                 if (cat === 'SOUND') return buildOfficialForm3SoundHtml(chosen, equipment);
@@ -4410,6 +5051,22 @@
                     csvRows.push([r.seq, r.date, r.damageDetail, r.operator, r.supervisor, r.notes]);
                 });
                 csvRows.push(['', '', '', '', '', 'FM-LAB-026 / 1 / 30-08-56']);
+            } else if (currentHistoricalData.category === 'CALIBRATOR') {
+                const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
+                const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records[records.length - 1] || {});
+                csvRows.push(['Acoustic Calibrator Verification (Cross-Check with Class 1 SLM)']);
+                csvRows.push(['Verification Date', chosen.date || '', 'Verification Time', chosen.time || '-']);
+                csvRows.push(['Model', chosen.eqModel || equipment.model, 'Serial No.', `'${equipment.serial}`, 'Asset Code', equipment.code || '-']);
+                csvRows.push(['Ref Class 1 SLM', chosen.refSlm || '-', 'Frequency', chosen.freq || '1 kHz', 'Tolerance', chosen.toleranceDb || '±0.25 dB']);
+                csvRows.push(['SLM Weighting Setup', chosen.weighting || 'A-Weighting / Fast']);
+                csvRows.push([]);
+                csvRows.push(['Nominal Level (dB)', 'Ref SLM Measured (dB)', 'Frequency Check (Hz)', 'Deviation Error (dB)', 'Status']);
+                (chosen.calData || []).forEach(r => {
+                    csvRows.push([r.std || '', r.measured || '', r.hz || '', r.err || '', r.status || '-']);
+                });
+                csvRows.push([]);
+                csvRows.push(['Result', chosen.result || '', 'Max Deviation', chosen.maxDevDb || '']);
+                csvRows.push(['Calibrated By', chosen.calibratedBy || '', 'Approve By', chosen.approvedBy || '']);
             } else if (currentHistoricalData.category === 'DOSIMETER') {
                 const idx = parseInt(document.getElementById('q_form3RecordSelect').value, 10);
                 const chosen = (!isNaN(idx) && records[idx]) ? records[idx] : (records[records.length - 1] || {});
@@ -4637,7 +5294,24 @@
             const driftEl = document.getElementById('kpi_max_drift');
             const driftBadge = document.getElementById('kpi_drift_badge');
             const driftTolLabel = document.getElementById('kpi_drift_tol_label');
-            if (currentEquipmentCategory === 'DOSIMETER') {
+            if (currentEquipmentCategory === 'CALIBRATOR') {
+                const { maxDev } = collectCalibratorVerificationData();
+                const tolDb = parseFloat(document.getElementById('f3_cal_tolerance')?.value || '0.25') || 0.25;
+                if (driftTolLabel) driftTolLabel.textContent = `เกณฑ์ยอมรับ ±${tolDb.toFixed(2)} dB`;
+                if (driftEl && driftBadge) {
+                    driftEl.textContent = `${maxDev.toFixed(2)} dB`;
+                    if (maxDev === 0) {
+                        driftBadge.textContent = 'พร้อมวัดผล';
+                        driftBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200';
+                    } else if (maxDev <= tolDb) {
+                        driftBadge.textContent = '✓ ผ่าน Class 1';
+                        driftBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
+                    } else {
+                        driftBadge.textContent = `❌ เกิน ±${tolDb.toFixed(2)} dB`;
+                        driftBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200';
+                    }
+                }
+            } else if (currentEquipmentCategory === 'DOSIMETER') {
                 const { maxDev } = collectDosimeterVerificationData();
                 const tolDb = parseFloat(document.getElementById('f3_dosi_tolerance')?.value || '1.0') || 1.0;
                 if (driftTolLabel) driftTolLabel.textContent = `เกณฑ์ยอมรับ ±${tolDb.toFixed(1)} dB`;
@@ -4733,7 +5407,10 @@
             const activeCat = (currentHistoricalData && currentHistoricalData.category) || document.getElementById('q_category')?.value || 'FLUE_GAS';
             const badgeEl = document.getElementById('trendTolBadge');
             const filterRow = document.getElementById('chartGasFilter');
-            if (activeCat === 'DOSIMETER') {
+            if (activeCat === 'CALIBRATOR') {
+                if (badgeEl) badgeEl.textContent = 'Acoustic Calibrator IEC 60942 Class 1 (±0.25 dB)';
+                if (filterRow) filterRow.classList.add('hidden');
+            } else if (activeCat === 'DOSIMETER') {
                 if (badgeEl) badgeEl.textContent = 'Noise DosiMeter IEC 61252 (±1.0 dB)';
                 if (filterRow) filterRow.classList.add('hidden');
             } else if (activeCat === 'HEAT') {
@@ -4756,6 +5433,63 @@
                 container.innerHTML = `
                     <div class="text-xs text-slate-400 py-10 flex flex-col items-center gap-2">
                         <span>📊 ยังไม่มีข้อมูลการทวนสอบในระบบ หรือ กดปุ่ม <b>"🔍 ดึงข้อมูลจาก Google Sheet"</b> เพื่อแสดงแนวโน้ม</span>
+                    </div>`;
+                return;
+            }
+
+            if (activeCat === 'CALIBRATOR') {
+                const width = 760, height = 230, padLeft = 50, padRight = 35, padTop = 25, padBottom = 35;
+                const plotW = width - padLeft - padRight, plotH = height - padTop - padBottom;
+                const minY = -0.5, maxY = 0.5;
+                const toY = val => padTop + plotH * (1 - (val - minY) / (maxY - minY));
+                const n = recs.length;
+                const toX = idx => n === 1 ? padLeft + plotW / 2 : padLeft + (idx / (n - 1)) * plotW;
+
+                const gridHtml = `
+                    <line x1="${padLeft}" y1="${toY(0.25)}" x2="${width - padRight}" y2="${toY(0.25)}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.2" opacity="0.7"/>
+                    <text x="${width - padRight + 4}" y="${toY(0.25) + 3}" fill="#dc2626" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold">+0.25 dB</text>
+                    <line x1="${padLeft}" y1="${toY(0)}" x2="${width - padRight}" y2="${toY(0)}" stroke="#94a3b8" stroke-width="1.2"/>
+                    <text x="${padLeft - 6}" y="${toY(0) + 3}" fill="#64748b" font-size="9" font-family="'JetBrains Mono', monospace" text-anchor="end">0 dB</text>
+                    <line x1="${padLeft}" y1="${toY(-0.25)}" x2="${width - padRight}" y2="${toY(-0.25)}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.2" opacity="0.7"/>
+                    <text x="${width - padRight + 4}" y="${toY(-0.25) + 3}" fill="#dc2626" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold">-0.25 dB</text>
+                `;
+
+                const p94 = [], p114 = [];
+                recs.forEach((r, idx) => {
+                    const rows = Array.isArray(r.calData) ? r.calData : [];
+                    const r94 = rows[0] || {};
+                    const r114 = rows[1] || {};
+                    const e94 = parseFloat(r94.err) || 0;
+                    const e114 = parseFloat(r114.err) || 0;
+                    p94.push({ x: toX(idx), y: toY(Math.max(minY, Math.min(maxY, e94))), val: e94, date: r.date, seq: r.seq });
+                    p114.push({ x: toX(idx), y: toY(Math.max(minY, Math.min(maxY, e114))), val: e114, date: r.date, seq: r.seq });
+                });
+
+                let seriesHtml = '';
+                [{ pts: p94, color: '#0891b2', name: '94.0 dB Dev' }, { pts: p114, color: '#2563eb', name: '114.0 dB Dev' }].forEach(s => {
+                    if (s.pts.length > 1) {
+                        const d = s.pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+                        seriesHtml += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linecap="round"/>`;
+                    }
+                    s.pts.forEach(p => {
+                        seriesHtml += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="${s.color}" stroke="#fff" stroke-width="2"><title>${s.name} (ครั้งที่ ${p.seq}, ${p.date}): ${p.val >= 0 ? '+' : ''}${p.val.toFixed(2)} dB</title></circle>`;
+                    });
+                });
+
+                const xLabelsHtml = recs.map((r, idx) =>
+                    `<text x="${toX(idx).toFixed(1)}" y="${height - 10}" fill="#64748b" font-size="10" text-anchor="middle">${escapeHtml(r.date || `รอบ ${r.seq}`)}</text>`
+                ).join('');
+
+                container.innerHTML = `
+                    <div class="w-full flex flex-col items-center">
+                        <svg viewBox="0 0 ${width} ${height}" class="w-full max-w-[800px] h-auto select-none">
+                            ${gridHtml}${seriesHtml}${xLabelsHtml}
+                        </svg>
+                        <div class="flex flex-wrap items-center justify-center gap-4 mt-2 text-[11px]">
+                            <div class="flex items-center gap-1.5 font-bold"><span class="w-3 h-3 rounded-full bg-cyan-600"></span><span>94.0 dB Deviation (dB)</span></div>
+                            <div class="flex items-center gap-1.5 font-bold"><span class="w-3 h-3 rounded-full bg-blue-600"></span><span>114.0 dB Deviation (dB)</span></div>
+                            <div class="text-[10px] text-red-500 font-mono font-semibold">-- เส้นประแดง = เกณฑ์ยอมรับ ±0.25 dB (IEC 60942 Class 1)</div>
+                        </div>
                     </div>`;
                 return;
             }
@@ -5114,6 +5848,23 @@
             if (lastOp) document.getElementById('f3_calibratedBy').value = lastOp;
             if (lastSup) document.getElementById('f3_approvedBy').value = lastSup;
 
+            if (currentEquipmentCategory === 'CALIBRATOR') {
+                document.getElementById('f3_time').value = nowTime;
+                onCalRefSlmSelectChange();
+                document.getElementById('f3_cal_freq').value = '1 kHz';
+                toggleCalCustomFreq();
+                document.getElementById('f3_cal_weighting').value = 'A-Weighting / Fast';
+                document.getElementById('cal_std_1').value = '94.0';
+                document.getElementById('cal_meas_1').value = '94.00';
+                document.getElementById('cal_hz_1').value = '1000.0';
+                document.getElementById('cal_std_2').value = '114.0';
+                document.getElementById('cal_meas_2').value = '114.00';
+                document.getElementById('cal_hz_2').value = '1000.0';
+                recalculateCalibratorTable();
+                updateEquipmentDashboard();
+                return;
+            }
+
             if (currentEquipmentCategory === 'DOSIMETER') {
                 document.getElementById('f3_snd_preTime').value = nowTime;
                 document.getElementById('f3_snd_postTime').value = nowTime;
@@ -5150,8 +5901,17 @@
                 document.getElementById('f3_snd_preTime').value = nowTime;
                 document.getElementById('f3_snd_postTime').value = nowTime;
                 const calEl = document.getElementById('f3_snd_calibrator');
+                const calSelEl = document.getElementById('f3_snd_calibratorSelect');
                 if (calEl && !calEl.value.trim()) {
-                    calEl.value = localStorage.getItem('etc_last_sound_calibrator') || 'Acoustic Calibrator 94/114 dB (1 kHz)';
+                    const lastCal = localStorage.getItem('etc_last_sound_calibrator');
+                    if (lastCal) {
+                        calEl.value = lastCal;
+                    } else if (calSelEl && calSelEl.options.length > 1) {
+                        calSelEl.selectedIndex = 1;
+                        onSoundCalibratorSelectChange();
+                    } else {
+                        calEl.value = 'RION NC75 S/N 34302326';
+                    }
                 }
                 document.getElementById('f3_snd_freq').value = '1 kHz';
                 toggleSoundCustomFreq();
@@ -5218,7 +5978,10 @@
             const urlParams = new URLSearchParams(window.location.search);
             const paramCat = (urlParams.get('cat') || '').toUpperCase();
             const paramSn = (urlParams.get('sn') || '').trim();
-            if (paramCat === 'DOSIMETER' || (paramSn && DOSIMETER_CATALOG.some(x => x.serial === paramSn))) {
+            if (paramCat === 'CALIBRATOR' || (paramSn && CALIBRATOR_CATALOG.some(x => x.serial === paramSn))) {
+                switchEquipmentCategory('CALIBRATOR');
+                if (paramSn) renderCategoryPresetOptions(paramSn);
+            } else if (paramCat === 'DOSIMETER' || (paramSn && DOSIMETER_CATALOG.some(x => x.serial === paramSn))) {
                 switchEquipmentCategory('DOSIMETER');
                 if (paramSn) renderCategoryPresetOptions(paramSn);
             } else if (paramCat === 'HEAT' || (paramSn && HEAT_CATALOG.some(x => x.serial === paramSn))) {
